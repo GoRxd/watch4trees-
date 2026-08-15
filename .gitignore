@@ -1,0 +1,58 @@
+# ==========================================
+# Watch4Trees - Root .gitignore
+# ==========================================
+
+# Compiled output & caches
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# AI Agent / IDE & Assistant Artifacts
+.agents/
+.gemini/
+.claude/
+.cursor/
+.windsurf/
+.copilot/
+**/brain/
+**/scratch/
+
+# IDEs & Editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# Testing & Coverage
+coverage/
+testem.log
+/typings
+
+# Environment & Secret files
+.env
+.env.*
+!.env.example
+*.local
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,207 @@
+/* Shared Global Mobile Drawer SCSS */
+
+.mobile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 998;
+  animation: fadeInDrawer 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  right: 1rem;
+  max-width: 440px;
+  margin: 0 auto;
+  z-index: 999;
+  padding: 1.5rem;
+  border-radius: var(--radius-xl, 26px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: rgba(5, 22, 15, 0.98);
+  border: 1px solid var(--border-glass-bright, rgba(74, 222, 128, 0.38));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(34, 197, 94, 0.2);
+  animation: slideDownDrawer 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  transform-origin: top center;
+  will-change: transform, opacity;
+}
+
+@keyframes fadeInDrawer {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDownDrawer {
+  from {
+    transform: translateY(-24px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.mobile-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border-glass, rgba(16, 185, 129, 0.22));
+}
+
+.btn-drawer-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glass, rgba(16, 185, 129, 0.22));
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-drawer-close:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #f87171;
+  transform: scale(1.08);
+}
+
+.btn-drawer-close:active {
+  transform: scale(0.95);
+}
+
+/* Authenticated User Summary Card in Drawer */
+.drawer-user-card {
+  padding: 1.2rem;
+  border-radius: var(--radius-lg, 20px);
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid var(--border-glass, rgba(16, 185, 129, 0.22));
+}
+
+.drawer-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.drawer-avatar {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.drawer-user-text strong {
+  display: block;
+  font-size: 1.05rem;
+  color: #fff;
+  font-family: var(--font-heading, inherit);
+}
+
+.drawer-user-text span {
+  font-size: 0.8rem;
+  color: var(--text-muted, #94a3b8);
+}
+
+.drawer-user-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.drawer-user-stats-row .d-stat {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.6rem 0.4rem;
+  border-radius: var(--radius-md, 14px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.drawer-user-stats-row .stat-icon {
+  font-size: 1.15rem;
+  margin-bottom: 0.15rem;
+}
+
+.drawer-user-stats-row .d-stat strong {
+  font-size: 0.95rem;
+  color: #fff;
+  font-family: var(--font-heading, inherit);
+}
+
+.drawer-user-stats-row .d-stat small {
+  font-size: 0.68rem;
+  color: var(--text-muted, #94a3b8);
+  margin-top: 0.15rem;
+}
+
+/* Nav Links */
+.mobile-nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-md, 14px);
+  color: #f0fdf4;
+  font-family: var(--font-heading, inherit);
+  font-weight: 600;
+  font-size: 0.98rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid transparent;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 48px;
+}
+
+.mobile-nav-item .nav-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.mobile-nav-item:hover, .mobile-nav-item:active {
+  background: rgba(16, 185, 129, 0.22);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.38);
+  transform: translateX(4px);
+}
+
+/* Footer Actions */
+.mobile-drawer-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-glass, rgba(16, 185, 129, 0.22));
+}
+
+.drawer-footer-actions {
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+}

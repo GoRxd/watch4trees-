@@ -1,0 +1,60 @@
+<div class="tree-stage-container" [class.size-lg]="size() === 'lg'" [class.size-md]="size() === 'md'">
+  <!-- Stage Visual Stage with Aura -->
+  <div class="tree-visual-stage">
+    <div 
+      class="tree-stage-glow animate-pulse-glow" 
+      [class.glow-celebrate]="isCelebration()"
+    ></div>
+
+    <!-- Floating Particles during Celebration -->
+    @if (isCelebration()) {
+      <div class="celebration-particles">
+        <span class="particle p1">✨</span>
+        <span class="particle p2">🎉</span>
+        <span class="particle p3">💧</span>
+        <span class="particle p4">🌿</span>
+        <span class="particle p5">⭐</span>
+      </div>
+    }
+
+    <div 
+      class="stage-icon-large animate-float" 
+      [class.celebrate-bounce]="isCelebration()"
+    >
+      <span class="emoji-huge">{{ stageEmoji() }}</span>
+    </div>
+
+    <!-- Status badge -->
+    <div class="tree-state-badge" [class.planted-success]="isFinished()">
+      @if (!isFinished()) {
+        <span>{{ stageKey() | translate }}</span>
+      } @else {
+        <span class="text-neon font-bold">🎉 {{ matureKey() | translate }}</span>
+      }
+    </div>
+  </div>
+
+  <!-- Water Drops Progress Bar -->
+  @if (showProgressBar()) {
+    <div class="tree-progress-section">
+      <div class="progress-info-row">
+        <span>{{ effectiveProgressLabelKey() | translate }}</span>
+        <strong>{{ currentDrops() }} / {{ maxDrops() }} {{ dropsUnit() }}</strong>
+      </div>
+
+      <div class="eco-progress-track">
+        <div 
+          class="eco-progress-fill" 
+          [style.width.%]="progressPercentage()"
+          [class.progress-completed]="isFinished()"
+        ></div>
+      </div>
+
+      @if (showHint()) {
+        <p class="progress-hint">
+          {{ effectiveHintKey() | translate }}
+        </p>
+      }
+    </div>
+  }
+</div>

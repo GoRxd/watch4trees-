@@ -1,0 +1,9 @@
+@if (auth.currentUser(); as user) {
+  <div class="user-profile-chip">
+    <span class="user-avatar">{{ user.avatar }}</span>
+    <span class="user-name">{{ user.name }}</span>
+    <button class="btn-logout" (click)="logout()" [title]="'auth.logout' | translate">
+      <span>🚪</span>
+    </button>
+  </div>
+}

@@ -1,0 +1,38 @@
+@if (auth.currentUser(); as user) {
+  <div class="user-hud-stats" [class.mode-compact]="mode === 'compact'">
+    <!-- Water Drops Inventory -->
+    <div class="hud-item hud-water" [title]="'dashboard.dropsLabel' | translate">
+      <span class="hud-icon">💧</span>
+      <div class="hud-info">
+        <strong class="text-blue">{{ user.waterDrops }}</strong>
+        @if (mode !== 'compact') {
+          <span>{{ 'dashboard.dropsLabel' | translate }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Eco Points -->
+    <div class="hud-item hud-points" [title]="'dashboard.pointsLabel' | translate">
+      <span class="hud-icon">🌿</span>
+      <div class="hud-info">
+        <strong class="text-neon">{{ user.ecoPoints }}</strong>
+        @if (mode !== 'compact') {
+          <span>{{ 'dashboard.pointsLabel' | translate }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Streak -->
+    @if (showStreak) {
+      <div class="hud-item hud-streak" [title]="'dashboard.streakLabel' | translate">
+        <span class="hud-icon">🔥</span>
+        <div class="hud-info">
+          <strong class="text-orange">{{ user.activeStreak }}@if (mode !== 'compact') {<span> {{ 'dashboard.daysUnit' | translate }}</span>}</strong>
+          @if (mode !== 'compact') {
+            <span>{{ 'dashboard.streakLabel' | translate }}</span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

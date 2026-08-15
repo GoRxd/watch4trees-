@@ -1,0 +1,486 @@
+<!-- Top Navigation Bar -->
+<header class="navbar-container">
+  <div class="navbar-content glass-panel">
+    <app-brand-logo (clicked)="scrollToSection('hero')"></app-brand-logo>
+
+    <nav class="nav-menu">
+      <a class="nav-link" (click)="scrollToSection('how-it-works')">{{ 'nav.howItWorks' | translate }}</a>
+      <a class="nav-link" (click)="scrollToSection('ideology')">{{ 'nav.ideology' | translate }}</a>
+      <a class="nav-link" (click)="scrollToSection('gamification')">{{ 'nav.forest' | translate }}</a>
+      <a class="nav-link" (click)="scrollToSection('transparency')">{{ 'nav.transparency' | translate }}</a>
+      <a class="nav-link" (click)="scrollToSection('b2b')">{{ 'nav.b2b' | translate }}</a>
+      <a class="nav-link" (click)="scrollToSection('faq')">{{ 'nav.faq' | translate }}</a>
+    </nav>
+
+    <div class="nav-actions">
+      <!-- Reusable Language Switcher Toggle -->
+      <app-lang-toggle></app-lang-toggle>
+
+      @if (!auth.isAuthenticated()) {
+        <button class="btn-eco-secondary btn-nav-login" (click)="goToAuth()">
+          <span>{{ 'auth.loginBtnNav' | translate }}</span>
+        </button>
+      }
+
+      <button class="btn-eco-primary btn-nav-cta" (click)="goToAuth()">
+        @if (!auth.isAuthenticated()) {
+          <span>{{ 'nav.cta' | translate }}</span>
+        } @else {
+          <span>🌿 {{ 'auth.goToDashboard' | translate }}</span>
+        }
+      </button>
+
+      <!-- Hamburger toggle button on mobile -->
+      <button class="btn-hamburger" (click)="toggleMobileMenu()" [title]="'Menu'" aria-label="Toggle navigation">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Shared Mobile Drawer Component -->
+  <app-mobile-drawer
+    [isOpen]="isMobileMenuOpen()"
+    mode="landing"
+    (closeDrawer)="closeMobileMenu()"
+    (sectionSelected)="scrollToSection($event)"
+  ></app-mobile-drawer>
+</header>
+
+<!-- MAIN LANDING CONTENT -->
+<main class="landing-main">
+
+  <!-- ==================== 1. HERO SECTION (Above the fold, loaded eagerly) ==================== -->
+  <section id="hero" class="hero-section">
+    <div class="hero-grid">
+      
+      <!-- Hero Left: Value Proposition -->
+      <div class="hero-text-col">
+        <div class="hero-badge-row">
+          <span class="badge-eco">{{ 'hero.badgeEco' | translate }}</span>
+          <span class="badge-verified">{{ 'hero.badgeVerified' | translate }}</span>
+        </div>
+        
+        <h1 class="hero-title">
+          {{ 'hero.title1' | translate }} <br>
+          <span class="gradient-text">{{ 'hero.title2' | translate }}</span>
+        </h1>
+        
+        <p class="hero-description">
+          {{ 'hero.desc' | translate }}
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn-eco-primary btn-large" (click)="goToAuth()">
+            <span>{{ 'hero.startBtn' | translate }}</span>
+            <span class="arrow">&rarr;</span>
+          </button>
+          <button class="btn-eco-secondary btn-large" (click)="scrollToSection('how-it-works')">
+            <span>{{ 'hero.howBtn' | translate }}</span>
+          </button>
+        </div>
+
+        <!-- Real-time global impact stats -->
+        <div class="hero-trust-bar">
+          <div class="trust-stat">
+            <span class="stat-number text-neon">{{ 'hero.statTrees' | translate }}</span>
+            <span class="stat-label">{{ 'hero.statTreesLabel' | translate }}</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-stat">
+            <span class="stat-number text-emerald">{{ 'hero.statCo2' | translate }}</span>
+            <span class="stat-label">{{ 'hero.statCo2Label' | translate }}</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-stat">
+            <span class="stat-number text-teal">{{ 'hero.statTrans' | translate }}</span>
+            <span class="stat-label">{{ 'hero.statTransLabel' | translate }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Right: Interactive Tree Simulator Card -->
+      <div class="hero-interactive-col">
+        <div class="interactive-preview-card glass-panel-glow">
+          <div class="card-top-tag">
+            <span class="badge-eco">{{ 'demo.badge' | translate }}</span>
+            <span class="tag-status">{{ 'demo.tag' | translate }}</span>
+          </div>
+
+          <!-- Shared Tree Stage Component -->
+          <app-tree-stage
+            [currentDrops]="demoWaterDrops()"
+            [maxDrops]="demoMaxDrops"
+            [isCelebration]="demoTreePlanted()"
+            translationPrefix="demo"
+            size="md"
+            [showProgressBar]="true"
+            [showHint]="true"
+          ></app-tree-stage>
+
+          <!-- Interactive Action -->
+          <div class="demo-actions">
+            @if (!demoTreePlanted()) {
+              <button class="btn-eco-primary btn-full" (click)="addDemoWater()">
+                <span>{{ 'demo.waterBtn' | translate }}</span>
+              </button>
+            } @else {
+              <button class="btn-eco-secondary btn-full" (click)="resetDemo()">
+                <span>{{ 'demo.resetBtn' | translate }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 2. HOW IT WORKS (3 SIMPLE STEPS) ==================== -->
+  <section id="how-it-works" class="section-container">
+    <div class="section-header text-center">
+      <span class="badge-eco">{{ 'howItWorks.badge' | translate }}</span>
+      <h2 class="section-title">{{ 'howItWorks.title' | translate }}</h2>
+      <p class="section-subtitle">
+        {{ 'howItWorks.subtitle' | translate }}
+      </p>
+    </div>
+
+    <div class="steps-grid">
+      
+      <!-- Step 1 -->
+      <div class="step-card glass-panel">
+        <div class="step-badge">{{ 'howItWorks.step1Badge' | translate }}</div>
+        <div class="step-icon">⏱️</div>
+        <h3 class="step-title">{{ 'howItWorks.step1Title' | translate }}</h3>
+        <p class="step-desc">{{ 'howItWorks.step1Desc' | translate }}</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-card glass-panel">
+        <div class="step-badge">{{ 'howItWorks.step2Badge' | translate }}</div>
+        <div class="step-icon">🎬</div>
+        <h3 class="step-title">{{ 'howItWorks.step2Title' | translate }}</h3>
+        <p class="step-desc">{{ 'howItWorks.step2Desc' | translate }}</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-card glass-panel">
+        <div class="step-badge">{{ 'howItWorks.step3Badge' | translate }}</div>
+        <div class="step-icon">🌲</div>
+        <h3 class="step-title">{{ 'howItWorks.step3Title' | translate }}</h3>
+        <p class="step-desc">{{ 'howItWorks.step3Desc' | translate }}</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 3. IDEOLOGY: PURPOSE-FIRST VS CLICK-TO-EARN ==================== -->
+  <section id="ideology" class="section-container ideology-section">
+    <div class="ideology-card glass-panel-glow">
+      <div class="ideology-grid">
+        <div class="ideology-left">
+          <span class="badge-eco">{{ 'ideology.badge' | translate }}</span>
+          <h2 class="ideology-title">{{ 'ideology.title' | translate }}</h2>
+          <p class="ideology-text">{{ 'ideology.p1' | translate }}</p>
+          <p class="ideology-text">{{ 'ideology.p2' | translate }}</p>
+          
+          <div class="motto-box">
+            <span class="motto-quote">{{ 'ideology.quote' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="ideology-right">
+          <div class="comparison-card glass-panel">
+            <div class="comp-col negative">
+              <h4>{{ 'ideology.negTitle' | translate }}</h4>
+              <ul>
+                <li>{{ 'ideology.neg1' | translate }}</li>
+                <li>{{ 'ideology.neg2' | translate }}</li>
+                <li>{{ 'ideology.neg3' | translate }}</li>
+              </ul>
+            </div>
+            <div class="comp-col positive">
+              <h4>{{ 'ideology.posTitle' | translate }}</h4>
+              <ul>
+                <li>{{ 'ideology.pos1' | translate }}</li>
+                <li>{{ 'ideology.pos2' | translate }}</li>
+                <li>{{ 'ideology.pos3' | translate }}</li>
+                <li>{{ 'ideology.pos4' | translate }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 4. VIRTUAL FOREST & GAMIFICATION ==================== -->
+  <section id="gamification" class="section-container">
+    <div class="section-header text-center">
+      <span class="badge-eco">{{ 'gamification.badge' | translate }}</span>
+      <h2 class="section-title">{{ 'gamification.title' | translate }}</h2>
+      <p class="section-subtitle">{{ 'gamification.subtitle' | translate }}</p>
+    </div>
+
+    <div class="gamification-features-grid">
+      
+      <div class="feature-box glass-panel">
+        <div class="f-icon">🌳</div>
+        <h3>{{ 'gamification.f1Title' | translate }}</h3>
+        <p>{{ 'gamification.f1Desc' | translate }}</p>
+      </div>
+
+      <div class="feature-box glass-panel">
+        <div class="f-icon">🔥</div>
+        <h3>{{ 'gamification.f2Title' | translate }}</h3>
+        <p>{{ 'gamification.f2Desc' | translate }}</p>
+      </div>
+
+      <div class="feature-box glass-panel">
+        <div class="f-icon">🏆</div>
+        <h3>{{ 'gamification.f3Title' | translate }}</h3>
+        <p>{{ 'gamification.f3Desc' | translate }}</p>
+      </div>
+
+      <div class="feature-box glass-panel">
+        <div class="f-icon">🎖️</div>
+        <h3>{{ 'gamification.f4Title' | translate }}</h3>
+        <p>{{ 'gamification.f4Desc' | translate }}</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 5. TRANSPARENCY & FINANCIAL SPLIT ==================== -->
+  <section id="transparency" class="section-container">
+    <div class="transparency-card glass-panel-glow">
+      <div class="transparency-header">
+        <span class="badge-eco">{{ 'transparency.badge' | translate }}</span>
+        <h2>{{ 'transparency.title' | translate }}</h2>
+        <p>{{ 'transparency.desc' | translate }}</p>
+      </div>
+
+      <!-- Financial Split Graph -->
+      <div class="split-visual-wrapper glass-panel">
+        <div class="split-header-row">
+          <h3>{{ 'transparency.splitTitle' | translate }}</h3>
+          <span class="badge-eco">{{ 'transparency.splitBadge' | translate }}</span>
+        </div>
+
+        <div class="split-bar">
+          <div class="bar-foundation" style="width: 85%;">
+            <span>{{ 'transparency.foundationShare' | translate }}</span>
+          </div>
+          <div class="bar-host" style="width: 15%;">
+            <span>{{ 'transparency.hostShare' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="split-details-grid">
+          <div class="split-detail-item">
+            <div class="detail-marker marker-green"></div>
+            <div>
+              <strong>{{ 'transparency.foundationTitle' | translate }}</strong>
+              <p>{{ 'transparency.foundationDesc' | translate }}</p>
+            </div>
+          </div>
+          <div class="split-detail-item">
+            <div class="detail-marker marker-gray"></div>
+            <div>
+              <strong>{{ 'transparency.hostTitle' | translate }}</strong>
+              <p>{{ 'transparency.hostDesc' | translate }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Partner Badges -->
+      <div class="partner-orgs-row">
+        <div class="partner-chip">
+          <span class="chip-flag">🇵🇱</span>
+          <span>{{ 'transparency.partners.poland' | translate }}</span>
+        </div>
+        <div class="partner-chip">
+          <span class="chip-flag">🌎</span>
+          <span>{{ 'transparency.partners.global' | translate }}</span>
+        </div>
+        <div class="partner-chip">
+          <span class="chip-flag">🇲🇬</span>
+          <span>{{ 'transparency.partners.eden' | translate }}</span>
+        </div>
+        <div class="partner-chip">
+          <span class="chip-flag">📊</span>
+          <span>{{ 'transparency.partners.audit' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 6. B2B & ESG SPONSORSHIP ==================== -->
+  <section id="b2b" class="section-container">
+    <div class="b2b-banner glass-panel">
+      <div class="b2b-content">
+        <span class="badge-eco">{{ 'b2b.badge' | translate }}</span>
+        <h2>{{ 'b2b.title' | translate }}</h2>
+        <p>{{ 'b2b.desc' | translate }}</p>
+        
+        <div class="b2b-perks">
+          <div class="perk-item">
+            <span class="perk-check">✓</span>
+            <span>{{ 'b2b.perk1' | translate }}</span>
+          </div>
+          <div class="perk-item">
+            <span class="perk-check">✓</span>
+            <span>{{ 'b2b.perk2' | translate }}</span>
+          </div>
+          <div class="perk-item">
+            <span class="perk-check">✓</span>
+            <span>{{ 'b2b.perk3' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="b2b-action">
+          <a href="mailto:partnerzy@watch4trees.org" class="btn-eco-primary">
+            <span>{{ 'b2b.cta' | translate }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 7. FAQ ACCORDION ==================== -->
+  <section id="faq" class="section-container">
+    <div class="section-header text-center">
+      <span class="badge-eco">{{ 'faq.badge' | translate }}</span>
+      <h2 class="section-title">{{ 'faq.title' | translate }}</h2>
+    </div>
+
+    <div class="faq-list">
+      
+      <!-- FAQ 1 -->
+      <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 0">
+        <div class="faq-question" (click)="toggleFaq(0)">
+          <h4>{{ 'faq.q1' | translate }}</h4>
+          <span class="faq-toggle-icon">{{ activeFaqIndex() === 0 ? '−' : '+' }}</span>
+        </div>
+        @if (activeFaqIndex() === 0) {
+          <div class="faq-answer">
+            <p>{{ 'faq.a1' | translate }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 1">
+        <div class="faq-question" (click)="toggleFaq(1)">
+          <h4>{{ 'faq.q2' | translate }}</h4>
+          <span class="faq-toggle-icon">{{ activeFaqIndex() === 1 ? '−' : '+' }}</span>
+        </div>
+        @if (activeFaqIndex() === 1) {
+          <div class="faq-answer">
+            <p>{{ 'faq.a2' | translate }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 2">
+        <div class="faq-question" (click)="toggleFaq(2)">
+          <h4>{{ 'faq.q3' | translate }}</h4>
+          <span class="faq-toggle-icon">{{ activeFaqIndex() === 2 ? '−' : '+' }}</span>
+        </div>
+        @if (activeFaqIndex() === 2) {
+          <div class="faq-answer">
+            <p>{{ 'faq.a3' | translate }}</p>
+          </div>
+        }
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 3">
+        <div class="faq-question" (click)="toggleFaq(3)">
+          <h4>{{ 'faq.q4' | translate }}</h4>
+          <span class="faq-toggle-icon">{{ activeFaqIndex() === 3 ? '−' : '+' }}</span>
+        </div>
+        @if (activeFaqIndex() === 3) {
+          <div class="faq-answer">
+            <p>{{ 'faq.a4' | translate }}</p>
+          </div>
+        }
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 8. CTA / EARLY ACCESS ==================== -->
+  <section id="join" class="section-container join-section">
+    <div class="join-card glass-panel-glow text-center">
+      <span class="badge-eco">{{ 'join.badge' | translate }}</span>
+      <h2 class="join-title">{{ 'join.title' | translate }}</h2>
+      <p class="join-subtitle">{{ 'join.subtitle' | translate }}</p>
+
+      @if (!emailSubscribed()) {
+        <form class="newsletter-form" (submit)="submitNewsletter($event)">
+          <input 
+            type="email" 
+            [placeholder]="'join.emailPlaceholder' | translate" 
+            class="eco-input rounded-full" 
+            [value]="emailInput()" 
+            (input)="emailInput.set($any($event.target).value)" 
+            required
+          >
+          <button type="submit" class="btn-eco-primary btn-glow">
+            <span>{{ 'join.btn' | translate }}</span>
+          </button>
+        </form>
+      } @else {
+        <div class="subscribed-success">
+          <div class="success-icon">🎉</div>
+          <h3>{{ 'join.successTitle' | translate }}</h3>
+          <p>{{ 'join.successDesc' | translate }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="landing-footer glass-panel">
+  <div class="footer-container">
+    <div class="footer-brand-col">
+      <app-brand-logo [subtitle]="'footer.subtitle' | translate" [clickable]="false"></app-brand-logo>
+      <p class="footer-desc">
+        {{ 'footer.desc' | translate }}
+      </p>
+    </div>
+
+    <div class="footer-links-col">
+      <h5>{{ 'footer.navTitle' | translate }}</h5>
+      <a (click)="scrollToSection('how-it-works')">{{ 'nav.howItWorks' | translate }}</a>
+      <a (click)="scrollToSection('ideology')">{{ 'nav.ideology' | translate }}</a>
+      <a (click)="scrollToSection('transparency')">{{ 'nav.transparency' | translate }}</a>
+      <a (click)="scrollToSection('b2b')">{{ 'nav.b2b' | translate }}</a>
+    </div>
+
+    <div class="footer-links-col">
+      <h5>{{ 'footer.partnersTitle' | translate }}</h5>
+      <span>🇵🇱 Posadzimy.pl</span>
+      <span>🌎 One Tree Planted</span>
+      <span>🇲🇬 Eden Reforestation</span>
+    </div>
+
+    <div class="footer-links-col">
+      <h5>{{ 'footer.techTitle' | translate }}</h5>
+      <span>{{ 'footer.tech1' | translate }}</span>
+      <span>{{ 'footer.tech2' | translate }}</span>
+      <span>{{ 'footer.tech3' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>{{ 'footer.copyright' | translate }}</p>
+  </div>
+</footer>

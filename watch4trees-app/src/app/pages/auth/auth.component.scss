@@ -1,0 +1,219 @@
+/* Auth View SCSS — Modern Centered Glass Card & Aligned Controls */
+
+.auth-page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 2.75rem 2.5rem;
+  border-radius: var(--radius-xl, 26px);
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 30px rgba(34, 197, 94, 0.12);
+}
+
+.auth-back-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
+}
+
+.auth-logo-center {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.auth-header {
+  margin-bottom: 1.5rem;
+}
+
+.auth-header h2 {
+  font-size: clamp(1.5rem, 3.5vw, 1.85rem);
+  margin-bottom: 0.4rem;
+}
+
+.auth-subtitle {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.error-banner {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  padding: 0.8rem 1rem;
+  border-radius: var(--radius-md, 14px);
+  font-size: 0.85rem;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+.demo-quick-login-box {
+  margin-bottom: 1.25rem;
+}
+
+.btn-demo-quick {
+  width: 100%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(34, 197, 94, 0.08) 100%);
+  border: 1px dashed var(--neon-lime);
+  border-radius: var(--radius-md, 14px);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 48px;
+}
+
+.btn-demo-quick:hover {
+  background: rgba(16, 185, 129, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
+}
+
+.d-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.d-text strong {
+  display: block;
+  font-size: 0.95rem;
+  color: #fff;
+  font-family: var(--font-heading);
+}
+
+.d-text span {
+  font-size: 0.76rem;
+  color: var(--neon-lime);
+  line-height: 1.3;
+}
+
+.divider-text {
+  text-align: center;
+  position: relative;
+  margin: 1.25rem 0;
+}
+
+.divider-text span {
+  background: rgba(6, 24, 16, 0.95);
+  padding: 0 0.9rem;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+
+.divider-text::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.social-login-row {
+  margin-bottom: 1.25rem;
+}
+
+.btn-social-google {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  background: #ffffff;
+  color: #1f2937;
+  border: none;
+  padding: 0.8rem 1.25rem;
+  border-radius: var(--radius-md, 14px);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  min-height: 46px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-social-google:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.18);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.form-group label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.auth-footer-toggle {
+  margin-top: 1.75rem;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.auth-footer-toggle a {
+  color: var(--neon-lime);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 0.35rem;
+}
+
+@media (max-width: 480px) {
+  .auth-page-wrapper {
+    padding: 1rem 0.6rem;
+  }
+
+  .auth-card {
+    padding: 1.6rem 1.2rem;
+    border-radius: 20px;
+  }
+
+  .auth-header h2 {
+    font-size: 1.45rem;
+  }
+
+  .btn-demo-quick {
+    padding: 0.75rem 0.95rem;
+    gap: 0.75rem;
+  }
+
+  .d-icon {
+    font-size: 1.45rem;
+  }
+
+  .d-text strong {
+    font-size: 0.88rem;
+  }
+}

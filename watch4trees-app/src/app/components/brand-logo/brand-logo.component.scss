@@ -1,0 +1,107 @@
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  user-select: none;
+}
+
+.is-clickable {
+  cursor: pointer;
+}
+
+.logo-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #052e16 0%, #10b981 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.35);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.brand-logo.is-clickable:hover .logo-badge {
+  transform: scale(1.05);
+}
+
+.logo-emoji {
+  font-size: 1.3rem;
+}
+
+.logo-text .title {
+  font-family: var(--font-heading, 'Space Grotesk', sans-serif);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  display: block;
+}
+
+.logo-text .subtitle {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--text-muted, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 0.1rem;
+}
+
+/* Size variants */
+.brand-logo.size-sm .logo-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+.brand-logo.size-sm .logo-emoji { font-size: 1rem; }
+.brand-logo.size-sm .logo-text .title { font-size: 1rem; }
+.brand-logo.size-sm .logo-text .subtitle { font-size: 0.6rem; }
+
+.brand-logo.size-lg .logo-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+}
+.brand-logo.size-lg .logo-emoji { font-size: 1.8rem; }
+.brand-logo.size-lg .logo-text .title { font-size: 1.6rem; }
+.brand-logo.size-lg .logo-text .subtitle { font-size: 0.8rem; }
+
+/* Responsive adjustments for mobile */
+@media (max-width: 640px) {
+  .brand-logo {
+    gap: 0.5rem;
+  }
+  
+  .logo-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  
+  .logo-emoji {
+    font-size: 1.1rem;
+  }
+  
+  .logo-text .title {
+    font-size: 1.05rem;
+  }
+  
+  .logo-text .subtitle {
+    display: none;
+  }
+  
+  .brand-logo.size-lg .logo-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+  }
+  .brand-logo.size-lg .logo-emoji { font-size: 1.4rem; }
+  .brand-logo.size-lg .logo-text .title { font-size: 1.3rem; }
+}
+
+@media (max-width: 360px) {
+  .logo-text .title {
+    font-size: 0.95rem;
+  }
+}

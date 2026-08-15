@@ -1,0 +1,189 @@
+<div class="page-wrapper">
+
+  <!-- Reusable App Header Component -->
+  <app-app-header 
+    [subtitle]="'nav.watch' | translate"
+  ></app-app-header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="watch-main-content">
+
+    <!-- ==================== STATE 1: IDLE / SESSION PICKER ==================== -->
+    @if (state() === 'idle') {
+      <div class="session-picker-view">
+        <div class="picker-header text-center">
+          <span class="badge-eco">{{ 'watch.pickerBadge' | translate }}</span>
+          <h2>{{ 'watch.pickerTitle' | translate }}</h2>
+          <p class="picker-subtitle">{{ 'watch.pickerSub' | translate }}</p>
+        </div>
+
+        <div class="session-cards-grid">
+          @for (s of sessions; track s.id) {
+            <div 
+              class="session-card glass-panel-glow" 
+              [class.selected]="selectedSession().id === s.id"
+              (click)="selectedSession.set(s)"
+            >
+              <div class="s-top-badge">
+                <span class="badge-eco">{{ s.badgeKey | translate }}</span>
+                <span class="s-icon">{{ s.icon }}</span>
+              </div>
+
+              <h3 class="s-title">{{ s.titleKey | translate }}</h3>
+              
+              <div class="s-rewards-box">
+                <div class="reward-row">
+                  <span class="r-icon">💧</span>
+                  <strong>+{{ s.waterReward }} {{ 'watch.waterDropsUnit' | translate }}</strong>
+                </div>
+                <div class="reward-row">
+                  <span class="r-icon">🌿</span>
+                  <span>+{{ s.pointsReward }} Eco-Points</span>
+                </div>
+              </div>
+
+              <div class="s-meta">
+                <span>⏱️ {{ s.durationSeconds }}s</span>
+                <span>🎬 {{ s.adCount }} spot</span>
+              </div>
+
+              <button class="btn-eco-primary btn-full" (click)="startSession(s)">
+                <span>{{ 'watch.startBtn' | translate }}</span>
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Compliance Notice -->
+        <div class="compliance-box glass-panel text-center">
+          <div class="comp-icon">🛡️</div>
+          <h4>{{ 'watch.complianceTitle' | translate }}</h4>
+          <p>{{ 'watch.complianceDesc' | translate }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- ==================== STATE 2: PLAYING REWARDED AD ==================== -->
+    @else if (state() === 'playing') {
+      <div class="ad-player-view">
+        
+        <div class="video-player-card glass-panel-glow">
+          
+          <!-- Video Top Bar -->
+          <div class="video-top-hud">
+            <div class="sponsor-badge">
+              <span class="s-logo">{{ currentSponsor().logo }}</span>
+              <span class="s-name">{{ currentSponsor().name }}</span>
+            </div>
+            
+            <div class="badge-danger">
+              <span>⏳ {{ 'watch.rewardIn' | translate }}: <strong>{{ currentTimer() }}s</strong></span>
+            </div>
+          </div>
+
+          <!-- Video Player Visual Screen -->
+          <div class="video-screen">
+            <div class="video-ambient-stream"></div>
+            
+            <div class="ad-content-wrapper">
+              <div class="ad-sponsor-scene">
+                <div class="ad-big-graphic animate-float">🌬️ ⚡ 🌲</div>
+                <h3 class="ad-headline">{{ currentSponsor().name }}</h3>
+                <p class="ad-tagline">{{ currentSponsor().tagline }}</p>
+                
+                <div class="esg-commitment-pill">
+                  <span>🎯 Cel ESG: {{ currentSponsor().esgGoal }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Progress Bar using Global Progress Styling -->
+            <div class="video-progress-track eco-progress-track">
+              <div 
+                class="video-progress-fill eco-progress-fill" 
+                [style.width.%]="((timerTotal() - currentTimer()) / timerTotal()) * 100"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Video Footer Notice -->
+          <div class="video-footer-info">
+            <span class="lock-notice">🔒 {{ 'watch.lockNotice' | translate }}</span>
+            <span class="ssv-status">✓ SSV Active (Server-Side Verified)</span>
+          </div>
+
+        </div>
+
+      </div>
+    }
+
+    <!-- ==================== STATE 3: ANTI-FRAUD HUMAN QUIZ ==================== -->
+    @else if (state() === 'quiz') {
+      <div class="quiz-view">
+        
+        <div class="quiz-card glass-panel-glow text-center">
+          <span class="badge-eco">🛡️ {{ 'watch.antiFraudBadge' | translate }}</span>
+          <h2>{{ 'watch.quizTitle' | translate }}</h2>
+          <p class="quiz-desc">{{ 'watch.quizDesc' | translate }}</p>
+
+          <div class="quiz-question-box">
+            <p class="question-text">{{ 'watch.quizQuestion' | translate }}</p>
+            
+            <div class="quiz-options">
+              <button class="btn-quiz-opt" (click)="answerQuiz(true)">
+                <span>🌱 {{ 'watch.opt1' | translate }}</span>
+              </button>
+              <button class="btn-quiz-opt" (click)="answerQuiz(false)">
+                <span>🏭 {{ 'watch.opt2' | translate }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    }
+
+    <!-- ==================== STATE 4: REWARD CELEBRATION ==================== -->
+    @else if (state() === 'reward') {
+      <div class="reward-view">
+        
+        <div class="reward-card glass-panel-glow text-center">
+          <div class="reward-sparkle-icon animate-float">🎉 💧 🌲</div>
+          <span class="badge-eco">{{ 'watch.rewardGrantedBadge' | translate }}</span>
+          <h2>{{ 'watch.rewardTitle' | translate }}</h2>
+          <p class="reward-sub">{{ 'watch.rewardSub' | translate }}</p>
+
+          <div class="reward-summary-box">
+            <div class="reward-pill">
+              <span class="r-big-icon">💧</span>
+              <div>
+                <strong>+{{ selectedSession().waterReward }} {{ 'watch.waterDropsUnit' | translate }}</strong>
+                <span>{{ 'watch.addedToInventory' | translate }}</span>
+              </div>
+            </div>
+
+            <div class="reward-pill">
+              <span class="r-big-icon">🌿</span>
+              <div>
+                <strong>+{{ selectedSession().pointsReward }} Eco-Points</strong>
+                <span>{{ 'watch.pointsAdded' | translate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="reward-cta-actions">
+            <a [routerLink]="'/dashboard'" class="btn-eco-primary btn-large btn-full">
+              <span>🌿 {{ 'watch.goToDashboardWater' | translate }}</span>
+            </a>
+            <button class="btn-eco-secondary btn-full" (click)="state.set('idle')">
+              <span>🎬 {{ 'watch.startAnotherSession' | translate }}</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    }
+
+  </main>
+</div>

@@ -1,0 +1,553 @@
+/* Watch Session SCSS (Eco Dark Glassmorphism) — Harmonious Spacing & Alignment */
+
+/* Main Container */
+.watch-main-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Session Picker */
+.session-picker-view {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.picker-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.picker-header h2 {
+  font-size: clamp(1.8rem, 4vw, 2.35rem);
+  margin-top: 0.2rem;
+}
+
+.picker-subtitle {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 620px;
+  line-height: 1.55;
+}
+
+.session-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.8rem;
+  align-items: stretch;
+}
+
+.session-card {
+  padding: 2.25rem 2rem;
+  border-radius: var(--radius-xl, 26px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.25s ease;
+  position: relative;
+  height: 100%;
+}
+
+.session-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--neon-green);
+  box-shadow: 0 12px 36px rgba(34, 197, 94, 0.22);
+}
+
+.session-card.selected {
+  border-color: var(--neon-lime);
+  background: rgba(6, 78, 59, 0.75);
+}
+
+.s-top-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.s-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.s-title {
+  font-size: 1.35rem;
+  color: #fff;
+}
+
+.s-rewards-box {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-glass);
+  padding: 1rem 1.2rem;
+  border-radius: var(--radius-md, 14px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reward-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.95rem;
+}
+
+.reward-row strong {
+  color: #38bdf8;
+}
+
+.s-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 0 0.2rem;
+}
+
+.session-card .btn-eco-primary {
+  margin-top: auto;
+}
+
+.compliance-box {
+  padding: 2rem 2.5rem;
+  border-radius: var(--radius-lg, 20px);
+  max-width: 780px;
+  margin: 1rem auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.comp-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.compliance-box h4 {
+  font-size: 1.15rem;
+  color: #fff;
+}
+
+.compliance-box p {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Video Player View */
+.ad-player-view {
+  max-width: 840px;
+  margin: 0 auto;
+  animation: slideDownExpand 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.video-player-card {
+  padding: 1.85rem;
+  border-radius: var(--radius-xl, 26px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.video-top-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sponsor-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 0.45rem 1.1rem;
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid var(--border-glass);
+}
+
+.s-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  font-family: var(--font-heading);
+}
+
+.video-screen {
+  position: relative;
+  min-height: 380px;
+  background: radial-gradient(circle at center, #063820 0%, #02120a 100%);
+  border-radius: var(--radius-lg, 20px);
+  overflow: hidden;
+  border: 1px solid var(--border-glass);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2.5rem 2rem;
+}
+
+.ad-content-wrapper {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.ad-big-graphic {
+  font-size: 4.2rem;
+  line-height: 1;
+  margin-bottom: 1.2rem;
+}
+
+.ad-headline {
+  font-size: clamp(1.5rem, 3.5vw, 1.85rem);
+  margin-bottom: 0.5rem;
+  color: #f0fdf4;
+}
+
+.ad-tagline {
+  color: #a7f3d0;
+  font-size: 1.05rem;
+  max-width: 550px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.5;
+}
+
+.esg-commitment-pill {
+  display: inline-block;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid var(--neon-lime);
+  color: #fff;
+  padding: 0.5rem 1.3rem;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.video-progress-track {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+.video-progress-fill {
+  transition: width 1s linear;
+}
+
+.video-footer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  padding: 0 0.25rem;
+}
+
+.ssv-status {
+  color: #34d399;
+  font-weight: 600;
+}
+
+/* Quiz View */
+.quiz-view {
+  max-width: 650px;
+  margin: 2rem auto;
+  animation: slideDownExpand 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.quiz-card {
+  padding: 3rem 2.5rem;
+  border-radius: var(--radius-xl, 26px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.quiz-card h2 {
+  font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+  margin: 0.4rem 0 0.3rem;
+}
+
+.quiz-desc {
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  margin-bottom: 0.8rem;
+}
+
+.quiz-question-box {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-glass);
+  padding: 2rem;
+  border-radius: var(--radius-lg, 20px);
+}
+
+.question-text {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-quiz-opt {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-glass-bright);
+  color: #fff;
+  padding: 1.1rem 1.5rem;
+  border-radius: var(--radius-md, 14px);
+  font-family: var(--font-heading);
+  font-size: 1.02rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-quiz-opt:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: var(--neon-lime);
+  transform: translateX(4px);
+}
+
+/* Reward Celebration View */
+.reward-view {
+  max-width: 650px;
+  margin: 2rem auto;
+  animation: slideDownExpand 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.reward-card {
+  padding: 3.5rem 2.5rem;
+  border-radius: var(--radius-xl, 26px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.reward-sparkle-icon {
+  font-size: 3.8rem;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.reward-card h2 {
+  font-size: clamp(1.8rem, 4vw, 2.35rem);
+  margin: 0.3rem 0 0.2rem;
+}
+
+.reward-sub {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.55;
+}
+
+.reward-summary-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.reward-pill {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--neon-lime);
+  padding: 1.25rem;
+  border-radius: var(--radius-lg, 20px);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-align: left;
+}
+
+.r-big-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.reward-pill strong {
+  display: block;
+  font-size: 1.1rem;
+  color: #fff;
+  font-family: var(--font-heading);
+}
+
+.reward-pill span {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.reward-cta-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ==================== RESPONSIVE WATCH MODULE ==================== */
+@media (max-width: 768px) {
+  .watch-main-content {
+    padding: 0 1rem;
+  }
+
+  .session-picker-view {
+    gap: 1.8rem;
+  }
+
+  .picker-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .session-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+
+  .session-card {
+    padding: 1.6rem 1.3rem;
+    border-radius: 20px;
+  }
+
+  .compliance-box {
+    padding: 1.5rem 1.2rem;
+    border-radius: 18px;
+  }
+
+  .video-player-card {
+    padding: 1.25rem;
+    border-radius: 20px;
+  }
+
+  .video-screen {
+    min-height: 300px;
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+  }
+
+  .ad-big-graphic {
+    font-size: 3.2rem;
+  }
+
+  .ad-headline {
+    font-size: 1.45rem;
+  }
+
+  .quiz-view, .reward-view {
+    margin: 1rem auto;
+  }
+
+  .quiz-card {
+    padding: 2rem 1.4rem;
+    border-radius: 20px;
+  }
+
+  .quiz-question-box {
+    padding: 1.4rem 1.1rem;
+    border-radius: 16px;
+  }
+
+  .reward-card {
+    padding: 2.2rem 1.4rem;
+    border-radius: 20px;
+  }
+
+  .reward-summary-box {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .watch-main-content {
+    padding: 0 0.5rem;
+  }
+
+  .picker-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .session-card {
+    padding: 1.35rem 1.1rem;
+  }
+
+  .video-screen {
+    min-height: 250px;
+    padding: 1rem 0.8rem;
+  }
+
+  .ad-big-graphic {
+    font-size: 2.5rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .ad-headline {
+    font-size: 1.25rem;
+  }
+
+  .ad-tagline {
+    font-size: 0.88rem;
+    margin-bottom: 1rem;
+  }
+
+  .esg-commitment-pill {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.8rem;
+  }
+
+  .video-top-hud {
+    gap: 0.4rem;
+  }
+
+  .sponsor-badge {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .badge-danger {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .btn-quiz-opt {
+    padding: 0.95rem 1.1rem;
+    font-size: 0.95rem;
+  }
+
+  .reward-pill {
+    padding: 1rem;
+  }
+
+  .r-big-icon {
+    font-size: 1.8rem;
+  }
+
+  .reward-card h2 {
+    font-size: 1.8rem;
+  }
+}

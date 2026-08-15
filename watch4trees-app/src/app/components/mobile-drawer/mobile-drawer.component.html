@@ -1,0 +1,118 @@
+@if (isOpen()) {
+  <!-- Backdrop Overlay -->
+  <div class="mobile-drawer-backdrop" (click)="onClose()"></div>
+
+  <!-- Animated Drawer Box -->
+  <div class="mobile-drawer glass-panel-glow">
+    <!-- Header with Brand Logo and Close Button -->
+    <div class="mobile-drawer-header">
+      <app-brand-logo (clicked)="mode() === 'landing' ? onSelectSection('hero') : onClose()" [routeTarget]="mode() === 'landing' ? '/' : '/dashboard'"></app-brand-logo>
+      <button class="btn-drawer-close" (click)="onClose()" aria-label="Close menu">✕</button>
+    </div>
+
+    <!-- Authenticated User Profile Summary Card -->
+    @if (mode() === 'app' && auth.currentUser(); as user) {
+      <div class="drawer-user-card glass-panel">
+        <div class="drawer-user-info">
+          <span class="drawer-avatar">{{ user.avatar }}</span>
+          <div class="drawer-user-text">
+            <strong>{{ user.name }}</strong>
+            <span>{{ user.email }}</span>
+          </div>
+        </div>
+        <div class="drawer-user-stats-row">
+          <div class="d-stat">
+            <span class="stat-icon">💧</span>
+            <strong>{{ user.waterDrops }}</strong>
+            <small>{{ 'dashboard.dropsLabel' | translate }}</small>
+          </div>
+          <div class="d-stat">
+            <span class="stat-icon">🌿</span>
+            <strong>{{ user.ecoPoints }}</strong>
+            <small>{{ 'dashboard.pointsLabel' | translate }}</small>
+          </div>
+          <div class="d-stat">
+            <span class="stat-icon">🔥</span>
+            <strong>{{ user.activeStreak }} {{ 'dashboard.daysUnit' | translate }}</strong>
+            <small>{{ 'dashboard.streakLabel' | translate }}</small>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Navigation Links: Landing Page Mode -->
+    @if (mode() === 'landing') {
+      <nav class="mobile-nav-links">
+        <a class="mobile-nav-item" (click)="onSelectSection('how-it-works')">
+          <span class="nav-icon">🌱</span>
+          <span>{{ 'nav.howItWorks' | translate }}</span>
+        </a>
+        <a class="mobile-nav-item" (click)="onSelectSection('ideology')">
+          <span class="nav-icon">💡</span>
+          <span>{{ 'nav.ideology' | translate }}</span>
+        </a>
+        <a class="mobile-nav-item" (click)="onSelectSection('gamification')">
+          <span class="nav-icon">🌲</span>
+          <span>{{ 'nav.forest' | translate }}</span>
+        </a>
+        <a class="mobile-nav-item" (click)="onSelectSection('transparency')">
+          <span class="nav-icon">📊</span>
+          <span>{{ 'nav.transparency' | translate }}</span>
+        </a>
+        <a class="mobile-nav-item" (click)="onSelectSection('b2b')">
+          <span class="nav-icon">🤝</span>
+          <span>{{ 'nav.b2b' | translate }}</span>
+        </a>
+        <a class="mobile-nav-item" (click)="onSelectSection('faq')">
+          <span class="nav-icon">❓</span>
+          <span>{{ 'nav.faq' | translate }}</span>
+        </a>
+      </nav>
+    } @else {
+      <!-- Navigation Links: App / Dashboard / Watch Mode -->
+      <nav class="mobile-nav-links">
+        <a class="mobile-nav-item" [routerLink]="'/dashboard'" (click)="onClose()">
+          <span class="nav-icon">🌿</span>
+          <span>{{ 'nav.dashboard' | translate }}</span>
+        </a>
+        <a class="mobile-nav-item" [routerLink]="'/watch'" (click)="onClose()">
+          <span class="nav-icon">🎬</span>
+          <span>{{ 'nav.watch' | translate }}</span>
+        </a>
+        <a class="mobile-nav-item" [routerLink]="'/'" (click)="onClose()">
+          <span class="nav-icon">🏠</span>
+          <span>{{ 'auth.backHome' | translate }}</span>
+        </a>
+      </nav>
+    }
+
+    <!-- Drawer Footer Actions -->
+    <div class="mobile-drawer-footer">
+      <div class="drawer-footer-actions">
+        <app-lang-toggle></app-lang-toggle>
+
+        @if (mode() === 'landing') {
+          @if (!auth.isAuthenticated()) {
+            <button class="btn-eco-secondary btn-full" (click)="goToAuth()">
+              <span>{{ 'auth.loginBtnNav' | translate }}</span>
+            </button>
+          }
+        } @else {
+          <button class="btn-eco-secondary btn-full" (click)="logout()">
+            <span>🚪 {{ 'auth.logout' | translate }}</span>
+          </button>
+        }
+      </div>
+
+      @if (mode() === 'landing') {
+        <button class="btn-eco-primary btn-full" (click)="goToAuth()">
+          @if (!auth.isAuthenticated()) {
+            <span>{{ 'nav.cta' | translate }}</span>
+          } @else {
+            <span>🌿 {{ 'auth.goToDashboard' | translate }}</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+}
