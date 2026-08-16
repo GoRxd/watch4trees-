@@ -2,73 +2,89 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid var(--border-glass, rgba(16, 185, 129, 0.22));
-  padding: 0.35rem 0.5rem 0.35rem 0.85rem;
+  background: rgba(14, 21, 17, 0.75);
+  border: 1px solid var(--border-subtle, rgba(82, 183, 136, 0.15));
+  padding: 0.3rem 0.45rem 0.3rem 0.75rem;
   border-radius: var(--radius-full, 9999px);
   font-size: 0.88rem;
   font-weight: 600;
   user-select: none;
   min-height: 40px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-  transition: border-color 0.2s ease;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
 }
 
 .user-profile-chip:hover {
-  border-color: var(--border-glass-bright, rgba(74, 222, 128, 0.38));
+  border-color: var(--border-medium, rgba(82, 183, 136, 0.3));
+  background: rgba(20, 30, 24, 0.9);
 }
 
-.user-avatar {
-  font-size: 1.25rem;
+.user-avatar-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-avatar-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
   line-height: 1;
 }
 
 .user-name {
-  color: #fff;
+  color: var(--text-main, #f8fafc);
   white-space: nowrap;
-  max-width: 140px;
+  max-width: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
   font-family: var(--font-heading, inherit);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .btn-logout {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid transparent;
   cursor: pointer;
-  font-size: 1rem;
   padding: 0;
-  opacity: 0.85;
+  color: var(--text-muted, #94a3b8);
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   -webkit-tap-highlight-color: transparent;
 }
 
+.logout-icon {
+  width: 14px;
+  height: 14px;
+}
+
 .btn-logout:hover {
-  opacity: 1;
-  transform: scale(1.08);
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: scale(1.05);
 }
 
 @media (max-width: 640px) {
   .user-profile-chip {
-    padding: 0.25rem 0.4rem 0.25rem 0.6rem;
+    padding: 0.25rem 0.35rem 0.25rem 0.5rem;
     gap: 0.35rem;
-    min-height: 36px;
+    min-height: 34px;
   }
 
   .user-name {
     display: none;
-  }
-
-  .user-avatar {
-    font-size: 1.15rem;
   }
 }

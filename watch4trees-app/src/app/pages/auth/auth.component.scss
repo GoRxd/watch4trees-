@@ -1,4 +1,4 @@
-/* Auth View SCSS — Modern Centered Glass Card & Aligned Controls */
+/* Auth View SCSS — Organic-Tech Climate Standard */
 
 .auth-page-wrapper {
   min-height: 100vh;
@@ -16,7 +16,7 @@
   border-radius: var(--radius-xl, 26px);
   position: relative;
   z-index: 1;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 30px rgba(34, 197, 94, 0.12);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
 }
 
 .auth-back-row {
@@ -43,19 +43,22 @@
 
 .auth-subtitle {
   font-size: 0.92rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
 .error-banner {
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
   color: #fca5a5;
   padding: 0.8rem 1rem;
   border-radius: var(--radius-md, 14px);
   font-size: 0.85rem;
   margin-bottom: 1.2rem;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .demo-quick-login-box {
@@ -64,8 +67,8 @@
 
 .btn-demo-quick {
   width: 100%;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(34, 197, 94, 0.08) 100%);
-  border: 1px dashed var(--neon-lime);
+  background: rgba(27, 67, 50, 0.35);
+  border: 1px solid var(--border-medium);
   border-radius: var(--radius-md, 14px);
   padding: 0.85rem 1.25rem;
   display: flex;
@@ -73,19 +76,25 @@
   gap: 1rem;
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   min-height: 48px;
 }
 
 .btn-demo-quick:hover {
-  background: rgba(16, 185, 129, 0.25);
+  background: rgba(27, 67, 50, 0.55);
+  border-color: var(--sage-light);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.2);
+  box-shadow: 0 4px 16px rgba(82, 183, 136, 0.2);
 }
 
-.d-icon {
-  font-size: 1.75rem;
-  line-height: 1;
+.d-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm, 10px);
+  background: rgba(233, 196, 106, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -98,7 +107,7 @@
 
 .d-text span {
   font-size: 0.76rem;
-  color: var(--neon-lime);
+  color: var(--sage-light);
   line-height: 1.3;
 }
 
@@ -109,7 +118,7 @@
 }
 
 .divider-text span {
-  background: rgba(6, 24, 16, 0.95);
+  background: var(--bg-dark-card);
   padding: 0 0.9rem;
   color: var(--text-dim);
   font-size: 0.78rem;
@@ -149,7 +158,7 @@
   font-size: 0.95rem;
   min-height: 46px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-social-google:hover {
@@ -173,7 +182,7 @@
 .form-group label {
   font-size: 0.84rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--text-secondary);
 }
 
 .auth-footer-toggle {
@@ -183,7 +192,7 @@
 }
 
 .auth-footer-toggle a {
-  color: var(--neon-lime);
+  color: var(--sage-light);
   font-weight: 700;
   cursor: pointer;
   text-decoration: underline;
@@ -207,10 +216,6 @@
   .btn-demo-quick {
     padding: 0.75rem 0.95rem;
     gap: 0.75rem;
-  }
-
-  .d-icon {
-    font-size: 1.45rem;
   }
 
   .d-text strong {

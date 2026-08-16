@@ -13,6 +13,7 @@ export class TreeStageComponent {
   currentDrops = input<number>(0);
   maxDrops = input<number>(10);
   isCelebration = input<boolean>(false);
+  isWatering = input<boolean>(false);
   size = input<'md' | 'lg'>('lg');
   translationPrefix = input<'dashboard' | 'demo'>('dashboard');
   showProgressBar = input<boolean>(true);
@@ -21,6 +22,7 @@ export class TreeStageComponent {
   hintTextKey = input<string | undefined>(undefined);
 
   stageIndex = computed(() => {
+    if (this.isCelebration()) return 3; // Keep mature tree illustration during celebration!
     const current = this.currentDrops();
     const max = this.maxDrops();
     if (current <= 0) return 0;

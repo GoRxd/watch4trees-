@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import {
   Profile,
+  UserBalance,
   UserWaterBalance,
   WaterDropTransaction,
   EcoProject,
@@ -97,21 +98,21 @@ export class DatabaseService {
   }
 
   // ----------------------------------------------------------------------------
-  // 3. User Water Balance Operations
+  // 3. User Balance Operations
   // ----------------------------------------------------------------------------
-  async getUserWaterBalance(userId: string): Promise<UserWaterBalance | null> {
+  async getUserWaterBalance(userId: string): Promise<UserBalance | null> {
     const { data, error } = await this.supabase.client
-      .from('user_water_balance')
+      .from('user_balance')
       .select('*')
       .eq('user_id', userId)
       .single();
 
     if (error) {
-      console.error('[DatabaseService] Error fetching water balance:', error);
+      console.error('[DatabaseService] Error fetching balance:', error);
       return null;
     }
 
-    const balance = data as UserWaterBalance;
+    const balance = data as UserBalance;
     this.activeBalance.set(balance);
     return balance;
   }
@@ -123,13 +124,15 @@ export class DatabaseService {
     userId: string,
     amount: number,
     source: TransactionSource = 'AD_REWARD',
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
+    points: number = 25
   ): Promise<boolean> {
     const { data, error } = await this.supabase.client.rpc('claim_ad_reward', {
       p_amount: amount,
-      p_ad_count: 1,
+      p_ad_count: metadata['adCount'] || 1,
       p_source: source,
-      p_metadata: metadata
+      p_metadata: metadata,
+      p_eco_points: points
     });
 
     if (error) {
@@ -140,6 +143,40 @@ export class DatabaseService {
     // Refresh updated balance from database
     await this.getUserWaterBalance(userId);
     return true;
+  }
+
+  async waterActiveTree(
+    userId: string,
+    drops: number = 1,
+    projectId?: string
+  ): Promise<{
+    success: boolean;
+    current_drops?: number;
+    active_tree_drops?: number;
+    eco_points?: number;
+    tree_planted_now?: boolean;
+    new_tree?: PlantedTree;
+    total_trees_planted?: number;
+    total_co2_offset_kg?: number;
+    error?: string;
+  }> {
+    const { data, error } = await this.supabase.client.rpc('water_active_tree', {
+      p_drops: drops,
+      p_project_id: projectId || null
+    });
+
+    if (error) {
+      console.error('[DatabaseService] Error calling water_active_tree RPC:', error);
+      return { success: false, error: error.message };
+    }
+
+    // Refresh updated balance and planted trees from database
+    await this.getUserWaterBalance(userId);
+    if (data?.tree_planted_now) {
+      await this.getPlantedTrees(userId);
+    }
+
+    return data;
   }
 
   // ----------------------------------------------------------------------------

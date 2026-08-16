@@ -39,11 +39,13 @@ CREATE TABLE public.profiles (
 );
 
 -- ------------------------------------------------------------------------------
--- 3. User Water Balance Table (1-to-1 with Profiles)
+-- 3. User Balance Table (1-to-1 with Profiles - stores drops, eco points, and stats)
 -- ------------------------------------------------------------------------------
-CREATE TABLE public.user_water_balance (
+CREATE TABLE public.user_balance (
   user_id UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
-  current_drops SMALLINT DEFAULT 0 NOT NULL CHECK (current_drops >= 0 AND current_drops <= 10),
+  current_drops INT DEFAULT 0 NOT NULL CHECK (current_drops >= 0),
+  active_tree_drops SMALLINT DEFAULT 0 NOT NULL CHECK (active_tree_drops >= 0 AND active_tree_drops <= 10),
+  eco_points INT DEFAULT 0 NOT NULL CHECK (eco_points >= 0),
   total_drops_earned INT DEFAULT 0 NOT NULL,
   total_trees_planted INT DEFAULT 0 NOT NULL,
   total_co2_offset_kg NUMERIC(10,2) DEFAULT 0.00 NOT NULL,
@@ -153,7 +155,7 @@ BEGIN
     full_name = COALESCE(EXCLUDED.full_name, public.profiles.full_name),
     avatar_url = COALESCE(EXCLUDED.avatar_url, public.profiles.avatar_url);
 
-  INSERT INTO public.user_water_balance (user_id, current_drops, total_drops_earned, total_trees_planted, total_co2_offset_kg)
+  INSERT INTO public.user_balance (user_id, current_drops, total_drops_earned, total_trees_planted, total_co2_offset_kg)
   VALUES (NEW.id, 0, 0, 0, 0.00)
   ON CONFLICT (user_id) DO NOTHING;
 
@@ -181,7 +183,7 @@ DECLARE
   v_balance RECORD;
   v_profile RECORD;
 BEGIN
-  SELECT * INTO v_balance FROM public.user_water_balance WHERE user_id = p_user_id;
+  SELECT * INTO v_balance FROM public.user_balance WHERE user_id = p_user_id;
   SELECT * INTO v_profile FROM public.profiles WHERE id = p_user_id;
 
   IF v_balance IS NULL OR v_profile IS NULL THEN
@@ -223,7 +225,8 @@ CREATE OR REPLACE FUNCTION public.claim_ad_reward(
   p_amount INT,
   p_ad_count INT DEFAULT 1,
   p_source transaction_source DEFAULT 'AD_REWARD',
-  p_metadata JSONB DEFAULT '{}'::jsonb
+  p_metadata JSONB DEFAULT '{}'::jsonb,
+  p_eco_points INT DEFAULT 25
 )
 RETURNS JSONB
 SECURITY DEFINER
@@ -236,8 +239,10 @@ DECLARE
   v_profile RECORD;
   v_new_drops INT;
   v_new_total INT;
+  v_new_points INT;
   v_safe_amount INT;
   v_safe_count INT;
+  v_safe_points INT;
 BEGIN
   IF v_user_id IS NULL THEN
     RAISE EXCEPTION 'Unauthorized: User must be authenticated to claim rewards';
@@ -246,6 +251,7 @@ BEGIN
   -- Sanitize inputs
   v_safe_amount := GREATEST(1, LEAST(10, p_amount));
   v_safe_count := GREATEST(1, LEAST(15, p_ad_count));
+  v_safe_points := GREATEST(0, LEAST(500, p_eco_points));
 
   -- 1. Check & increment daily limit in profiles (max 15 ads/day)
   SELECT * INTO v_profile FROM public.profiles WHERE id = v_user_id FOR UPDATE;
@@ -272,15 +278,17 @@ BEGIN
     WHERE id = v_user_id;
   END IF;
 
-  -- 2. Lock & update water balance (capped at 10 drops)
-  SELECT * INTO v_current_balance FROM public.user_water_balance WHERE user_id = v_user_id FOR UPDATE;
+  -- 2. Lock & update water balance (add to available drops inventory and eco_points)
+  SELECT * INTO v_current_balance FROM public.user_balance WHERE user_id = v_user_id FOR UPDATE;
   
-  v_new_drops := LEAST(10, GREATEST(0, v_current_balance.current_drops + v_safe_amount));
+  v_new_drops := GREATEST(0, v_current_balance.current_drops + v_safe_amount);
   v_new_total := v_current_balance.total_drops_earned + v_safe_amount;
+  v_new_points := v_current_balance.eco_points + v_safe_points;
 
-  UPDATE public.user_water_balance
+  UPDATE public.user_balance
   SET current_drops = v_new_drops,
       total_drops_earned = v_new_total,
+      eco_points = v_new_points,
       updated_at = now()
   WHERE user_id = v_user_id;
 
@@ -294,13 +302,15 @@ BEGIN
   RETURN jsonb_build_object(
     'success', true,
     'current_drops', v_new_drops,
+    'active_tree_drops', v_current_balance.active_tree_drops,
+    'eco_points', v_new_points,
     'total_drops_earned', v_new_total,
     'daily_watched_count', LEAST(15, v_profile.daily_watched_count + v_safe_count)
   );
 END;
 $$;
 
--- RPC 2: Water Tree / Plant Tree (Converts 10 drops into a certified tree)
+-- RPC 2: Plant Matured Tree (Converts mature active tree with 10 drops into a certified tree)
 CREATE OR REPLACE FUNCTION public.plant_matured_tree(
   p_project_id UUID DEFAULT NULL
 )
@@ -319,6 +329,7 @@ DECLARE
   v_cert_num VARCHAR(60);
   v_balance RECORD;
   v_co2_kg NUMERIC(10,2);
+  v_new_points INT;
 BEGIN
   IF v_user_id IS NULL THEN
     RAISE EXCEPTION 'Unauthorized: User must be authenticated to plant a tree';
@@ -336,11 +347,14 @@ BEGIN
 
   v_co2_kg := v_project.co2_absorption_kg_year;
 
-  -- 2. Lock & update water balance (reset drops to 0, increment planted trees)
-  SELECT * INTO v_balance FROM public.user_water_balance WHERE user_id = v_user_id FOR UPDATE;
+  -- 2. Lock & update water balance (reset active tree drops to 0, increment planted trees and add +200 bonus points)
+  SELECT * INTO v_balance FROM public.user_balance WHERE user_id = v_user_id FOR UPDATE;
 
-  UPDATE public.user_water_balance
-  SET current_drops = 0,
+  v_new_points := v_balance.eco_points + 200;
+
+  UPDATE public.user_balance
+  SET active_tree_drops = 0,
+      eco_points = v_new_points,
       total_trees_planted = v_balance.total_trees_planted + 1,
       total_co2_offset_kg = v_balance.total_co2_offset_kg + v_co2_kg,
       updated_at = now()
@@ -380,6 +394,7 @@ BEGIN
     'tree_number', v_tree_num,
     'planted_at', now(),
     'created_at', now(),
+    'eco_points', v_new_points,
     'project', row_to_json(v_project),
     'certificate', jsonb_build_object(
       'id', v_cert_id,
@@ -390,6 +405,145 @@ BEGIN
       'batch_id', 'BATCH-2026-Q3',
       'issued_at', now()
     )
+  );
+END;
+$$;
+
+-- RPC 2.5: Water Active Tree (Decrements user drops inventory by 1, increments active tree progress by 1, auto-plants at 10)
+CREATE OR REPLACE FUNCTION public.water_active_tree(
+  p_drops INT DEFAULT 1,
+  p_project_id UUID DEFAULT NULL
+)
+RETURNS JSONB
+SECURITY DEFINER
+SET search_path = public, auth, extensions, pg_temp
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_user_id UUID := auth.uid();
+  v_balance RECORD;
+  v_safe_drops INT;
+  v_new_current_drops INT;
+  v_new_active_tree_drops INT;
+  v_new_eco_points INT;
+  v_project_id UUID := p_project_id;
+  v_project RECORD;
+  v_tree_id UUID;
+  v_cert_id UUID;
+  v_tree_num VARCHAR(40);
+  v_cert_num VARCHAR(60);
+  v_co2_kg NUMERIC(10,2);
+  v_new_tree JSONB := NULL;
+  v_tree_planted_now BOOLEAN := false;
+BEGIN
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Unauthorized: User must be authenticated to water tree';
+  END IF;
+
+  v_safe_drops := GREATEST(1, p_drops);
+
+  SELECT * INTO v_balance FROM public.user_balance WHERE user_id = v_user_id FOR UPDATE;
+  IF v_balance IS NULL THEN
+    RAISE EXCEPTION 'User water balance not found for user %', v_user_id;
+  END IF;
+
+  IF v_balance.current_drops < v_safe_drops THEN
+    RAISE EXCEPTION 'Insufficient water drops: Available %, Required %', v_balance.current_drops, v_safe_drops;
+  END IF;
+
+  -- 1. Deduct drops from user inventory (-1), add to tree progress (+1), add +15 eco_points
+  v_new_current_drops := v_balance.current_drops - v_safe_drops;
+  v_new_active_tree_drops := v_balance.active_tree_drops + v_safe_drops;
+  v_new_eco_points := v_balance.eco_points + (15 * v_safe_drops);
+
+  -- 2. Record water drop transaction
+  INSERT INTO public.water_drop_transactions (user_id, amount, source, metadata)
+  VALUES (v_user_id, -v_safe_drops, 'TREE_CONVERSION', jsonb_build_object('action', 'water_tree'));
+
+  -- 3. Check if tree reached 10 drops (mature and ready to plant!)
+  IF v_new_active_tree_drops >= 10 THEN
+    v_tree_planted_now := true;
+    v_tree_id := gen_random_uuid();
+    v_cert_id := gen_random_uuid();
+    v_new_eco_points := v_new_eco_points + 200; -- +200 bonus points for planting a tree!
+
+    IF v_project_id IS NULL THEN
+      SELECT id INTO v_project_id FROM public.eco_projects WHERE is_active = true LIMIT 1;
+    END IF;
+
+    SELECT * INTO v_project FROM public.eco_projects WHERE id = v_project_id;
+    v_co2_kg := COALESCE(v_project.co2_absorption_kg_year, 22.00);
+
+    v_tree_num := 'W4T-' || v_project.country_code || '-' || to_char(now(), 'YYYY') || '-' || to_char(floor(1000 + random() * 9000), 'FM9999');
+    v_cert_num := 'CERT-' || v_tree_num;
+
+    -- Insert planted tree
+    INSERT INTO public.planted_trees (
+      id, user_id, project_id, status, tree_number, latitude, longitude, planted_at, created_at
+    ) VALUES (
+      v_tree_id, v_user_id, v_project_id, 'CERTIFIED', v_tree_num, 54.01250, 17.82140, now(), now()
+    );
+
+    -- Insert certificate
+    INSERT INTO public.tree_certificates (
+      id, tree_id, certificate_number, verified_by, pdf_url, batch_id, issued_at
+    ) VALUES (
+      v_cert_id, v_tree_id, v_cert_num, v_project.organization, 'https://watch4trees.org/cert/' || v_cert_num || '.pdf', 'BATCH-2026-Q3', now()
+    );
+
+    -- Update balance: active_tree_drops resets to 0, total_trees_planted + 1
+    UPDATE public.user_balance
+    SET current_drops = v_new_current_drops,
+        active_tree_drops = 0,
+        eco_points = v_new_eco_points,
+        total_trees_planted = v_balance.total_trees_planted + 1,
+        total_co2_offset_kg = v_balance.total_co2_offset_kg + v_co2_kg,
+        updated_at = now()
+    WHERE user_id = v_user_id;
+
+    v_new_active_tree_drops := 0;
+
+    v_new_tree := jsonb_build_object(
+      'id', v_tree_id,
+      'user_id', v_user_id,
+      'project_id', v_project_id,
+      'status', 'CERTIFIED',
+      'tree_number', v_tree_num,
+      'planted_at', now(),
+      'created_at', now(),
+      'project', row_to_json(v_project),
+      'certificate', jsonb_build_object(
+        'id', v_cert_id,
+        'tree_id', v_tree_id,
+        'certificate_number', v_cert_num,
+        'verified_by', v_project.organization,
+        'pdf_url', 'https://watch4trees.org/cert/' || v_cert_num || '.pdf',
+        'batch_id', 'BATCH-2026-Q3',
+        'issued_at', now()
+      )
+    );
+  ELSE
+    -- Normal watering step (tree progress advances by +1)
+    UPDATE public.user_balance
+    SET current_drops = v_new_current_drops,
+        active_tree_drops = v_new_active_tree_drops,
+        eco_points = v_new_eco_points,
+        updated_at = now()
+    WHERE user_id = v_user_id;
+  END IF;
+
+  -- 4. Evaluate achievements
+  PERFORM public.evaluate_user_achievements(v_user_id);
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'current_drops', v_new_current_drops,
+    'active_tree_drops', v_new_active_tree_drops,
+    'eco_points', v_new_eco_points,
+    'tree_planted_now', v_tree_planted_now,
+    'new_tree', v_new_tree,
+    'total_trees_planted', CASE WHEN v_tree_planted_now THEN v_balance.total_trees_planted + 1 ELSE v_balance.total_trees_planted END,
+    'total_co2_offset_kg', CASE WHEN v_tree_planted_now THEN v_balance.total_co2_offset_kg + v_co2_kg ELSE v_balance.total_co2_offset_kg END
   );
 END;
 $$;
@@ -413,7 +567,7 @@ BEGIN
   END IF;
 
   SELECT row_to_json(p) INTO v_profile FROM public.profiles p WHERE p.id = v_user_id;
-  SELECT row_to_json(b) INTO v_balance FROM public.user_water_balance b WHERE b.user_id = v_user_id;
+  SELECT row_to_json(b) INTO v_balance FROM public.user_balance b WHERE b.user_id = v_user_id;
 
   SELECT COALESCE(json_agg(
     json_build_object(
@@ -502,11 +656,12 @@ BEGIN
       'username', p.username,
       'avatar_url', p.avatar_url,
       'streak_days', p.streak_days,
+      'eco_points', b.eco_points,
       'total_trees_planted', b.total_trees_planted,
       'total_co2_offset_kg', b.total_co2_offset_kg
-    ) ORDER BY b.total_trees_planted DESC, b.total_co2_offset_kg DESC
+    ) ORDER BY b.eco_points DESC, b.total_trees_planted DESC
   ), '[]'::json) INTO v_result
-  FROM public.user_water_balance b
+  FROM public.user_balance b
   JOIN public.profiles p ON p.id = b.user_id
   LIMIT LEAST(50, GREATEST(1, p_limit));
 
@@ -518,7 +673,7 @@ $$;
 -- 12. Row Level Security (RLS) Policies (Strict Read-Only + Safe Profile Update)
 -- ==============================================================================
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.user_water_balance ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_balance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.water_drop_transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.eco_projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.planted_trees ENABLE ROW LEVEL SECURITY;
@@ -533,8 +688,8 @@ CREATE POLICY "Profiles are viewable by everyone" ON public.profiles
 CREATE POLICY "Users can update own profile" ON public.profiles
   FOR UPDATE USING (auth.uid() = id);
 
--- User Water Balance: Read-only for owner (modifications strictly through RPCs)
-CREATE POLICY "Users can view own water balance" ON public.user_water_balance
+-- User Balance: Read-only for owner (modifications strictly through RPCs)
+CREATE POLICY "Users can view own balance" ON public.user_balance
   FOR SELECT USING (auth.uid() = user_id);
 
 -- Water Drop Transactions: Read-only for owner (insertions strictly through RPCs)
@@ -576,6 +731,7 @@ GRANT UPDATE (username, full_name, avatar_url) ON public.profiles TO authenticat
 
 -- Grant RPC execution to authenticated users
 GRANT EXECUTE ON FUNCTION public.claim_ad_reward TO authenticated;
+GRANT EXECUTE ON FUNCTION public.water_active_tree TO authenticated;
 GRANT EXECUTE ON FUNCTION public.plant_matured_tree TO authenticated;
 GRANT EXECUTE ON FUNCTION public.get_user_dashboard TO authenticated;
 GRANT EXECUTE ON FUNCTION public.update_user_profile TO authenticated;

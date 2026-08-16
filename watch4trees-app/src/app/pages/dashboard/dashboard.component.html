@@ -7,17 +7,21 @@
   <main class="dash-main-container">
 
     <!-- ==================== 1. QUICK AD SESSION PROMO BANNER ==================== -->
-    <section class="watch-promo-banner glass-panel-glow">
+    <section class="watch-promo-banner glass-panel-elevated">
       <div class="promo-content">
         <div class="promo-text">
-          <div class="badge-eco">{{ 'dashboard.promoBadge' | translate }}</div>
+          <div class="badge-eco">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+            {{ 'dashboard.promoBadge' | translate }}
+          </div>
           <h2>{{ 'dashboard.promoTitle' | translate }}</h2>
           <p>{{ 'dashboard.promoDesc' | translate }}</p>
         </div>
         <div class="promo-action">
-          <a [routerLink]="'/watch'" class="btn-eco-primary btn-large animate-pulse-glow">
-            <span>🎬 {{ 'dashboard.startWatchBtn' | translate }}</span>
-            <span class="arrow">&rarr;</span>
+          <a [routerLink]="'/watch'" class="btn-eco-primary btn-large">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>{{ 'dashboard.startWatchBtn' | translate }}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </a>
         </div>
       </div>
@@ -27,14 +31,17 @@
     <div class="dash-grid-top">
       
       <!-- Centerpiece: Active Growing Tree Simulator -->
-      <div class="tree-nurture-card glass-panel-glow">
+      <div class="tree-nurture-card glass-panel-elevated">
         
         <div class="card-header-row">
           <div>
             <span class="badge-eco">{{ 'dashboard.activeTreeBadge' | translate }}</span>
             <h3 class="tree-title">{{ 'dashboard.activeTreeTitle' | translate }}</h3>
           </div>
-          <span class="badge-eco">🎯 {{ auth.currentUser()?.targetFoundation }}</span>
+          <span class="badge-verified">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            {{ auth.currentUser()?.targetFoundation }}
+          </span>
         </div>
 
         <!-- Shared Reusable Tree Stage Visualizer -->
@@ -42,6 +49,7 @@
           [currentDrops]="currentTreeDrops()"
           [maxDrops]="dropsNeededForTree"
           [isCelebration]="treeSuccessCelebration()"
+          [isWatering]="isWatering()"
           translationPrefix="dashboard"
           size="lg"
           [showProgressBar]="true"
@@ -51,10 +59,12 @@
         <!-- Watering Actions -->
         <div class="tree-actions-row">
           <button class="btn-eco-primary btn-water" (click)="waterActiveTree()" [disabled]="treeSuccessCelebration()">
-            <span>💧 {{ 'dashboard.waterActionBtn' | translate }} (-1 💧)</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+            <span>{{ 'dashboard.waterActionBtn' | translate }} (-1 💧)</span>
           </button>
           <a [routerLink]="'/watch'" class="btn-eco-secondary">
-            <span>➕ {{ 'dashboard.getMoreWaterBtn' | translate }}</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>{{ 'dashboard.getMoreWaterBtn' | translate }}</span>
           </a>
         </div>
 
@@ -68,33 +78,41 @@
           <div class="impact-stats-list">
             
             <div class="impact-stat-box">
-              <div class="stat-ico">🌲</div>
+              <div class="stat-ico-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
+              </div>
               <div class="stat-cnt">
-                <strong>{{ user.treesPlanted }}</strong>
+                <strong class="font-mono text-sage">{{ user.treesPlanted }}</strong>
                 <span>{{ 'dashboard.statPlantedTotal' | translate }}</span>
               </div>
             </div>
 
             <div class="impact-stat-box">
-              <div class="stat-ico">💨</div>
+              <div class="stat-ico-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+              </div>
               <div class="stat-cnt">
-                <strong>{{ user.treesPlanted * ecoMetrics.CO2_PER_TREE_KG }} kg</strong>
+                <strong class="font-mono text-blue">{{ user.treesPlanted * ecoMetrics.CO2_PER_TREE_KG }} kg</strong>
                 <span>{{ 'dashboard.statCo2Neutralized' | translate }}</span>
               </div>
             </div>
 
             <div class="impact-stat-box">
-              <div class="stat-ico">🏆</div>
+              <div class="stat-ico-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/><path d="M14 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+              </div>
               <div class="stat-cnt">
-                <strong class="text-neon">Top 5%</strong>
+                <strong class="text-gold font-mono">Top 5%</strong>
                 <span>{{ 'dashboard.statLeagueRank' | translate }}</span>
               </div>
             </div>
 
             <div class="impact-stat-box">
-              <div class="stat-ico">🎯</div>
+              <div class="stat-ico-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F43F5E" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              </div>
               <div class="stat-cnt">
-                <strong class="text-teal">{{ user.dailyLimitRemaining }} / {{ ecoMetrics.DEFAULT_DAILY_LIMIT }}</strong>
+                <strong class="text-sage font-mono">{{ user.dailyLimitRemaining }} / {{ ecoMetrics.DEFAULT_DAILY_LIMIT }}</strong>
                 <span>{{ 'dashboard.statDailyAdsLimit' | translate }}</span>
               </div>
             </div>
@@ -107,7 +125,8 @@
           <h4>{{ 'dashboard.readyForSession' | translate }}</h4>
           <p>{{ 'dashboard.readyForSessionDesc' | translate }}</p>
           <a [routerLink]="'/watch'" class="btn-eco-primary btn-full">
-            <span>{{ 'dashboard.openWatchModule' | translate }} &rarr;</span>
+            <span>{{ 'dashboard.openWatchModule' | translate }}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </a>
         </div>
       </div>
@@ -122,7 +141,10 @@
             <span class="badge-eco">{{ 'dashboard.forestBadge' | translate }}</span>
             <h2>{{ 'dashboard.forestTitle' | translate }}</h2>
           </div>
-          <span class="badge-eco">🌲 {{ myPlantedTrees().length }} {{ 'dashboard.treesCountLabel' | translate }}</span>
+          <span class="badge-gold">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
+            {{ myPlantedTrees().length }} {{ 'dashboard.treesCountLabel' | translate }}
+          </span>
         </div>
 
         <!-- Passports Grid -->
@@ -130,10 +152,12 @@
           @for (tree of myPlantedTrees(); track tree.id) {
             <div class="certificate-card glass-panel">
               <div class="cert-header">
-                <div class="cert-species-icon">{{ tree.speciesIcon }}</div>
+                <div class="cert-species-badge">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
+                </div>
                 <div class="cert-serial">
-                  <span class="cert-tag">Certyfikat</span>
-                  <strong>{{ tree.serialNumber }}</strong>
+                  <span class="cert-tag font-mono">OFFICIAL CERTIFICATE</span>
+                  <strong class="font-mono text-sage">{{ tree.serialNumber }}</strong>
                 </div>
               </div>
 
@@ -141,25 +165,40 @@
 
               <div class="cert-details">
                 <div class="cert-row">
-                  <span class="c-label">📍 Lokalizacja:</span>
-                  <span class="c-val">{{ tree.location }}</span>
+                  <span class="c-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    Lokalizacja:
+                  </span>
+                  <span class="c-val font-mono">{{ tree.location }}</span>
                 </div>
                 <div class="cert-row">
-                  <span class="c-label">📅 Data nasadzenia:</span>
+                  <span class="c-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Data:
+                  </span>
                   <span class="c-val">{{ tree.plantedDate }}</span>
                 </div>
                 <div class="cert-row">
-                  <span class="c-label">🏛️ Fundacja:</span>
-                  <span class="c-val text-neon font-bold">{{ tree.foundation }}</span>
+                  <span class="c-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4"/></svg>
+                    Partner:
+                  </span>
+                  <span class="c-val text-sage font-bold">{{ tree.foundation }}</span>
                 </div>
                 <div class="cert-row">
-                  <span class="c-label">💨 Absorpcja CO2:</span>
-                  <span class="c-val text-emerald">~{{ tree.co2PerYearKg }} kg / rok</span>
+                  <span class="c-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                    Absorpcja CO₂:
+                  </span>
+                  <span class="c-val text-gold font-mono">~{{ tree.co2PerYearKg }} kg / rok</span>
                 </div>
               </div>
 
               <div class="cert-footer">
-                <span class="status-verified">✓ Zweryfikowane w Rejestrze</span>
+                <span class="status-verified">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Zweryfikowane w Rejestrze
+                </span>
               </div>
             </div>
           }

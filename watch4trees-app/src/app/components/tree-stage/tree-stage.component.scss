@@ -1,34 +1,34 @@
 .tree-stage-container {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.25rem;
   width: 100%;
 }
 
 .tree-visual-stage {
   position: relative;
-  min-height: 220px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem 0;
+  padding: 1.25rem 0;
 }
 
 .tree-stage-glow {
   position: absolute;
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(34, 197, 94, 0.22) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(82, 183, 136, 0.18) 0%, transparent 70%);
   pointer-events: none;
   transition: all 0.5s ease;
 }
 
 .glow-celebrate {
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(circle, rgba(34, 197, 94, 0.55) 0%, rgba(16, 185, 129, 0.25) 50%, transparent 75%);
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(233, 196, 106, 0.35) 0%, rgba(82, 183, 136, 0.2) 50%, transparent 75%);
 }
 
 .celebration-particles {
@@ -40,46 +40,225 @@
 
 .particle {
   position: absolute;
-  font-size: 1.6rem;
-  animation: particleFloat 1.5s ease-out infinite;
+  animation: particleFloat 1.6s ease-out infinite;
 }
 
 .particle.p1 { top: 20%; left: 20%; animation-delay: 0s; }
 .particle.p2 { top: 15%; right: 22%; animation-delay: 0.3s; }
-.particle.p3 { bottom: 30%; left: 15%; animation-delay: 0.6s; }
-.particle.p4 { bottom: 25%; right: 18%; animation-delay: 0.2s; }
-.particle.p5 { top: 10%; left: 50%; transform: translateX(-50%); animation-delay: 0.5s; }
+.particle.p3 { bottom: 30%; left: 18%; animation-delay: 0.6s; }
+.particle.p4 { bottom: 25%; right: 20%; animation-delay: 0.2s; }
 
 @keyframes particleFloat {
+  0% { transform: translateY(15px) scale(0.6); opacity: 0; }
+  50% { opacity: 1; transform: translateY(-8px) scale(1.2); }
+  100% { transform: translateY(-24px) scale(0.8); opacity: 0; }
+}
+
+/* ==========================================================================
+   Watering Can (Konewka) & Water Drops Stream Animation (FOR NOW UNRESPONSIVE)
+   ========================================================================== */
+.watering-can-container {
+  position: absolute;
+  top: 5px;
+  right: calc(50% - 130px);
+  width: 140px;
+  height: 160px;
+  pointer-events: none;
+  z-index: 12;
+  opacity: 0;
+  transform: translateY(-25px) scale(0.85);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.watering-active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: opacity 0.3s cubic-bezier(0, 0, 0.2, 1), transform 0.3s cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.can-body-box {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 90px;
+  height: 72px;
+  transform-origin: 65% 55%;
+  transform: rotate(-28deg);
+  animation: canContinuousPour 0.8s ease-in-out infinite alternate;
+}
+
+.can-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.45));
+}
+
+@keyframes canContinuousPour {
   0% {
-    transform: translateY(15px) scale(0.6);
-    opacity: 0;
+    transform: rotate(-24deg) translateY(0);
   }
   50% {
-    opacity: 1;
-    transform: translateY(-10px) scale(1.2);
+    transform: rotate(-32deg) translateY(3px);
   }
   100% {
-    transform: translateY(-30px) scale(0.8);
+    transform: rotate(-28deg) translateY(1px);
+  }
+}
+
+.water-drops-shower {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  width: 70px;
+  height: 95px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+
+  .watering-active & {
+    opacity: 1;
+    transition: opacity 0.25s ease;
+  }
+}
+
+.water-stream-drop {
+  position: absolute;
+  width: 6px;
+  height: 11px;
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 50%, #0284c7 100%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.8), 0 0 2px #fff;
+  opacity: 0;
+}
+
+.drop-1 { top: 0; left: 16px; animation: dropStreamFall 0.65s ease-in infinite; animation-delay: 0.1s; }
+.drop-2 { top: 4px; left: 12px; animation: dropStreamFall 0.7s ease-in infinite; animation-delay: 0.2s; }
+.drop-3 { top: 2px; left: 20px; animation: dropStreamFall 0.6s ease-in infinite; animation-delay: 0.3s; }
+.drop-4 { top: 6px; left: 14px; animation: dropStreamFall 0.65s ease-in infinite; animation-delay: 0.4s; }
+.drop-5 { top: 3px; left: 18px; animation: dropStreamFall 0.75s ease-in infinite; animation-delay: 0.15s; }
+.drop-6 { top: 8px; left: 10px; animation: dropStreamFall 0.65s ease-in infinite; animation-delay: 0.45s; }
+.drop-7 { top: 5px; left: 22px; animation: dropStreamFall 0.6s ease-in infinite; animation-delay: 0.35s; }
+
+@keyframes dropStreamFall {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-12px, 20px) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-30px, 60px) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-42px, 85px) scale(0.4);
+  }
+}
+
+.soil-splash-effect {
+  position: absolute;
+  bottom: 15px;
+  left: -20px;
+  width: 50px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.splash-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(56, 189, 248, 0.7);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+  opacity: 0;
+}
+
+.ring-1 {
+  width: 20px;
+  height: 10px;
+  animation: splashRipple 0.8s ease-out infinite;
+  animation-delay: 0.3s;
+}
+
+.ring-2 {
+  width: 32px;
+  height: 14px;
+  animation: splashRipple 0.8s ease-out infinite;
+  animation-delay: 0.5s;
+}
+
+@keyframes splashRipple {
+  0% {
+    transform: translate(-50%, -50%) scale(0.4);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.6);
     opacity: 0;
   }
 }
 
-.stage-icon-large {
+.splash-bead {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #7dd3fc;
+  box-shadow: 0 0 6px #38bdf8;
+  opacity: 0;
+}
+
+.bead-1 {
+  left: 30%;
+  bottom: 50%;
+  animation: beadBounce1 0.7s ease-out infinite;
+  animation-delay: 0.35s;
+}
+
+.bead-2 {
+  right: 30%;
+  bottom: 50%;
+  animation: beadBounce2 0.7s ease-out infinite;
+  animation-delay: 0.45s;
+}
+
+@keyframes beadBounce1 {
+  0% { opacity: 0; transform: translate(0, 0); }
+  50% { opacity: 1; transform: translate(-8px, -14px); }
+  100% { opacity: 0; transform: translate(-14px, -2px); }
+}
+
+@keyframes beadBounce2 {
+  0% { opacity: 0; transform: translate(0, 0); }
+  50% { opacity: 1; transform: translate(8px, -12px); }
+  100% { opacity: 0; transform: translate(12px, -1px); }
+}
+
+.stage-artwork {
   position: relative;
   z-index: 2;
-  margin-bottom: 0.8rem;
-  user-select: none;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.emoji-huge {
-  font-size: 5.5rem;
-  display: inline-block;
+.tree-svg-stage {
+  width: 120px;
+  height: 120px;
+  display: block;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.35));
 }
 
-.size-lg .emoji-huge {
-  font-size: 6.5rem;
+.size-lg .tree-svg-stage {
+  width: 140px;
+  height: 140px;
 }
 
 .celebrate-bounce {
@@ -87,28 +266,40 @@
 }
 
 @keyframes bounceCelebration {
-  0%, 100% { transform: scale(1) translateY(0) rotate(0deg); }
-  25% { transform: scale(1.22) translateY(-18px) rotate(-5deg); }
-  75% { transform: scale(1.22) translateY(-18px) rotate(5deg); }
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.08) translateY(-10px); }
 }
 
 .tree-state-badge {
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid var(--border-glass, rgba(16, 185, 129, 0.2));
-  padding: 0.4rem 1.2rem;
-  border-radius: 9999px;
-  font-size: 0.92rem;
-  color: #fff;
+  background: rgba(14, 21, 17, 0.85);
+  border: 1px solid var(--border-subtle, rgba(82, 183, 136, 0.2));
+  padding: 0.35rem 1rem;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.85rem;
+  color: var(--text-main, #f8fafc);
   z-index: 2;
   white-space: nowrap;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
+.badge-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.badge-icon-svg {
+  width: 14px;
+  height: 14px;
+}
+
 .planted-success {
-  border-color: var(--neon-lime, #4ade80);
-  background: rgba(6, 78, 59, 0.85);
-  box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
-  transform: scale(1.05);
+  border-color: var(--gold-amber, #e9c46a);
+  background: rgba(27, 67, 50, 0.9);
+  box-shadow: 0 0 20px rgba(233, 196, 106, 0.25);
+  transform: scale(1.04);
 }
 
 .tree-progress-section {
@@ -120,66 +311,53 @@
 .progress-info-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.88rem;
-  color: #93c5fd;
+  align-items: baseline;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #cbd5e1);
 }
 
-.eco-progress-fill {
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.progress-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 700;
+}
+
+.drop-svg-inline {
+  width: 13px;
+  height: 13px;
+  display: inline-block;
 }
 
 .progress-completed {
-  background: linear-gradient(90deg, #10b981 0%, #22c55e 50%, #4ade80 100%);
-  box-shadow: 0 0 12px rgba(74, 222, 128, 0.6);
+  background: linear-gradient(90deg, #2d6a4f 0%, #52b788 50%, #e9c46a 100%);
+  box-shadow: 0 0 10px rgba(82, 183, 136, 0.5);
 }
 
 .progress-hint {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--text-muted, #94a3b8);
   line-height: 1.4;
 }
 
-/* Responsive adjustments for smaller screens */
 @media (max-width: 640px) {
   .tree-visual-stage {
-    min-height: 170px;
-    padding: 1rem 0;
+    min-height: 160px;
+    padding: 0.8rem 0;
   }
 
-  .tree-stage-glow {
-    width: 140px;
-    height: 140px;
+  .tree-svg-stage {
+    width: 100px;
+    height: 100px;
   }
 
-  .glow-celebrate {
-    width: 200px;
-    height: 200px;
-  }
-
-  .emoji-huge {
-    font-size: 4rem;
-  }
-
-  .size-lg .emoji-huge {
-    font-size: 4.6rem;
+  .size-lg .tree-svg-stage {
+    width: 115px;
+    height: 115px;
   }
 
   .tree-state-badge {
-    font-size: 0.82rem;
-    padding: 0.3rem 0.85rem;
-  }
-
-  .progress-info-row {
     font-size: 0.8rem;
-  }
-}
-
-@media (max-width: 360px) {
-  .emoji-huge {
-    font-size: 3.4rem;
-  }
-
-  .size-lg .emoji-huge {
-    font-size: 3.8rem;
+    padding: 0.25rem 0.8rem;
   }
 }

@@ -1,6 +1,5 @@
-/* Dashboard View SCSS (Eco Dark Glassmorphism) — Harmonious Spacing & Alignment */
+/* Dashboard View SCSS (Organic-Tech Climate Standard) */
 
-/* Main Container */
 .dash-main-container {
   max-width: 1280px;
   margin: 0 auto;
@@ -14,9 +13,9 @@
 .watch-promo-banner {
   padding: 2.25rem 2.75rem;
   border-radius: var(--radius-xl, 26px);
-  background: linear-gradient(135deg, rgba(5, 46, 22, 0.85) 0%, rgba(6, 78, 59, 0.7) 100%);
-  border: 1px solid rgba(74, 222, 128, 0.35);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 25px rgba(34, 197, 94, 0.12);
+  background: linear-gradient(135deg, rgba(27, 67, 50, 0.75) 0%, rgba(14, 21, 17, 0.9) 100%);
+  border: 1px solid var(--border-medium);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
 .promo-content {
@@ -35,7 +34,6 @@
 
 .promo-text .badge-eco {
   align-self: flex-start;
-  width: fit-content;
 }
 
 .promo-text h2 {
@@ -44,7 +42,7 @@
 }
 
 .promo-text p {
-  color: #bbf7d0;
+  color: var(--text-secondary);
   font-size: 0.96rem;
   max-width: 680px;
   line-height: 1.55;
@@ -116,23 +114,29 @@
 }
 
 .impact-stat-box {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid var(--border-glass);
-  padding: 1rem 1.1rem;
+  background: rgba(14, 21, 17, 0.7);
+  border: 1px solid var(--border-subtle);
+  padding: 0.9rem 1rem;
   border-radius: var(--radius-md, 14px);
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
 .impact-stat-box:hover {
-  border-color: var(--border-glass-bright);
+  border-color: var(--border-medium);
+  background: rgba(20, 30, 24, 0.85);
 }
 
-.stat-ico {
-  font-size: 1.85rem;
-  line-height: 1;
+.stat-ico-box {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm, 10px);
+  background: rgba(82, 183, 136, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
@@ -144,7 +148,6 @@
 
 .stat-cnt strong {
   font-size: 1.15rem;
-  font-family: var(--font-heading);
   font-weight: 700;
 }
 
@@ -156,8 +159,8 @@
 
 .session-box-mini {
   margin-top: auto;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.28);
+  background: rgba(27, 67, 50, 0.25);
+  border: 1px solid var(--border-medium);
   padding: 1.25rem;
   border-radius: var(--radius-lg, 20px);
   display: flex;
@@ -167,12 +170,12 @@
 
 .session-box-mini h4 {
   font-size: 1.02rem;
-  color: #4ade80;
+  color: var(--sage-light);
 }
 
 .session-box-mini p {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   line-height: 1.5;
 }
 
@@ -207,7 +210,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  border-left: 4px solid var(--emerald-primary);
+  border-left: 3px solid var(--sage-light);
   height: 100%;
 }
 
@@ -217,9 +220,16 @@
   gap: 0.85rem;
 }
 
-.cert-species-icon {
-  font-size: 2.1rem;
-  line-height: 1;
+.cert-species-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm, 10px);
+  background: rgba(82, 183, 136, 0.1);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .cert-serial {
@@ -229,32 +239,29 @@
 }
 
 .cert-tag {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-weight: 700;
 }
 
 .cert-serial strong {
-  font-family: var(--font-heading);
-  font-size: 0.98rem;
-  color: #fff;
+  font-size: 0.95rem;
   margin-top: 0.1rem;
 }
 
 .cert-species {
   font-size: 1.08rem;
-  color: #f0fdf4;
+  color: #ffffff;
   font-weight: 600;
 }
 
 .cert-details {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.55rem;
   font-size: 0.85rem;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(10, 15, 12, 0.6);
   border: 1px solid var(--border-subtle);
   padding: 0.9rem 1rem;
   border-radius: var(--radius-md, 14px);
@@ -270,6 +277,10 @@
 .c-label {
   color: var(--text-muted);
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
 }
 
 .c-val {
@@ -286,11 +297,14 @@
 
 .status-verified {
   font-size: 0.78rem;
-  color: #34d399;
+  color: var(--sage-light);
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
-/* ==================== RESPONSIVE DASHBOARD ==================== */
+/* Responsive */
 @media (max-width: 1024px) {
   .dash-grid-top {
     grid-template-columns: 1fr;

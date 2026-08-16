@@ -21,14 +21,18 @@ export interface Profile {
   updated_at: string;
 }
 
-export interface UserWaterBalance {
+export interface UserBalance {
   user_id: string;
   current_drops: number;
+  active_tree_drops: number;
+  eco_points: number;
   total_drops_earned: number;
   total_trees_planted: number;
   total_co2_offset_kg: number;
   updated_at: string;
 }
+
+export type UserWaterBalance = UserBalance;
 
 export interface WaterDropTransaction {
   id: string;

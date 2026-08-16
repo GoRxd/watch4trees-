@@ -31,15 +31,17 @@ Table profiles {
   Note: 'Extended public user profile linked to Supabase Auth'
 }
 
-Table user_water_balance {
+Table user_balance {
   user_id uuid [pk, ref: - profiles.id]
-  current_drops smallint [default: 0, note: 'Water drops in current cycle (0-9)']
+  current_drops int [default: 0, note: 'Water drops in user wallet']
+  active_tree_drops smallint [default: 0, note: 'Water drops poured on active tree (0-10)']
+  eco_points int [default: 0, note: 'League and gamification eco points']
   total_drops_earned int [default: 0, note: 'Lifetime accumulated drops']
   total_trees_planted int [default: 0, note: 'Lifetime planted trees']
   total_co2_offset_kg decimal(10,2) [default: 0.00, note: 'Calculated at ~22kg CO2/tree/year']
   updated_at timestamptz [default: `now()`]
 
-  Note: 'Realtime water wallet & aggregated eco impact metrics'
+  Note: 'Unified user balance for drops, eco points, and lifetime environmental impact metrics'
 }
 
 Table water_drop_transactions {

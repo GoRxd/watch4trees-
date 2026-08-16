@@ -53,9 +53,9 @@ export class AuthService {
       .eq('id', userId)
       .single();
 
-    // 2. Fetch water balance from database
+    // 2. Fetch user balance from database
     const { data: balance } = await this.supabase.client
-      .from('user_water_balance')
+      .from('user_balance')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -66,7 +66,7 @@ export class AuthService {
       email: authUser.email || '',
       name: profile?.full_name || profile?.username || userMeta['full_name'] || authUser.email?.split('@')[0] || 'Eko-Hero',
       avatar: profile?.avatar_url || userMeta['avatar_url'] || '👨‍🌾',
-      ecoPoints: (balance?.total_trees_planted || 0) * 200 + (balance?.total_drops_earned || 0) * 15,
+      ecoPoints: balance?.eco_points ?? 0,
       waterDrops: balance?.current_drops ?? 0,
       treesPlanted: balance?.total_trees_planted ?? 0,
       activeStreak: profile?.streak_days ?? 1,

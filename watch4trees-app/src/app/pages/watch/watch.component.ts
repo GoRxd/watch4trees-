@@ -74,7 +74,7 @@ export class WatchComponent implements OnDestroy {
   quizAnswered = signal<boolean>(false);
   quizCorrect = signal<boolean>(false);
 
-  // Mock ESG Sponsor details
+  // [TODO_TEMPLATE: Fetch active ESG sponsor and ad campaign from DatabaseService / Ad Server]
   currentSponsor = signal<SponsorInfo>({
     name: 'EkoEnergia Green Power',
     tagline: '100% energii z certyfikowanych farm wiatrowych i słonecznych',
@@ -132,17 +132,24 @@ export class WatchComponent implements OnDestroy {
     const session = this.selectedSession();
 
     if (user) {
-      this.auth.updateUser({
-        waterDrops: user.waterDrops + session.waterReward,
-        ecoPoints: user.ecoPoints + session.pointsReward,
-        dailyLimitRemaining: Math.max(0, user.dailyLimitRemaining - session.adCount)
-      });
+      // Record transaction in database with eco_points
+      await this.db.addWaterDrops(
+        user.id,
+        session.waterReward,
+        'AD_REWARD',
+        {
+          sessionId: session.id,
+          adCount: session.adCount,
+          durationSeconds: session.durationSeconds
+        },
+        session.pointsReward
+      );
 
-      // Record transaction in database
-      await this.db.addWaterDrops(user.id, session.waterReward, 'AD_REWARD', {
-        sessionId: session.id,
-        adCount: session.adCount,
-        durationSeconds: session.durationSeconds
+      const balance = this.db.activeBalance();
+      this.auth.updateUser({
+        waterDrops: balance?.current_drops ?? (user.waterDrops + session.waterReward),
+        ecoPoints: balance?.eco_points ?? (user.ecoPoints + session.pointsReward),
+        dailyLimitRemaining: Math.max(0, user.dailyLimitRemaining - session.adCount)
       });
     }
 

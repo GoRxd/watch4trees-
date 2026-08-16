@@ -13,7 +13,6 @@
     </nav>
 
     <div class="nav-actions">
-      <!-- Reusable Language Switcher Toggle -->
       <app-lang-toggle></app-lang-toggle>
 
       @if (!auth.isAuthenticated()) {
@@ -26,11 +25,15 @@
         @if (!auth.isAuthenticated()) {
           <span>{{ 'nav.cta' | translate }}</span>
         } @else {
-          <span>🌿 {{ 'auth.goToDashboard' | translate }}</span>
+          <span class="btn-cta-inner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            {{ 'auth.goToDashboard' | translate }}
+          </span>
         }
       </button>
 
-      <!-- Hamburger toggle button on mobile -->
       <button class="btn-hamburger" (click)="toggleMobileMenu()" [title]="'Menu'" aria-label="Toggle navigation">
         <span class="bar"></span>
         <span class="bar"></span>
@@ -39,7 +42,6 @@
     </div>
   </div>
 
-  <!-- Shared Mobile Drawer Component -->
   <app-mobile-drawer
     [isOpen]="isMobileMenuOpen()"
     mode="landing"
@@ -51,15 +53,25 @@
 <!-- MAIN LANDING CONTENT -->
 <main class="landing-main">
 
-  <!-- ==================== 1. HERO SECTION (Above the fold, loaded eagerly) ==================== -->
+  <!-- ==================== 1. HERO SECTION ==================== -->
   <section id="hero" class="hero-section">
     <div class="hero-grid">
       
       <!-- Hero Left: Value Proposition -->
       <div class="hero-text-col">
         <div class="hero-badge-row">
-          <span class="badge-eco">{{ 'hero.badgeEco' | translate }}</span>
-          <span class="badge-verified">{{ 'hero.badgeVerified' | translate }}</span>
+          <span class="badge-eco">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/>
+            </svg>
+            {{ 'hero.badgeEco' | translate }}
+          </span>
+          <span class="badge-verified">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            {{ 'hero.badgeVerified' | translate }}
+          </span>
         </div>
         
         <h1 class="hero-title">
@@ -74,7 +86,10 @@
         <div class="hero-cta-group">
           <button class="btn-eco-primary btn-large" (click)="goToAuth()">
             <span>{{ 'hero.startBtn' | translate }}</span>
-            <span class="arrow">&rarr;</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </button>
           <button class="btn-eco-secondary btn-large" (click)="scrollToSection('how-it-works')">
             <span>{{ 'hero.howBtn' | translate }}</span>
@@ -84,17 +99,17 @@
         <!-- Real-time global impact stats -->
         <div class="hero-trust-bar">
           <div class="trust-stat">
-            <span class="stat-number text-neon">{{ 'hero.statTrees' | translate }}</span>
+            <span class="stat-number text-sage font-mono">{{ 'hero.statTrees' | translate }}</span>
             <span class="stat-label">{{ 'hero.statTreesLabel' | translate }}</span>
           </div>
           <div class="trust-divider"></div>
           <div class="trust-stat">
-            <span class="stat-number text-emerald">{{ 'hero.statCo2' | translate }}</span>
+            <span class="stat-number text-gold font-mono">{{ 'hero.statCo2' | translate }}</span>
             <span class="stat-label">{{ 'hero.statCo2Label' | translate }}</span>
           </div>
           <div class="trust-divider"></div>
           <div class="trust-stat">
-            <span class="stat-number text-teal">{{ 'hero.statTrans' | translate }}</span>
+            <span class="stat-number text-blue font-mono">{{ 'hero.statTrans' | translate }}</span>
             <span class="stat-label">{{ 'hero.statTransLabel' | translate }}</span>
           </div>
         </div>
@@ -102,9 +117,12 @@
 
       <!-- Hero Right: Interactive Tree Simulator Card -->
       <div class="hero-interactive-col">
-        <div class="interactive-preview-card glass-panel-glow">
+        <div class="interactive-preview-card glass-panel-elevated">
           <div class="card-top-tag">
-            <span class="badge-eco">{{ 'demo.badge' | translate }}</span>
+            <span class="badge-eco">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+              {{ 'demo.badge' | translate }}
+            </span>
             <span class="tag-status">{{ 'demo.tag' | translate }}</span>
           </div>
 
@@ -123,10 +141,16 @@
           <div class="demo-actions">
             @if (!demoTreePlanted()) {
               <button class="btn-eco-primary btn-full" (click)="addDemoWater()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                </svg>
                 <span>{{ 'demo.waterBtn' | translate }}</span>
               </button>
             } @else {
               <button class="btn-eco-secondary btn-full" (click)="resetDemo()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                </svg>
                 <span>{{ 'demo.resetBtn' | translate }}</span>
               </button>
             }
@@ -151,24 +175,45 @@
       
       <!-- Step 1 -->
       <div class="step-card glass-panel">
-        <div class="step-badge">{{ 'howItWorks.step1Badge' | translate }}</div>
-        <div class="step-icon">⏱️</div>
+        <div class="step-badge font-mono">{{ 'howItWorks.step1Badge' | translate }}</div>
+        <div class="step-icon-wrapper">
+          <svg class="step-svg" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
         <h3 class="step-title">{{ 'howItWorks.step1Title' | translate }}</h3>
         <p class="step-desc">{{ 'howItWorks.step1Desc' | translate }}</p>
       </div>
 
       <!-- Step 2 -->
       <div class="step-card glass-panel">
-        <div class="step-badge">{{ 'howItWorks.step2Badge' | translate }}</div>
-        <div class="step-icon">🎬</div>
+        <div class="step-badge font-mono">{{ 'howItWorks.step2Badge' | translate }}</div>
+        <div class="step-icon-wrapper">
+          <svg class="step-svg" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+            <line x1="7" y1="2" x2="7" y2="22"/>
+            <line x1="17" y1="2" x2="17" y2="22"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <line x1="2" y1="7" x2="7" y2="7"/>
+            <line x1="2" y1="17" x2="7" y2="17"/>
+            <line x1="17" y1="17" x2="22" y2="17"/>
+            <line x1="17" y1="7" x2="22" y2="7"/>
+          </svg>
+        </div>
         <h3 class="step-title">{{ 'howItWorks.step2Title' | translate }}</h3>
         <p class="step-desc">{{ 'howItWorks.step2Desc' | translate }}</p>
       </div>
 
       <!-- Step 3 -->
       <div class="step-card glass-panel">
-        <div class="step-badge">{{ 'howItWorks.step3Badge' | translate }}</div>
-        <div class="step-icon">🌲</div>
+        <div class="step-badge font-mono">{{ 'howItWorks.step3Badge' | translate }}</div>
+        <div class="step-icon-wrapper">
+          <svg class="step-svg" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/>
+            <path d="M12 7V21"/>
+          </svg>
+        </div>
         <h3 class="step-title">{{ 'howItWorks.step3Title' | translate }}</h3>
         <p class="step-desc">{{ 'howItWorks.step3Desc' | translate }}</p>
       </div>
@@ -178,7 +223,7 @@
 
   <!-- ==================== 3. IDEOLOGY: PURPOSE-FIRST VS CLICK-TO-EARN ==================== -->
   <section id="ideology" class="section-container ideology-section">
-    <div class="ideology-card glass-panel-glow">
+    <div class="ideology-card glass-panel-elevated">
       <div class="ideology-grid">
         <div class="ideology-left">
           <span class="badge-eco">{{ 'ideology.badge' | translate }}</span>
@@ -194,7 +239,10 @@
         <div class="ideology-right">
           <div class="comparison-card glass-panel">
             <div class="comp-col negative">
-              <h4>{{ 'ideology.negTitle' | translate }}</h4>
+              <div class="comp-col-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                <h4>{{ 'ideology.negTitle' | translate }}</h4>
+              </div>
               <ul>
                 <li>{{ 'ideology.neg1' | translate }}</li>
                 <li>{{ 'ideology.neg2' | translate }}</li>
@@ -202,7 +250,10 @@
               </ul>
             </div>
             <div class="comp-col positive">
-              <h4>{{ 'ideology.posTitle' | translate }}</h4>
+              <div class="comp-col-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <h4>{{ 'ideology.posTitle' | translate }}</h4>
+              </div>
               <ul>
                 <li>{{ 'ideology.pos1' | translate }}</li>
                 <li>{{ 'ideology.pos2' | translate }}</li>
@@ -227,25 +278,33 @@
     <div class="gamification-features-grid">
       
       <div class="feature-box glass-panel">
-        <div class="f-icon">🌳</div>
+        <div class="f-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
+        </div>
         <h3>{{ 'gamification.f1Title' | translate }}</h3>
         <p>{{ 'gamification.f1Desc' | translate }}</p>
       </div>
 
       <div class="feature-box glass-panel">
-        <div class="f-icon">🔥</div>
+        <div class="f-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+        </div>
         <h3>{{ 'gamification.f2Title' | translate }}</h3>
         <p>{{ 'gamification.f2Desc' | translate }}</p>
       </div>
 
       <div class="feature-box glass-panel">
-        <div class="f-icon">🏆</div>
+        <div class="f-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/><path d="M14 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        </div>
         <h3>{{ 'gamification.f3Title' | translate }}</h3>
         <p>{{ 'gamification.f3Desc' | translate }}</p>
       </div>
 
       <div class="feature-box glass-panel">
-        <div class="f-icon">🎖️</div>
+        <div class="f-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        </div>
         <h3>{{ 'gamification.f4Title' | translate }}</h3>
         <p>{{ 'gamification.f4Desc' | translate }}</p>
       </div>
@@ -255,7 +314,7 @@
 
   <!-- ==================== 5. TRANSPARENCY & FINANCIAL SPLIT ==================== -->
   <section id="transparency" class="section-container">
-    <div class="transparency-card glass-panel-glow">
+    <div class="transparency-card glass-panel-elevated">
       <div class="transparency-header">
         <span class="badge-eco">{{ 'transparency.badge' | translate }}</span>
         <h2>{{ 'transparency.title' | translate }}</h2>
@@ -266,7 +325,7 @@
       <div class="split-visual-wrapper glass-panel">
         <div class="split-header-row">
           <h3>{{ 'transparency.splitTitle' | translate }}</h3>
-          <span class="badge-eco">{{ 'transparency.splitBadge' | translate }}</span>
+          <span class="badge-verified">{{ 'transparency.splitBadge' | translate }}</span>
         </div>
 
         <div class="split-bar">
@@ -299,19 +358,19 @@
       <!-- Partner Badges -->
       <div class="partner-orgs-row">
         <div class="partner-chip">
-          <span class="chip-flag">🇵🇱</span>
+          <span class="partner-tag-country font-mono">PL</span>
           <span>{{ 'transparency.partners.poland' | translate }}</span>
         </div>
         <div class="partner-chip">
-          <span class="chip-flag">🌎</span>
+          <span class="partner-tag-country font-mono">GL</span>
           <span>{{ 'transparency.partners.global' | translate }}</span>
         </div>
         <div class="partner-chip">
-          <span class="chip-flag">🇲🇬</span>
+          <span class="partner-tag-country font-mono">MG</span>
           <span>{{ 'transparency.partners.eden' | translate }}</span>
         </div>
         <div class="partner-chip">
-          <span class="chip-flag">📊</span>
+          <span class="partner-tag-country font-mono">FSC</span>
           <span>{{ 'transparency.partners.audit' | translate }}</span>
         </div>
       </div>
@@ -322,21 +381,27 @@
   <section id="b2b" class="section-container">
     <div class="b2b-banner glass-panel">
       <div class="b2b-content">
-        <span class="badge-eco">{{ 'b2b.badge' | translate }}</span>
+        <span class="badge-gold">{{ 'b2b.badge' | translate }}</span>
         <h2>{{ 'b2b.title' | translate }}</h2>
         <p>{{ 'b2b.desc' | translate }}</p>
         
         <div class="b2b-perks">
           <div class="perk-item">
-            <span class="perk-check">✓</span>
+            <div class="perk-check-box">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
             <span>{{ 'b2b.perk1' | translate }}</span>
           </div>
           <div class="perk-item">
-            <span class="perk-check">✓</span>
+            <div class="perk-check-box">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
             <span>{{ 'b2b.perk2' | translate }}</span>
           </div>
           <div class="perk-item">
-            <span class="perk-check">✓</span>
+            <div class="perk-check-box">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
             <span>{{ 'b2b.perk3' | translate }}</span>
           </div>
         </div>
@@ -344,6 +409,7 @@
         <div class="b2b-action">
           <a href="mailto:partnerzy@watch4trees.org" class="btn-eco-primary">
             <span>{{ 'b2b.cta' | translate }}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </a>
         </div>
       </div>
@@ -363,7 +429,7 @@
       <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 0">
         <div class="faq-question" (click)="toggleFaq(0)">
           <h4>{{ 'faq.q1' | translate }}</h4>
-          <span class="faq-toggle-icon">{{ activeFaqIndex() === 0 ? '−' : '+' }}</span>
+          <span class="faq-toggle-icon font-mono">{{ activeFaqIndex() === 0 ? '−' : '+' }}</span>
         </div>
         @if (activeFaqIndex() === 0) {
           <div class="faq-answer">
@@ -376,7 +442,7 @@
       <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 1">
         <div class="faq-question" (click)="toggleFaq(1)">
           <h4>{{ 'faq.q2' | translate }}</h4>
-          <span class="faq-toggle-icon">{{ activeFaqIndex() === 1 ? '−' : '+' }}</span>
+          <span class="faq-toggle-icon font-mono">{{ activeFaqIndex() === 1 ? '−' : '+' }}</span>
         </div>
         @if (activeFaqIndex() === 1) {
           <div class="faq-answer">
@@ -389,7 +455,7 @@
       <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 2">
         <div class="faq-question" (click)="toggleFaq(2)">
           <h4>{{ 'faq.q3' | translate }}</h4>
-          <span class="faq-toggle-icon">{{ activeFaqIndex() === 2 ? '−' : '+' }}</span>
+          <span class="faq-toggle-icon font-mono">{{ activeFaqIndex() === 2 ? '−' : '+' }}</span>
         </div>
         @if (activeFaqIndex() === 2) {
           <div class="faq-answer">
@@ -402,7 +468,7 @@
       <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 3">
         <div class="faq-question" (click)="toggleFaq(3)">
           <h4>{{ 'faq.q4' | translate }}</h4>
-          <span class="faq-toggle-icon">{{ activeFaqIndex() === 3 ? '−' : '+' }}</span>
+          <span class="faq-toggle-icon font-mono">{{ activeFaqIndex() === 3 ? '−' : '+' }}</span>
         </div>
         @if (activeFaqIndex() === 3) {
           <div class="faq-answer">
@@ -416,7 +482,7 @@
 
   <!-- ==================== 8. CTA / EARLY ACCESS ==================== -->
   <section id="join" class="section-container join-section">
-    <div class="join-card glass-panel-glow text-center">
+    <div class="join-card glass-panel-elevated text-center">
       <span class="badge-eco">{{ 'join.badge' | translate }}</span>
       <h2 class="join-title">{{ 'join.title' | translate }}</h2>
       <p class="join-subtitle">{{ 'join.subtitle' | translate }}</p>
@@ -431,13 +497,15 @@
             (input)="emailInput.set($any($event.target).value)" 
             required
           >
-          <button type="submit" class="btn-eco-primary btn-glow">
+          <button type="submit" class="btn-eco-primary">
             <span>{{ 'join.btn' | translate }}</span>
           </button>
         </form>
       } @else {
         <div class="subscribed-success">
-          <div class="success-icon">🎉</div>
+          <div class="success-icon-box">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
           <h3>{{ 'join.successTitle' | translate }}</h3>
           <p>{{ 'join.successDesc' | translate }}</p>
         </div>
@@ -467,9 +535,9 @@
 
     <div class="footer-links-col">
       <h5>{{ 'footer.partnersTitle' | translate }}</h5>
-      <span>🇵🇱 Posadzimy.pl</span>
-      <span>🌎 One Tree Planted</span>
-      <span>🇲🇬 Eden Reforestation</span>
+      <span class="footer-partner-link">🇵🇱 Posadzimy.pl</span>
+      <span class="footer-partner-link">🌎 One Tree Planted</span>
+      <span class="footer-partner-link">🇲🇬 Eden Reforestation</span>
     </div>
 
     <div class="footer-links-col">

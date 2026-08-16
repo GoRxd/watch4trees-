@@ -32,9 +32,11 @@ export class DashboardComponent implements OnInit {
   ecoMetrics = ECO_METRICS;
 
   // Active tree watering state
-  currentTreeDrops = signal<number>(6);
+  currentTreeDrops = signal<number>(0);
   dropsNeededForTree = ECO_METRICS.DEFAULT_TREE_DROPS_NEEDED;
   treeSuccessCelebration = signal<boolean>(false);
+  isWatering = signal<boolean>(false);
+  private wateringTimeout: any = null;
 
   // Planted trees certificates list
   myPlantedTrees = signal<PlantedTreeCertificate[]>([]);
@@ -48,10 +50,10 @@ export class DashboardComponent implements OnInit {
     const user = this.auth.currentUser();
     if (!user) return;
 
-    // Fetch user water balance
+    // Fetch user water balance from Supabase
     const balance = await this.db.getUserWaterBalance(user.id);
     if (balance) {
-      this.currentTreeDrops.set(balance.current_drops);
+      this.currentTreeDrops.set(balance.active_tree_drops ?? 0);
     }
 
     // Fetch planted trees and map to certificates
@@ -81,61 +83,55 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    // Deduct 1 drop from user inventory and add to active tree
-    this.auth.updateUser({
-      waterDrops: user.waterDrops - 1,
-      ecoPoints: user.ecoPoints + 15
-    });
-
-    this.currentTreeDrops.update(d => d + 1);
-
-    // Record drop transaction in database
-    await this.db.addWaterDrops(user.id, 1, 'AD_REWARD', { action: 'water_tree' });
-
-    // Check if tree is fully mature and funded (10 drops)!
-    if (this.currentTreeDrops() >= this.dropsNeededForTree) {
-      await this.celebrateTreePlanted();
+    // Trigger or extend visual watering can animation smoothly
+    if (this.wateringTimeout) {
+      clearTimeout(this.wateringTimeout);
     }
-  }
+    this.isWatering.set(true);
+    this.wateringTimeout = setTimeout(() => {
+      this.isWatering.set(false);
+      this.wateringTimeout = null;
+    }, 1500);
 
-  private async celebrateTreePlanted() {
-    const user = this.auth.currentUser();
-    if (!user) return;
+    // Call secure RPC in Supabase backend to spend water drop and water tree
+    const res = await this.db.waterActiveTree(user.id, 1);
+    if (res.success && res.current_drops !== undefined) {
+      this.auth.updateUser({
+        waterDrops: res.current_drops,
+        ecoPoints: res.eco_points ?? (user.ecoPoints + 15),
+        treesPlanted: res.total_trees_planted ?? user.treesPlanted
+      });
 
-    this.treeSuccessCelebration.set(true);
+      // If this drop completed the 10-drop threshold and planted a real tree in backend:
+      if (res.tree_planted_now) {
+        // Show 10/10 fully mature state during celebration
+        this.currentTreeDrops.set(this.dropsNeededForTree);
+        this.treeSuccessCelebration.set(true);
 
-    // Record new planted tree in database
-    const planted = await this.db.recordNewPlantedTree(user.id);
-    if (!planted) {
-      this.treeSuccessCelebration.set(false);
-      return;
+        if (res.new_tree) {
+          const newCert: PlantedTreeCertificate = {
+            id: res.new_tree.id,
+            serialNumber: res.new_tree.certificate?.certificate_number || res.new_tree.tree_number,
+            species: res.new_tree.project?.tree_species || 'Dąb Szypułkowy (Quercus robur)',
+            speciesIcon: '🌳',
+            plantedDate: new Date().toLocaleDateString(),
+            location: `${res.new_tree.project?.name || 'Nadleśnictwo Lipusz'}, ${res.new_tree.project?.region || 'Polska'}`,
+            foundation: res.new_tree.certificate?.verified_by || user.targetFoundation || 'Posadzimy.pl',
+            co2PerYearKg: ECO_METRICS.CO2_PER_TREE_KG
+          };
+          this.myPlantedTrees.update(trees => [newCert, ...trees]);
+        }
+
+        setTimeout(() => {
+          this.currentTreeDrops.set(0);
+          this.treeSuccessCelebration.set(false);
+        }, 4000);
+      } else {
+        // Normal watering progress step (+1)
+        this.currentTreeDrops.set(res.active_tree_drops ?? 0);
+      }
+    } else if (res.error) {
+      console.error('[DashboardComponent] Error watering tree:', res.error);
     }
-
-    const newCert: PlantedTreeCertificate = {
-      id: planted.id,
-      serialNumber: planted.certificate?.certificate_number || planted.tree_number,
-      species: planted.project?.tree_species || 'Dąb Szypułkowy (Quercus robur)',
-      speciesIcon: '🌳',
-      plantedDate: new Date().toLocaleDateString(),
-      location: `${planted.project?.name || 'Nadleśnictwo Solec Kujawski'}, ${planted.project?.region || 'Polska'}`,
-      foundation: planted.certificate?.verified_by || user.targetFoundation || 'Posadzimy.pl',
-      co2PerYearKg: ECO_METRICS.CO2_PER_TREE_KG
-    };
-
-    // Update user stats and trees list
-    this.auth.updateUser({
-      treesPlanted: user.treesPlanted + 1,
-      ecoPoints: user.ecoPoints + 200
-    });
-
-    this.myPlantedTrees.update(trees => [newCert, ...trees]);
-
-    // Reset tree progress after small delay
-    setTimeout(() => {
-      this.currentTreeDrops.set(0);
-      this.treeSuccessCelebration.set(false);
-    }, 4000);
   }
 }
-
-

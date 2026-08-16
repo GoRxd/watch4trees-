@@ -70,6 +70,7 @@ export class LandingComponent {
     this.demoTreePlanted.set(false);
   }
 
+  // [TODO_TEMPLATE: Submit email to Supabase / Backend Newsletter subscription API]
   submitNewsletter(e: Event) {
     e.preventDefault();
     if (this.emailInput().trim()) {

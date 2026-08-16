@@ -59,4 +59,16 @@ describe('TreeStageComponent', () => {
     expect(comp.isMature()).toBeTrue();
     expect(comp.progressPercentage()).toEqual(100);
   });
+
+  it('should render watering can container when isWatering is true', () => {
+    const fixture = TestBed.createComponent(TreeStageComponent);
+    const comp = fixture.componentInstance;
+    fixture.componentRef.setInput('isWatering', true);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.watering-can-container')).toBeTruthy();
+    expect(compiled.querySelector('.can-svg')).toBeTruthy();
+    expect(compiled.querySelector('.water-drops-shower')).toBeTruthy();
+  });
 });

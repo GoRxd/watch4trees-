@@ -111,17 +111,21 @@ VALUES (
   full_name = EXCLUDED.full_name,
   streak_days = EXCLUDED.streak_days;
 
--- 5. Upsert User Water Balance
-INSERT INTO public.user_water_balance (user_id, current_drops, total_drops_earned, total_trees_planted, total_co2_offset_kg, updated_at)
+-- 5. Upsert User Balance
+INSERT INTO public.user_balance (user_id, current_drops, active_tree_drops, eco_points, total_drops_earned, total_trees_planted, total_co2_offset_kg, updated_at)
 VALUES (
   'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
   6,
+  2,
+  7000,
   186,
   18,
   396.00,
   now()
 ) ON CONFLICT (user_id) DO UPDATE SET
   current_drops = EXCLUDED.current_drops,
+  active_tree_drops = EXCLUDED.active_tree_drops,
+  eco_points = EXCLUDED.eco_points,
   total_drops_earned = EXCLUDED.total_drops_earned,
   total_trees_planted = EXCLUDED.total_trees_planted,
   total_co2_offset_kg = EXCLUDED.total_co2_offset_kg;

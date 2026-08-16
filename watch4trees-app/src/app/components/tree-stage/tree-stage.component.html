@@ -1,35 +1,211 @@
 <div class="tree-stage-container" [class.size-lg]="size() === 'lg'" [class.size-md]="size() === 'md'">
-  <!-- Stage Visual Stage with Aura -->
+  <!-- Stage Visual Stage with Layered SVG Art -->
   <div class="tree-visual-stage">
     <div 
-      class="tree-stage-glow animate-pulse-glow" 
+      class="tree-stage-glow animate-pulse-drop" 
       [class.glow-celebrate]="isCelebration()"
     ></div>
 
     <!-- Floating Particles during Celebration -->
     @if (isCelebration()) {
       <div class="celebration-particles">
-        <span class="particle p1">✨</span>
-        <span class="particle p2">🎉</span>
-        <span class="particle p3">💧</span>
-        <span class="particle p4">🌿</span>
-        <span class="particle p5">⭐</span>
+        <span class="particle p1">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#E9C46A"><path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/></svg>
+        </span>
+        <span class="particle p2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#52B788"><circle cx="12" cy="12" r="10"/></svg>
+        </span>
+        <span class="particle p3">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#38BDF8"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+        </span>
+        <span class="particle p4">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#74C69D"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        </span>
       </div>
     }
 
+    <!-- Animated Watering Can (Konewka) & Water Droplets Animation (Smooth Fade & Slide Transitions) -->
+    <div class="watering-can-container" [class.watering-active]="isWatering()">
+      <!-- SVG Watering Can (Spout facing left towards plant, handle on right) -->
+      <div class="can-body-box">
+        <svg class="can-svg" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Can Body -->
+          <path d="M64 28H34L40 70H68L64 28Z" fill="url(#canGrad1)" stroke="#52B788" stroke-width="2"/>
+          <!-- Top Opening Rim -->
+          <ellipse cx="49" cy="28" rx="15" ry="4" fill="#1B4332" stroke="#52B788" stroke-width="1.5"/>
+          <!-- Back/Right Handle -->
+          <path d="M65 34C82 34 84 58 68 62" stroke="#52B788" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <!-- Top Overhead Handle -->
+          <path d="M58 27V15C58 13 42 13 42 15V27" stroke="#74C69D" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+          <!-- Long Spout pointing left towards plant -->
+          <path d="M42 48L20 26L16 31L39 56" fill="#2D6A4F" stroke="#52B788" stroke-width="1.5"/>
+          <!-- Sprinkler Head (Sitko) pointing down-left -->
+          <ellipse cx="17" cy="27" rx="5" ry="9" transform="rotate(-35 17 27)" fill="#E9C46A" stroke="#B08968" stroke-width="1.5"/>
+          <!-- Sprinkler Holes -->
+          <circle cx="17" cy="25" r="0.8" fill="#52B788"/>
+          <circle cx="15" cy="28" r="0.8" fill="#52B788"/>
+          <circle cx="19" cy="29" r="0.8" fill="#52B788"/>
+          <defs>
+            <linearGradient id="canGrad1" x1="68" y1="28" x2="34" y2="70" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#40916C"/>
+              <stop offset="1" stop-color="#1B4332"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- Animated Water Drops Shower Cascading Down -->
+      <div class="water-drops-shower">
+        <span class="water-stream-drop drop-1"></span>
+        <span class="water-stream-drop drop-2"></span>
+        <span class="water-stream-drop drop-3"></span>
+        <span class="water-stream-drop drop-4"></span>
+        <span class="water-stream-drop drop-5"></span>
+        <span class="water-stream-drop drop-6"></span>
+        <span class="water-stream-drop drop-7"></span>
+      </div>
+
+      <!-- Splash ripples upon hitting the plant/soil -->
+      <div class="soil-splash-effect">
+        <span class="splash-ring ring-1"></span>
+        <span class="splash-ring ring-2"></span>
+        <span class="splash-bead bead-1"></span>
+        <span class="splash-bead bead-2"></span>
+      </div>
+    </div>
+
+    <!-- SVG Organic Tree Stage Illustration -->
     <div 
-      class="stage-icon-large animate-float" 
+      class="stage-artwork animate-float" 
       [class.celebrate-bounce]="isCelebration()"
     >
-      <span class="emoji-huge">{{ stageEmoji() }}</span>
+      @switch (stageIndex()) {
+        @case (0) {
+          <!-- Stage 0: Seed / Acorn -->
+          <svg class="tree-svg-stage" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Ground Base -->
+            <ellipse cx="70" cy="115" rx="42" ry="10" fill="#151F19" stroke="rgba(82,183,136,0.2)" stroke-width="1.5"/>
+            <path d="M40 115C48 110 92 110 100 115" stroke="#40916C" stroke-width="2" stroke-linecap="round"/>
+            <!-- Acorn Cup -->
+            <path d="M54 78C54 70 86 70 86 78C86 82 54 82 54 78Z" fill="#D4A373"/>
+            <path d="M68 66V72" stroke="#B08968" stroke-width="3" stroke-linecap="round"/>
+            <!-- Acorn Body -->
+            <path d="M55 80C55 98 70 106 70 106C70 106 85 98 85 80C85 78 55 78 55 80Z" fill="url(#acornBodyGrad)"/>
+            <!-- Sprout Tip -->
+            <path d="M70 70C70 60 76 56 82 54C82 60 78 66 70 70Z" fill="#74C69D"/>
+            <defs>
+              <linearGradient id="acornBodyGrad" x1="55" y1="80" x2="85" y2="106" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#E9C46A"/>
+                <stop offset="1" stop-color="#9C6644"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        }
+        @case (1) {
+          <!-- Stage 1: Sprout -->
+          <svg class="tree-svg-stage" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="70" cy="118" rx="46" ry="11" fill="#151F19" stroke="rgba(82,183,136,0.2)" stroke-width="1.5"/>
+            <!-- Stem -->
+            <path d="M70 118C70 100 68 85 70 65" stroke="#74C69D" stroke-width="4" stroke-linecap="round"/>
+            <!-- Left Leaf -->
+            <path d="M70 80C52 75 46 60 48 50C60 52 68 68 70 80Z" fill="url(#sproutLeaf1)" stroke="#2D6A4F" stroke-width="1"/>
+            <!-- Right Leaf -->
+            <path d="M70 68C88 64 94 48 90 38C78 40 72 56 70 68Z" fill="url(#sproutLeaf2)" stroke="#2D6A4F" stroke-width="1"/>
+            <!-- Water Droplet on Leaf -->
+            <circle cx="86" cy="45" r="3.5" fill="#38BDF8" fill-opacity="0.8"/>
+            <defs>
+              <linearGradient id="sproutLeaf1" x1="48" y1="50" x2="70" y2="80" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#95D5B2"/>
+                <stop offset="1" stop-color="#40916C"/>
+              </linearGradient>
+              <linearGradient id="sproutLeaf2" x1="90" y1="38" x2="70" y2="68" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#95D5B2"/>
+                <stop offset="1" stop-color="#2D6A4F"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        }
+        @case (2) {
+          <!-- Stage 2: Young Sapling -->
+          <svg class="tree-svg-stage" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="70" cy="120" rx="50" ry="12" fill="#151F19" stroke="rgba(82,183,136,0.25)" stroke-width="1.5"/>
+            <!-- Trunk -->
+            <path d="M68 120L69 68L73 68L74 120Z" fill="#7F4F24"/>
+            <!-- Foliage Clouds -->
+            <circle cx="54" cy="62" r="20" fill="url(#saplingGrad1)"/>
+            <circle cx="86" cy="62" r="20" fill="url(#saplingGrad2)"/>
+            <circle cx="70" cy="44" r="24" fill="url(#saplingGrad3)"/>
+            <!-- Foliage details -->
+            <path d="M62 42C65 38 75 38 78 42" stroke="#B7E4C7" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="saplingGrad1" x1="34" y1="42" x2="74" y2="82" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#74C69D"/>
+                <stop offset="1" stop-color="#1B4332"/>
+              </linearGradient>
+              <linearGradient id="saplingGrad2" x1="66" y1="42" x2="106" y2="82" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#52B788"/>
+                <stop offset="1" stop-color="#1B4332"/>
+              </linearGradient>
+              <linearGradient id="saplingGrad3" x1="46" y1="20" x2="94" y2="68" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#95D5B2"/>
+                <stop offset="1" stop-color="#2D6A4F"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        }
+        @default {
+          <!-- Stage 3: Certified Mature Oak Tree -->
+          <svg class="tree-svg-stage" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="70" cy="122" rx="55" ry="12" fill="#151F19" stroke="rgba(82,183,136,0.3)" stroke-width="1.5"/>
+            <!-- Sturdy Root & Trunk -->
+            <path d="M58 122C64 116 66 85 67 60L73 60C74 85 76 116 82 122Z" fill="#582F0E"/>
+            <path d="M62 122L67 114" stroke="#7F4F24" stroke-width="2" stroke-linecap="round"/>
+            <path d="M78 122L73 114" stroke="#7F4F24" stroke-width="2" stroke-linecap="round"/>
+            <!-- Massive Crown -->
+            <circle cx="45" cy="65" r="25" fill="url(#matureGrad1)"/>
+            <circle cx="95" cy="65" r="25" fill="url(#matureGrad2)"/>
+            <circle cx="70" cy="40" r="32" fill="url(#matureGrad3)"/>
+            <circle cx="70" cy="60" r="28" fill="url(#matureGrad4)"/>
+            <!-- Verified Impact Badge Ring on Tree -->
+            @if (isFinished()) {
+              <circle cx="102" cy="36" r="12" fill="#E9C46A" stroke="#FFFFFF" stroke-width="1.5"/>
+              <path d="M98 36L101 39L107 33" stroke="#1B4332" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            }
+            <defs>
+              <linearGradient id="matureGrad1" x1="20" y1="40" x2="70" y2="90" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#52B788"/>
+                <stop offset="1" stop-color="#1B4332"/>
+              </linearGradient>
+              <linearGradient id="matureGrad2" x1="70" y1="40" x2="120" y2="90" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#40916C"/>
+                <stop offset="1" stop-color="#081C15"/>
+              </linearGradient>
+              <linearGradient id="matureGrad3" x1="38" y1="8" x2="102" y2="72" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#74C69D"/>
+                <stop offset="0.7" stop-color="#2D6A4F"/>
+                <stop offset="1" stop-color="#1B4332"/>
+              </linearGradient>
+              <linearGradient id="matureGrad4" x1="42" y1="32" x2="98" y2="88" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#40916C"/>
+                <stop offset="1" stop-color="#1B4332"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        }
+      }
     </div>
 
     <!-- Status badge -->
     <div class="tree-state-badge" [class.planted-success]="isFinished()">
       @if (!isFinished()) {
-        <span>{{ stageKey() | translate }}</span>
+        <span class="badge-text">{{ stageKey() | translate }}</span>
       } @else {
-        <span class="text-neon font-bold">🎉 {{ matureKey() | translate }}</span>
+        <span class="badge-text text-gold font-bold">
+          <svg class="badge-icon-svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l2.4 7.4h7.6l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4-6.2-4.5h7.6z"/>
+          </svg>
+          {{ matureKey() | translate }}
+        </span>
       }
     </div>
   </div>
@@ -38,8 +214,13 @@
   @if (showProgressBar()) {
     <div class="tree-progress-section">
       <div class="progress-info-row">
-        <span>{{ effectiveProgressLabelKey() | translate }}</span>
-        <strong>{{ currentDrops() }} / {{ maxDrops() }} {{ dropsUnit() }}</strong>
+        <span class="progress-label">{{ effectiveProgressLabelKey() | translate }}</span>
+        <strong class="progress-counter font-mono text-blue">
+          {{ currentDrops() }} / {{ maxDrops() }}
+          <svg class="drop-svg-inline" viewBox="0 0 24 24" fill="#38BDF8">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+          </svg>
+        </strong>
       </div>
 
       <div class="eco-progress-track">
