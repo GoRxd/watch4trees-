@@ -54,3 +54,10 @@ The application will be available at `http://localhost:4200/`.
 - **Developer Guidelines & Rules:** [AGENT.md](./AGENT.md)
 - **Product Specification & Architecture:** [PROJECT_SPECIFICATION.md](./PROJECT_SPECIFICATION.md)
 
+---
+
+## 📄 License
+
+This project is proprietary and confidential. All rights reserved. See the [LICENSE](./LICENSE) file for more details.
+
+

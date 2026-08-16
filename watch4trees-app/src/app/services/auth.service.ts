@@ -1,35 +1,28 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../models';
 import { SafeStorage } from '../utils/storage.helper';
-import { STORAGE_KEYS } from '../constants';
+import { STORAGE_KEYS, ECO_METRICS } from '../constants';
+import { SupabaseService } from './supabase.service';
 
 export type { User } from '../models';
-
-const DEFAULT_DEMO_USER: User = {
-  id: 'usr-demo-001',
-  email: 'ekolog@watch4trees.org',
-  name: 'Damian (Eko-Ogrodnik)',
-  avatar: '👨‍🌾',
-  ecoPoints: 340,
-  waterDrops: 7,
-  treesPlanted: 18,
-  activeStreak: 6,
-  dailyLimitRemaining: 12,
-  targetFoundation: 'Posadzimy.pl'
-};
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private router = inject(Router);
+  private supabase = inject(SupabaseService);
+
   // Current user signal
   currentUser = signal<User | null>(this.loadStoredUser());
 
   // Computed auth status
   isAuthenticated = computed(() => !!this.currentUser());
 
-  constructor(private router: Router) {}
+  constructor() {
+    this.initAuthStateListener();
+  }
 
   private loadStoredUser(): User | null {
     return SafeStorage.getJSON<User>(STORAGE_KEYS.USER);
@@ -40,40 +33,118 @@ export class AuthService {
     SafeStorage.setJSON(STORAGE_KEYS.USER, user);
   }
 
-  private authenticate(user: User, redirectUrl: string = '/dashboard'): boolean {
-    this.saveUser(user);
-    this.router.navigate([redirectUrl]);
-    return true;
-  }
-
-  // [TODO_TEMPLATE: Connect to real backend / OAuth (Google / Email Auth)]
-  login(email: string, pass: string): boolean {
-    const user: User = {
-      ...DEFAULT_DEMO_USER,
-      email: email,
-      name: email.split('@')[0] || 'Eko-Aktywista'
-    };
-    return this.authenticate(user);
-  }
-
-  loginWithGoogle() {
-    this.authenticate({
-      ...DEFAULT_DEMO_USER,
-      email: 'damian.google@gmail.com',
-      name: 'Damian G.'
+  private async initAuthStateListener() {
+    this.supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        await this.syncUserFromDatabase(session.user);
+      } else if (event === 'SIGNED_OUT') {
+        this.saveUser(null);
+      }
     });
   }
 
-  loginDemo() {
-    this.authenticate(DEFAULT_DEMO_USER);
+  private async syncUserFromDatabase(authUser: any): Promise<User> {
+    const userId = authUser.id;
+
+    // 1. Fetch profile from database
+    const { data: profile } = await this.supabase.client
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    // 2. Fetch water balance from database
+    const { data: balance } = await this.supabase.client
+      .from('user_water_balance')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    const userMeta = authUser.user_metadata || {};
+    const user: User = {
+      id: userId,
+      email: authUser.email || '',
+      name: profile?.full_name || profile?.username || userMeta['full_name'] || authUser.email?.split('@')[0] || 'Eko-Hero',
+      avatar: profile?.avatar_url || userMeta['avatar_url'] || '👨‍🌾',
+      ecoPoints: (balance?.total_trees_planted || 0) * 200 + (balance?.total_drops_earned || 0) * 15,
+      waterDrops: balance?.current_drops ?? 0,
+      treesPlanted: balance?.total_trees_planted ?? 0,
+      activeStreak: profile?.streak_days ?? 1,
+      dailyLimitRemaining: Math.max(0, ECO_METRICS.DEFAULT_DAILY_LIMIT - (profile?.daily_watched_count || 0)),
+      targetFoundation: 'Posadzimy.pl'
+    };
+
+    this.saveUser(user);
+    return user;
   }
 
-  logout() {
+  async login(email: string, pass: string): Promise<{ success: boolean; error?: string }> {
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password: pass
+    });
+
+    if (error) {
+      console.error('[AuthService] Login error:', error.message);
+      return { success: false, error: error.message };
+    }
+
+    if (data.user) {
+      const user = await this.syncUserFromDatabase(data.user);
+      this.router.navigate(['/dashboard']);
+      return { success: true };
+    }
+
+    return { success: false, error: 'Unknown login error' };
+  }
+
+  async signUp(email: string, pass: string, username?: string): Promise<{ success: boolean; error?: string }> {
+    const displayName = username || email.split('@')[0];
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password: pass,
+      options: {
+        data: {
+          username: displayName,
+          full_name: displayName,
+          avatar_url: '👨‍🌾'
+        }
+      }
+    });
+
+    if (error) {
+      console.error('[AuthService] Sign up error:', error.message);
+      return { success: false, error: error.message };
+    }
+
+    if (data.user) {
+      // Auto login after sign up
+      await this.syncUserFromDatabase(data.user);
+      this.router.navigate(['/dashboard']);
+      return { success: true };
+    }
+
+    return { success: false, error: 'Unknown sign up error' };
+  }
+
+  async loginWithGoogle() {
+    await this.supabase.auth.signInWithOAuth({
+      provider: 'google'
+    });
+  }
+
+  async loginDemo(): Promise<{ success: boolean; error?: string }> {
+    // Authenticate with seeded demo user credentials
+    return this.login('ekolog@watch4trees.org', 'demoPassword123!');
+  }
+
+  async logout() {
+    await this.supabase.auth.signOut();
     this.saveUser(null);
     this.router.navigate(['/']);
   }
 
-  // Update user state after watering / ad completion
+  // Update user state locally and in database
   updateUser(updates: Partial<User>) {
     const current = this.currentUser();
     if (current) {

@@ -2,6 +2,7 @@ import { Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { DatabaseService } from '../../services/database.service';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
@@ -23,6 +24,7 @@ export type { AdSessionConfig, SessionType, SponsorInfo } from '../../models';
 })
 export class WatchComponent implements OnDestroy {
   auth = inject(AuthService);
+  db = inject(DatabaseService);
   i18n = inject(TranslationService);
 
   // Available session options
@@ -124,7 +126,8 @@ export class WatchComponent implements OnDestroy {
   }
 
   // Server-Side Verification simulation & award delivery
-  private grantRewards() {
+  // [TODO_TEMPLATE: Send SSV ad session confirmation to Supabase Edge Function]
+  private async grantRewards() {
     const user = this.auth.currentUser();
     const session = this.selectedSession();
 
@@ -133,6 +136,13 @@ export class WatchComponent implements OnDestroy {
         waterDrops: user.waterDrops + session.waterReward,
         ecoPoints: user.ecoPoints + session.pointsReward,
         dailyLimitRemaining: Math.max(0, user.dailyLimitRemaining - session.adCount)
+      });
+
+      // Record transaction in database
+      await this.db.addWaterDrops(user.id, session.waterReward, 'AD_REWARD', {
+        sessionId: session.id,
+        adCount: session.adCount,
+        durationSeconds: session.durationSeconds
       });
     }
 
@@ -145,3 +155,4 @@ export class WatchComponent implements OnDestroy {
     }
   }
 }
+

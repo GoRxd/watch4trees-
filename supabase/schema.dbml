@@ -1,0 +1,126 @@
+// ==========================================
+// Watch4Trees - Memory-Optimized DBML Schema
+// Docs: https://dbml.dbdiagram.io/docs
+// ==========================================
+
+Enum transaction_source {
+  AD_REWARD
+  GAMEPLAY_OFFERWALL
+  STREAK_BONUS
+  TREE_CONVERSION
+  ADMIN_ADJUSTMENT
+}
+
+Enum tree_status {
+  PLANNED
+  PLANTED
+  CERTIFIED
+}
+
+Table profiles {
+  id uuid [pk, note: 'References auth.users.id']
+  username varchar(50) [unique, not null]
+  full_name varchar(100)
+  avatar_url text
+  daily_watched_count smallint [default: 0, note: 'Daily limit anti-fraud (max 15/day)']
+  last_watch_date date [default: `CURRENT_DATE`]
+  streak_days smallint [default: 1, note: 'Consecutive active days']
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+
+  Note: 'Extended public user profile linked to Supabase Auth'
+}
+
+Table user_water_balance {
+  user_id uuid [pk, ref: - profiles.id]
+  current_drops smallint [default: 0, note: 'Water drops in current cycle (0-9)']
+  total_drops_earned int [default: 0, note: 'Lifetime accumulated drops']
+  total_trees_planted int [default: 0, note: 'Lifetime planted trees']
+  total_co2_offset_kg decimal(10,2) [default: 0.00, note: 'Calculated at ~22kg CO2/tree/year']
+  updated_at timestamptz [default: `now()`]
+
+  Note: 'Realtime water wallet & aggregated eco impact metrics'
+}
+
+Table water_drop_transactions {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, ref: > profiles.id]
+  amount smallint [not null, note: '+1 (ad), +5 (gameplay), -10 (tree conversion)']
+  source transaction_source [not null]
+  metadata jsonb [note: 'Ad session ID, provider, offerwall transaction id']
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    (user_id, created_at)
+  }
+
+  Note: 'Immutable ledger of all water drop inflows and outflows'
+}
+
+Table eco_projects {
+  id uuid [pk, default: `gen_random_uuid()`]
+  name varchar(100) [not null, note: 'e.g. Partner planting project']
+  organization varchar(100) [not null, note: 'Flexible partner name']
+  region varchar(100) [not null, note: 'Polska, Amazonia, etc.']
+  country_code char(2) [not null, note: 'ISO-2: PL, BR, MG']
+  tree_species varchar(100) [not null]
+  co2_absorption_kg_year decimal(5,2) [default: 22.00]
+  is_active boolean [default: true]
+  created_at timestamptz [default: `now()`]
+
+  Note: 'Verified certified planting projects & partners'
+}
+
+Table planted_trees {
+  id uuid [pk, default: `gen_random_uuid()`]
+  user_id uuid [not null, ref: > profiles.id]
+  project_id uuid [not null, ref: > eco_projects.id]
+  status tree_status [default: 'PLANNED']
+  tree_number varchar(40) [unique, not null, note: 'e.g. W4T-2026-00042']
+  latitude decimal(8,5) [note: 'GPS Latitude (~1 meter precision)']
+  longitude decimal(8,5) [note: 'GPS Longitude (~1 meter precision)']
+  planted_at timestamptz
+  created_at timestamptz [default: `now()`]
+
+  indexes {
+    (user_id, status)
+  }
+
+  Note: 'Physical trees allocated to user and funded by attention/ads'
+}
+
+Table tree_certificates {
+  id uuid [pk, default: `gen_random_uuid()`]
+  tree_id uuid [unique, not null, ref: - planted_trees.id]
+  certificate_number varchar(60) [unique, not null]
+  verified_by varchar(100) [not null, note: 'Official partner entity']
+  pdf_url text
+  batch_id varchar(50) [note: 'Partner planting batch reference']
+  issued_at timestamptz [default: `now()`]
+
+  Note: 'Open Impact Ledger - Verifiable proof & digital passport'
+}
+
+Table achievements {
+  id varchar(40) [pk, note: 'e.g. first_seed, forest_guardian']
+  title varchar(80) [not null, note: 'Title or i18n key']
+  description varchar(150) [not null, note: 'Description or i18n key']
+  icon_name varchar(40) [not null]
+  required_trees smallint [default: 0]
+  required_streak smallint [default: 0]
+
+  Note: 'Gamification badge definitions'
+}
+
+Table user_achievements {
+  user_id uuid [ref: > profiles.id]
+  achievement_id varchar(40) [ref: > achievements.id]
+  unlocked_at timestamptz [default: `now()`]
+
+  indexes {
+    (user_id, achievement_id) [pk]
+  }
+
+  Note: 'Unlocked user badges with composite primary key'
+}
+

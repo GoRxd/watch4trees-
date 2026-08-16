@@ -1,7 +1,8 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { DatabaseService } from '../../services/database.service';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
@@ -24,8 +25,9 @@ export type { PlantedTreeCertificate } from '../../models';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   auth = inject(AuthService);
+  db = inject(DatabaseService);
   i18n = inject(TranslationService);
   ecoMetrics = ECO_METRICS;
 
@@ -35,40 +37,40 @@ export class DashboardComponent {
   treeSuccessCelebration = signal<boolean>(false);
 
   // Planted trees certificates list
-  myPlantedTrees = signal<PlantedTreeCertificate[]>([
-    {
-      id: 'tree-1',
-      serialNumber: 'W4T-PL-2026-0941',
-      species: 'Dąb Szypułkowy (Quercus robur)',
-      speciesIcon: '🌳',
-      plantedDate: '12.08.2026',
-      location: 'Nadleśnictwo Lipusz, Polska (Działka #44/B)',
-      foundation: 'Posadzimy.pl',
-      co2PerYearKg: ECO_METRICS.CO2_PER_TREE_KG
-    },
-    {
-      id: 'tree-2',
-      serialNumber: 'W4T-PL-2026-0812',
-      species: 'Sosna Zwyczajna (Pinus sylvestris)',
-      speciesIcon: '🌲',
-      plantedDate: '28.07.2026',
-      location: 'Nadleśnictwo Spychowo, Mazury',
-      foundation: 'Posadzimy.pl',
-      co2PerYearKg: 18
-    },
-    {
-      id: 'tree-3',
-      serialNumber: 'W4T-GL-2026-4401',
-      species: 'Namorzyny Czerwone (Rhizophora mangle)',
-      speciesIcon: '🌴',
-      plantedDate: '15.07.2026',
-      location: 'Mahajanga Mangrove Restoration, Madagaskar',
-      foundation: 'Eden Reforestation Projects',
-      co2PerYearKg: 25
-    }
-  ]);
+  myPlantedTrees = signal<PlantedTreeCertificate[]>([]);
 
-  waterActiveTree() {
+  ngOnInit() {
+    this.loadUserData();
+  }
+
+  // [TODO_TEMPLATE: Load user trees and balance from DatabaseService / Supabase]
+  async loadUserData() {
+    const user = this.auth.currentUser();
+    if (!user) return;
+
+    // Fetch user water balance
+    const balance = await this.db.getUserWaterBalance(user.id);
+    if (balance) {
+      this.currentTreeDrops.set(balance.current_drops);
+    }
+
+    // Fetch planted trees and map to certificates
+    const dbTrees = await this.db.getPlantedTrees(user.id);
+    const certificates: PlantedTreeCertificate[] = dbTrees.map(t => ({
+      id: t.id,
+      serialNumber: t.certificate?.certificate_number || t.tree_number,
+      species: t.project?.tree_species || 'Dąb Szypułkowy (Quercus robur)',
+      speciesIcon: t.project?.country_code === 'MG' ? '🌴' : (t.project?.tree_species.includes('Sosna') ? '🌲' : '🌳'),
+      plantedDate: t.planted_at ? new Date(t.planted_at).toLocaleDateString() : new Date().toLocaleDateString(),
+      location: `${t.project?.name || 'Nadleśnictwo Lipusz'}, ${t.project?.region || 'Polska'}`,
+      foundation: t.certificate?.verified_by || t.project?.organization || user.targetFoundation || 'Posadzimy.pl',
+      co2PerYearKg: Number(t.project?.co2_absorption_kg_year || ECO_METRICS.CO2_PER_TREE_KG)
+    }));
+
+    this.myPlantedTrees.set(certificates);
+  }
+
+  async waterActiveTree() {
     const user = this.auth.currentUser();
     if (!user) return;
 
@@ -87,26 +89,36 @@ export class DashboardComponent {
 
     this.currentTreeDrops.update(d => d + 1);
 
-    // Check if tree is fully mature and funded!
+    // Record drop transaction in database
+    await this.db.addWaterDrops(user.id, 1, 'AD_REWARD', { action: 'water_tree' });
+
+    // Check if tree is fully mature and funded (10 drops)!
     if (this.currentTreeDrops() >= this.dropsNeededForTree) {
-      this.celebrateTreePlanted();
+      await this.celebrateTreePlanted();
     }
   }
 
-  private celebrateTreePlanted() {
+  private async celebrateTreePlanted() {
     const user = this.auth.currentUser();
     if (!user) return;
 
     this.treeSuccessCelebration.set(true);
 
-    const newTree: PlantedTreeCertificate = {
-      id: 'tree-' + Date.now(),
-      serialNumber: `W4T-PL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-      species: 'Dąb Szypułkowy (Quercus robur)',
+    // Record new planted tree in database
+    const planted = await this.db.recordNewPlantedTree(user.id);
+    if (!planted) {
+      this.treeSuccessCelebration.set(false);
+      return;
+    }
+
+    const newCert: PlantedTreeCertificate = {
+      id: planted.id,
+      serialNumber: planted.certificate?.certificate_number || planted.tree_number,
+      species: planted.project?.tree_species || 'Dąb Szypułkowy (Quercus robur)',
       speciesIcon: '🌳',
       plantedDate: new Date().toLocaleDateString(),
-      location: 'Nadleśnictwo Solec Kujawski, Polska',
-      foundation: user.targetFoundation || 'Posadzimy.pl',
+      location: `${planted.project?.name || 'Nadleśnictwo Solec Kujawski'}, ${planted.project?.region || 'Polska'}`,
+      foundation: planted.certificate?.verified_by || user.targetFoundation || 'Posadzimy.pl',
       co2PerYearKg: ECO_METRICS.CO2_PER_TREE_KG
     };
 
@@ -116,7 +128,7 @@ export class DashboardComponent {
       ecoPoints: user.ecoPoints + 200
     });
 
-    this.myPlantedTrees.update(trees => [newTree, ...trees]);
+    this.myPlantedTrees.update(trees => [newCert, ...trees]);
 
     // Reset tree progress after small delay
     setTimeout(() => {
@@ -125,3 +137,5 @@ export class DashboardComponent {
     }, 4000);
   }
 }
+
+
