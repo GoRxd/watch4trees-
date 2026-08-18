@@ -17,6 +17,7 @@ export interface Profile {
   daily_watched_count: number;
   last_watch_date: string;
   streak_days: number;
+  active_session_until?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -31,8 +32,6 @@ export interface UserBalance {
   total_co2_offset_kg: number;
   updated_at: string;
 }
-
-export type UserWaterBalance = UserBalance;
 
 export interface WaterDropTransaction {
   id: string;
@@ -61,22 +60,15 @@ export interface PlantedTree {
   project_id: string;
   status: TreeStatus;
   tree_number: string;
+  certificate_number: string;
+  verified_by: string;
+  pdf_url?: string | null;
+  batch_id?: string | null;
   latitude: number | null;
   longitude: number | null;
   planted_at: string | null;
   created_at: string;
   project?: EcoProject;
-  certificate?: TreeCertificate;
-}
-
-export interface TreeCertificate {
-  id: string;
-  tree_id: string;
-  certificate_number: string;
-  verified_by: string;
-  pdf_url: string | null;
-  batch_id: string | null;
-  issued_at: string;
 }
 
 export interface Achievement {
@@ -84,8 +76,9 @@ export interface Achievement {
   title: string;
   description: string;
   icon_name: string;
-  required_trees: number;
-  required_streak: number;
+  category?: string;
+  criteria_type?: string;
+  created_at?: string;
 }
 
 export interface UserAchievement {
@@ -139,3 +132,57 @@ export interface SponsorInfo {
   esgGoal: string;
 }
 
+// ------------------------------------------------------------------------------
+// Edge Function Request / Response Types (Anti-Cheat & Anti-Fraud)
+// ------------------------------------------------------------------------------
+
+export interface QuizOption {
+  id: string;
+  textPl: string;
+  textEn: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  questionPl: string;
+  questionEn: string;
+  options: QuizOption[];
+}
+
+export interface AdSessionStartResponse {
+  success: boolean;
+  sessionToken?: string;
+  sessionType?: SessionType;
+  durationSeconds?: number;
+  waterReward?: number;
+  pointsReward?: number;
+  adCount?: number;
+  quiz?: QuizQuestion;
+  error?: string;
+  dailyLimitRemaining?: number;
+}
+
+export interface AdSessionClaimResponse {
+  success: boolean;
+  current_drops?: number;
+  active_tree_drops?: number;
+  eco_points?: number;
+  total_drops_earned?: number;
+  daily_watched_count?: number;
+  dailyLimitRemaining?: number;
+  streak_days?: number;
+  error?: string;
+  quizVerified?: boolean;
+}
+
+export interface TreeWaterResponse {
+  success: boolean;
+  current_drops?: number;
+  active_tree_drops?: number;
+  eco_points?: number;
+  total_trees_planted?: number;
+  total_co2_offset_kg?: number;
+  tree_planted_now?: boolean;
+  new_tree?: PlantedTree;
+  error?: string;
+}

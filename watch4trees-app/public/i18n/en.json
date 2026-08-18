@@ -92,11 +92,15 @@
     "opt2": "Heavy coal mining and fossil fuels",
     "rewardGrantedBadge": "Reward Granted!",
     "rewardTitle": "Great Job, Eco-Hero!",
-    "rewardSub": "Your attention generated funds for our forestry partner. You received fresh water drops to nurture your tree.",
+    "rewardSub": "Your attention funded certified tree planting. You earned new water drops to hydrate your active tree.",
     "addedToInventory": "Added to your inventory",
-    "pointsAdded": "Added to your league ranking",
+    "pointsAdded": "Credited to your eco ranking",
     "goToDashboardWater": "Go to Dashboard & Water Tree",
-    "startAnotherSession": "Start Another Session"
+    "startAnotherSession": "Start Another Session",
+    "quizFailedBadge": "Verification Failed (Anti-Fraud)",
+    "quizFailedTitle": "Session Cancelled",
+    "quizFailedDesc": "An incorrect answer was submitted for the attention check. For security and anti-bot verification, the reward has been voided. You can launch a fresh session.",
+    "tryAgainBtn": "Start New Session"
   },
   "hero": {
     "badgeEco": "Purpose-First Eco-Activism",
@@ -227,6 +231,25 @@
     "tech1": "Angular 19 (Signals & Standalone)",
     "tech2": "Tailwind & SCSS Glassmorphism",
     "tech3": "Server-Side Verification (SSV)",
-    "copyright": "© 2026 Watch4Trees. All rights reserved. Purpose-first initiative."
+    "copyright": "© 2026 Watch4Trees. All rights reserved. Non-profit purpose-first initiative."
+  },
+  "toast": {
+    "rewardClaimedTitle": "Reward Claimed!",
+    "rewardClaimedMsg": "Received +{{drops}} 💧 and +{{points}} eco points!",
+    "sessionInProgressTitle": "Session In Progress",
+    "dailyLimitTitle": "Daily Limit",
+    "sessionErrorTitle": "Session Error",
+    "sessionStartError": "Failed to start ad session. Please try again.",
+    "quizWrongTitle": "Attention Check",
+    "quizWrongMsg": "Incorrect quiz answer! Please choose the correct option to verify human presence.",
+    "rewardErrorTitle": "Reward Error",
+    "rewardErrorMsg": "Reward verification failed.",
+    "noDropsTitle": "No Water Drops",
+    "noDropsMsg": "You don't have water drops yet! Watch a quick ad session to earn drops to water your tree.",
+    "treePlantedTitle": "New Tree Planted!",
+    "treePlantedMsg": "🌳 Congratulations! You funded a real tree planting! Certificate has been generated.",
+    "wateredTitle": "Tree Watered",
+    "wateredMsg": "Watered tree (-1 💧, +15 pts). Stage: {{drops}}/10 drops.",
+    "wateringErrorTitle": "Watering Error"
   }
 }

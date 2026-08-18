@@ -96,7 +96,11 @@
     "addedToInventory": "Dodano do Twojego ekwipunku",
     "pointsAdded": "Naliczono do rankingu ligowego",
     "goToDashboardWater": "Przejdź do Pulpitu i Podlej Drzewo",
-    "startAnotherSession": "Rozpocznij Kolejną Sesję"
+    "startAnotherSession": "Rozpocznij Kolejną Sesję",
+    "quizFailedBadge": "Weryfikacja Nieudana (Anti-Fraud)",
+    "quizFailedTitle": "Sesja Została Anulowana",
+    "quizFailedDesc": "Wybrano błędną odpowiedź w teście uważności. Ze względów bezpieczeństwa i ochrony przed botami nagroda nie została przyznana. Możesz uruchomić nową sesję.",
+    "tryAgainBtn": "Rozpocznij Nową Sesję"
   },
   "hero": {
     "badgeEco": "Purpose-First Eco-Activism",
@@ -228,5 +232,24 @@
     "tech2": "Tailwind & SCSS Glassmorphism",
     "tech3": "Server-Side Verification (SSV)",
     "copyright": "© 2026 Watch4Trees. Wszelkie prawa zastrzeżone. Projekt non-profit purpose-first."
+  },
+  "toast": {
+    "rewardClaimedTitle": "Nagroda odebrana!",
+    "rewardClaimedMsg": "Otrzymano +{{drops}} 💧 i +{{points}} pkt eko!",
+    "sessionInProgressTitle": "Sesja w toku",
+    "dailyLimitTitle": "Limit dzienny",
+    "sessionErrorTitle": "Błąd sesji",
+    "sessionStartError": "Nie udało się rozpocząć sesji reklamowej. Spróbuj ponownie.",
+    "quizWrongTitle": "Weryfikacja uwagi",
+    "quizWrongMsg": "Błędna odpowiedź na quiz! Wybierz poprawną opcję, aby potwierdzić obecność człowieka.",
+    "rewardErrorTitle": "Błąd nagrody",
+    "rewardErrorMsg": "Wystąpił błąd weryfikacji nagrody.",
+    "noDropsTitle": "Brak kropel wody",
+    "noDropsMsg": "Nie masz jeszcze kropel wody! Obejrzyj krótką sesję, aby zdobyć krople do podlania drzewa.",
+    "treePlantedTitle": "Nowe drzewo posadzone!",
+    "treePlantedMsg": "🌳 Gratulacje! Ufundowałeś posadzenie prawdziwego drzewa! Certyfikat został wygenerowany.",
+    "wateredTitle": "Podlano drzewo",
+    "wateredMsg": "Podlano drzewo (-1 💧, +15 pkt). Stan: {{drops}}/10 kropel.",
+    "wateringErrorTitle": "Błąd podlewania"
   }
 }

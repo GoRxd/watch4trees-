@@ -8,6 +8,8 @@ tmp/
 out-tsc/
 bazel-out/
 .angular/
+supabase/.temp/
+supabase/.branches/
 
 # Dependencies
 node_modules/

@@ -1,5 +1,5 @@
 // ==========================================
-// Watch4Trees - Memory-Optimized DBML Schema
+// Watch4Trees - DBML Schema
 // Docs: https://dbml.dbdiagram.io/docs
 // ==========================================
 
@@ -35,7 +35,7 @@ Table user_balance {
   user_id uuid [pk, ref: - profiles.id]
   current_drops int [default: 0, note: 'Water drops in user wallet']
   active_tree_drops smallint [default: 0, note: 'Water drops poured on active tree (0-10)']
-  eco_points int [default: 0, note: 'League and gamification eco points']
+  eco_points int [default: 0, note: 'Gamification eco points']
   total_drops_earned int [default: 0, note: 'Lifetime accumulated drops']
   total_trees_planted int [default: 0, note: 'Lifetime planted trees']
   total_co2_offset_kg decimal(10,2) [default: 0.00, note: 'Calculated at ~22kg CO2/tree/year']
@@ -47,9 +47,9 @@ Table user_balance {
 Table water_drop_transactions {
   id uuid [pk, default: `gen_random_uuid()`]
   user_id uuid [not null, ref: > profiles.id]
-  amount smallint [not null, note: '+1 (ad), +5 (gameplay), -10 (tree conversion)']
+  amount smallint [not null, note: '+1 (ad), +5 (gameplay), -1 (tree water)']
   source transaction_source [not null]
-  metadata jsonb [note: 'Ad session ID, provider, offerwall transaction id']
+  metadata jsonb [note: 'Ad session details, provider, etc.']
   created_at timestamptz [default: `now()`]
 
   indexes {
@@ -61,10 +61,10 @@ Table water_drop_transactions {
 
 Table eco_projects {
   id uuid [pk, default: `gen_random_uuid()`]
-  name varchar(100) [not null, note: 'e.g. Partner planting project']
-  organization varchar(100) [not null, note: 'Flexible partner name']
-  region varchar(100) [not null, note: 'Polska, Amazonia, etc.']
-  country_code char(2) [not null, note: 'ISO-2: PL, BR, MG']
+  name varchar(100) [not null, note: 'e.g. Nadleśnictwo Lipusz']
+  organization varchar(100) [not null, note: 'Posadzimy.pl, Eden Reforestation']
+  region varchar(100) [not null, note: 'Polska, Kaszuby, etc.']
+  country_code char(2) [not null, note: 'ISO-2: PL, MG']
   tree_species varchar(100) [not null]
   co2_absorption_kg_year decimal(5,2) [default: 22.00]
   is_active boolean [default: true]
@@ -77,41 +77,34 @@ Table planted_trees {
   id uuid [pk, default: `gen_random_uuid()`]
   user_id uuid [not null, ref: > profiles.id]
   project_id uuid [not null, ref: > eco_projects.id]
-  status tree_status [default: 'PLANNED']
-  tree_number varchar(40) [unique, not null, note: 'e.g. W4T-2026-00042']
-  latitude decimal(8,5) [note: 'GPS Latitude (~1 meter precision)']
-  longitude decimal(8,5) [note: 'GPS Longitude (~1 meter precision)']
-  planted_at timestamptz
+  status tree_status [default: 'CERTIFIED']
+  tree_number varchar(40) [unique, not null, note: 'e.g. W4T-PL-2026-0941']
+  certificate_number varchar(60) [unique, not null, note: 'Digital passport certificate']
+  verified_by varchar(100) [not null, note: 'Official partner entity']
+  pdf_url text
+  batch_id varchar(50)
+  latitude decimal(8,5)
+  longitude decimal(8,5)
+  planted_at timestamptz [default: `now()`]
   created_at timestamptz [default: `now()`]
 
   indexes {
-    (user_id, status)
+    (user_id, created_at)
   }
 
   Note: 'Physical trees allocated to user and funded by attention/ads'
 }
 
-Table tree_certificates {
-  id uuid [pk, default: `gen_random_uuid()`]
-  tree_id uuid [unique, not null, ref: - planted_trees.id]
-  certificate_number varchar(60) [unique, not null]
-  verified_by varchar(100) [not null, note: 'Official partner entity']
-  pdf_url text
-  batch_id varchar(50) [note: 'Partner planting batch reference']
-  issued_at timestamptz [default: `now()`]
-
-  Note: 'Open Impact Ledger - Verifiable proof & digital passport'
-}
-
 Table achievements {
   id varchar(40) [pk, note: 'e.g. first_seed, forest_guardian']
-  title varchar(80) [not null, note: 'Title or i18n key']
-  description varchar(150) [not null, note: 'Description or i18n key']
+  title varchar(80) [not null, note: 'Title']
+  description varchar(150) [not null, note: 'Description']
   icon_name varchar(40) [not null]
-  required_trees smallint [default: 0]
-  required_streak smallint [default: 0]
+  category varchar(40) [default: 'general']
+  criteria_type varchar(40) [default: 'custom', note: 'Evaluated by custom backend logic']
+  created_at timestamptz [default: `now()`]
 
-  Note: 'Gamification badge definitions'
+  Note: 'Gamification badge definitions evaluated flexibly on backend'
 }
 
 Table user_achievements {
@@ -125,4 +118,3 @@ Table user_achievements {
 
   Note: 'Unlocked user badges with composite primary key'
 }
-
