@@ -115,7 +115,7 @@
                 
                 <div class="esg-commitment-pill">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                  <span>Cel ESG: {{ currentSponsor().esgGoal }}</span>
+                  <span>{{ 'watch.esgGoalLabel' | translate }}: {{ currentSponsor().esgGoal }}</span>
                 </div>
               </div>
             </div>
@@ -124,7 +124,7 @@
             <div class="video-progress-track eco-progress-track">
               <div 
                 class="video-progress-fill eco-progress-fill" 
-                [style.width.%]="((timerTotal() - currentTimer()) / timerTotal()) * 100"
+                [style.width.%]="progressPercent()"
               ></div>
             </div>
           </div>
@@ -137,7 +137,7 @@
             </span>
             <span class="ssv-status">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              SSV Active (Server-Side Verified)
+              {{ 'watch.ssvActive' | translate }}
             </span>
           </div>
 

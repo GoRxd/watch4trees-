@@ -64,12 +64,60 @@
     "openWatchModule": "Go to Watch Session",
     "forestBadge": "Digital Certificates Ledger",
     "forestTitle": "My Virtual Forest & Tree Passports",
-    "treesCountLabel": "Planted Trees"
+    "treesCountLabel": "Planted Trees",
+    "tabForest": "Virtual Forest & Passports",
+    "tabAchievements": "Badges & Achievements",
+    "certLocation": "Location:",
+    "certDate": "Date:",
+    "certPartner": "Partner:",
+    "certCo2": "CO₂ Absorption:",
+    "certVerified": "Verified in Ledger",
+    "certTag": "OFFICIAL CERTIFICATE"
+  },
+  "achievements": {
+    "badge": "Eco-Gamification",
+    "title": "Achievements & Badges",
+    "subtitle": "Earn unique badges for your genuine engagement, planting trees, and nurturing your virtual grove.",
+    "unlockedCount": "Unlocked Badges",
+    "allFilter": "All",
+    "onboardingFilter": "Onboarding",
+    "wateringFilter": "Watering",
+    "gamingFilter": "Partner Games",
+    "impactFilter": "Real Impact",
+    "streakFilter": "Streaks",
+    "statusUnlocked": "Unlocked",
+    "statusLocked": "Locked",
+    "emptyCategory": "No achievements found in this category.",
+    "lockedHint": "Complete requirements within the app to unlock this badge.",
+    "items": {
+      "first_seed": {
+        "title": "First Seed",
+        "desc": "Collect your first water drop and begin your adventure."
+      },
+      "water_master": {
+        "title": "Water Master",
+        "desc": "Fill the watering can and collect 10 drops to plant a tree."
+      },
+      "green_player": {
+        "title": "Eco Gamer",
+        "desc": "Spend time in partner games, turning playtime into real saplings."
+      },
+      "forest_guardian": {
+        "title": "Forest Guardian",
+        "desc": "Plant at least 10 real certified trees."
+      },
+      "eco_hero_month": {
+        "title": "Eco Hero of the Month",
+        "desc": "Maintain a 30-day activity streak without interruption."
+      }
+    }
   },
   "watch": {
     "backToDashboard": "Back to Dashboard",
     "moduleTitle": "Rewarded Ad Session & Match-Funding",
-    "pickerBadge": "Choose Session Length",
+    "pickerBadge": "Session Duration Selection",
+    "esgGoalLabel": "ESG Goal",
+    "ssvActive": "SSV Active (Server-Side Verified)",
     "pickerTitle": "How much time can you invest in the planet?",
     "pickerSub": "Select your session format. Every completed second generates revenue for certified tree planting non-profits.",
     "sessionQuickTitle": "Quick Shot",
@@ -248,8 +296,10 @@
     "noDropsMsg": "You don't have water drops yet! Watch a quick ad session to earn drops to water your tree.",
     "treePlantedTitle": "New Tree Planted!",
     "treePlantedMsg": "🌳 Congratulations! You funded a real tree planting! Certificate has been generated.",
-    "wateredTitle": "Tree Watered",
-    "wateredMsg": "Watered tree (-1 💧, +15 pts). Stage: {{drops}}/10 drops.",
-    "wateringErrorTitle": "Watering Error"
+    "wateredTitle": "Tree watered",
+    "wateredMsg": "Tree watered (-1 💧, +15 pts). Status: {{drops}}/10 drops.",
+    "wateringErrorTitle": "Watering error",
+    "achievementUnlockedTitle": "🏆 New Achievement!",
+    "achievementUnlockedMsg": "Unlocked badge: {{title}} {{icon}}!"
   }
 }

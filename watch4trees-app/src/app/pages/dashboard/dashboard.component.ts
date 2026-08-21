@@ -8,10 +8,12 @@ import { ToastService } from '../../services/toast.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
 import { TreeStageComponent } from '../../components/tree-stage/tree-stage.component';
+import { AchievementsListComponent } from '../../components/achievements-list/achievements-list.component';
 import { PlantedTreeCertificate } from '../../models';
 import { ECO_METRICS } from '../../constants';
 
 export type { PlantedTreeCertificate } from '../../models';
+export type DashboardTab = 'forest' | 'achievements';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,7 +23,8 @@ export type { PlantedTreeCertificate } from '../../models';
     RouterModule, 
     TranslatePipe, 
     AppHeaderComponent,
-    TreeStageComponent
+    TreeStageComponent,
+    AchievementsListComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -32,6 +35,9 @@ export class DashboardComponent implements OnInit {
   i18n = inject(TranslationService);
   toast = inject(ToastService);
   ecoMetrics = ECO_METRICS;
+
+  // Active dashboard navigation tab
+  activeTab = signal<DashboardTab>('forest');
 
   // Active tree watering state
   currentTreeDrops = signal<number>(0);

@@ -70,6 +70,7 @@ export class WatchComponent implements OnDestroy {
   // Video playback countdown
   currentTimer = signal<number>(15);
   timerTotal = signal<number>(15);
+  progressPercent = signal<number>(0);
   timerInterval: any = null;
 
   // Server-Side Anti-Fraud Session State
@@ -106,26 +107,42 @@ export class WatchComponent implements OnDestroy {
       return;
     }
 
+    const totalSeconds = res.durationSeconds || session.durationSeconds;
     this.sessionToken.set(res.sessionToken);
     this.serverQuiz.set(res.quiz);
-    this.timerTotal.set(res.durationSeconds || session.durationSeconds);
-    this.currentTimer.set(res.durationSeconds || session.durationSeconds);
+    this.timerTotal.set(totalSeconds);
+    this.currentTimer.set(totalSeconds);
+    this.progressPercent.set(0);
     this.state.set('playing');
 
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
     }
 
+    const durationMs = totalSeconds * 1000;
+    const startTime = Date.now();
+
     this.timerInterval = setInterval(() => {
-      if (this.currentTimer() > 1) {
-        this.currentTimer.update(t => t - 1);
-      } else {
+      const elapsed = Date.now() - startTime;
+      const remainingMs = Math.max(0, durationMs - elapsed);
+      const remainingSec = Math.ceil(remainingMs / 1000);
+      const progress = Math.min(100, (elapsed / durationMs) * 100);
+
+      this.currentTimer.set(remainingSec);
+      this.progressPercent.set(progress);
+
+      if (remainingMs <= 0) {
         clearInterval(this.timerInterval);
         this.timerInterval = null;
-        // Transition to human anti-fraud verification
-        this.state.set('quiz');
+        this.currentTimer.set(0);
+        this.progressPercent.set(100);
+
+        // Smooth transition after reaching 100%
+        setTimeout(() => {
+          this.state.set('quiz');
+        }, 400);
       }
-    }, 1000);
+    }, 40);
   }
 
   // Verify anti-fraud attention quiz via Edge Function
@@ -176,15 +193,21 @@ export class WatchComponent implements OnDestroy {
   }
 
   resetSession() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
     this.state.set('idle');
     this.sessionToken.set(null);
     this.serverQuiz.set(null);
     this.errorMessage.set(null);
+    this.progressPercent.set(0);
   }
 
   ngOnDestroy() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
+      this.timerInterval = null;
     }
   }
 }

@@ -5,6 +5,8 @@ import {
   UserBalance,
   EcoProject,
   PlantedTree,
+  Achievement,
+  UserAchievement,
   SessionType,
   AdSessionStartResponse,
   AdSessionClaimResponse,
@@ -111,6 +113,54 @@ export class DatabaseService {
     const projects = (data || []) as EcoProject[];
     this.ecoProjects.set(projects);
     return projects;
+  }
+
+  // ----------------------------------------------------------------------------
+  // 3b. Achievements & Gamification (Direct Read via RLS)
+  // [TODO_TEMPLATE: User will implement custom backend triggers / Edge Functions to evaluate and award achievements]
+  // ----------------------------------------------------------------------------
+  async getAchievements(): Promise<Achievement[]> {
+    const { data, error } = await this.supabase.client
+      .from('achievements')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('[DatabaseService] Error fetching achievements:', error);
+      return [];
+    }
+
+    return (data || []) as Achievement[];
+  }
+
+  async getUserAchievements(userId: string): Promise<UserAchievement[]> {
+    const { data, error } = await this.supabase.client
+      .from('user_achievements')
+      .select('*, achievement:achievements(*)')
+      .eq('user_id', userId)
+      .order('unlocked_at', { ascending: false });
+
+    if (error) {
+      console.error('[DatabaseService] Error fetching user achievements:', error);
+      return [];
+    }
+
+    return (data || []) as UserAchievement[];
+  }
+
+  async getAchievementById(achievementId: string): Promise<Achievement | null> {
+    const { data, error } = await this.supabase.client
+      .from('achievements')
+      .select('*')
+      .eq('id', achievementId)
+      .single();
+
+    if (error) {
+      console.error('[DatabaseService] Error fetching achievement by id:', error);
+      return null;
+    }
+
+    return data as Achievement;
   }
 
   // ----------------------------------------------------------------------------

@@ -179,6 +179,51 @@
   line-height: 1.5;
 }
 
+/* Dashboard Tab Navigation */
+.dash-tab-nav-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+}
+
+.dash-tab-nav {
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border-radius: var(--radius-lg, 18px);
+  background: rgba(10, 15, 12, 0.7);
+  border: 1px solid var(--border-subtle);
+}
+
+.dash-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-md, 14px);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+
+  &:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &.active {
+    background: rgba(82, 183, 136, 0.15);
+    color: var(--sage-light);
+    border-color: rgba(82, 183, 136, 0.35);
+    box-shadow: 0 0 14px rgba(82, 183, 136, 0.2);
+  }
+}
+
 /* My Virtual Forest */
 .my-forest-section {
   display: flex;

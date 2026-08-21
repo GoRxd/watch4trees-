@@ -9,6 +9,7 @@ export interface ToastMessage {
   title?: string;
   message: string;
   durationMs?: number;
+  isClosing?: boolean;
 }
 
 @Injectable({
@@ -36,14 +37,15 @@ export class ToastService {
       type,
       title,
       message,
-      durationMs
+      durationMs,
+      isClosing: false
     };
 
     this.toasts.update(current => [...current, newToast]);
 
     if (durationMs > 0) {
       setTimeout(() => {
-        this.remove(id);
+        this.dismiss(id);
       }, durationMs);
     }
   }
@@ -64,7 +66,18 @@ export class ToastService {
     this.show(messageKey, 'info', titleKey, 4500, params);
   }
 
+  dismiss(id: string) {
+    this.toasts.update(current => 
+      current.map(t => t.id === id ? { ...t, isClosing: true } : t)
+    );
+
+    setTimeout(() => {
+      this.remove(id);
+    }, 280);
+  }
+
   remove(id: string) {
     this.toasts.update(current => current.filter(t => t.id !== id));
   }
 }
+

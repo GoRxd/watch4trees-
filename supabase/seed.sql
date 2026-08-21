@@ -10,15 +10,20 @@ VALUES
   ('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380b03', 'Mahajanga Mangrove Restoration', 'Eden Reforestation Projects', 'Madagaskar', 'MG', 'Namorzyny Czerwone (Rhizophora mangle)', 25.00, true)
 ON CONFLICT (id) DO NOTHING;
 
--- 2. Insert Gamification Achievements Definitions
+-- 2. Insert Gamification Achievements Definitions (Key-based i18n codes)
 INSERT INTO public.achievements (id, title, description, icon_name, category, criteria_type)
 VALUES
-  ('first_seed', 'Pierwsze Nasiono', 'Zdobądź swoją pierwszą kroplę wody i rozpocznij przygodę.', '🌰', 'onboarding', 'custom_first_seed'),
-  ('water_master', 'Mistrz Kropel', 'Napełnij konewkę i uzyskaj 10 kropel do zasadzenia drzewa.', '💧', 'watering', 'custom_water_master'),
-  ('green_player', 'Gracz Ekolog', 'Poświęć czas w grze partnerskiej, zamieniając zabawę w sadzonki.', '🎮', 'gaming', 'custom_offerwall'),
-  ('forest_guardian', 'Strażnik Puszczy', 'Zasadź co najmniej 10 prawdziwych drzew.', '🌲', 'impact', 'custom_forest_guardian'),
-  ('eco_hero_month', 'Eko Bohater Miesiąca', 'Utrzymaj 30-dniowy streak aktywności bez przerwy.', '🏆', 'streak', 'custom_eco_hero_month')
-ON CONFLICT (id) DO NOTHING;
+  ('first_seed', 'achievements.items.first_seed.title', 'achievements.items.first_seed.desc', '🌰', 'onboarding', 'custom_first_seed'),
+  ('water_master', 'achievements.items.water_master.title', 'achievements.items.water_master.desc', '💧', 'watering', 'custom_water_master'),
+  ('green_player', 'achievements.items.green_player.title', 'achievements.items.green_player.desc', '🎮', 'gaming', 'custom_offerwall'),
+  ('forest_guardian', 'achievements.items.forest_guardian.title', 'achievements.items.forest_guardian.desc', '🌲', 'impact', 'custom_forest_guardian'),
+  ('eco_hero_month', 'achievements.items.eco_hero_month.title', 'achievements.items.eco_hero_month.desc', '🏆', 'streak', 'custom_eco_hero_month')
+ON CONFLICT (id) DO UPDATE SET
+  title = EXCLUDED.title,
+  description = EXCLUDED.description,
+  icon_name = EXCLUDED.icon_name,
+  category = EXCLUDED.category,
+  criteria_type = EXCLUDED.criteria_type;
 
 -- 3. Insert Demo User in auth.users & auth.identities
 INSERT INTO auth.users (

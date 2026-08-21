@@ -1,0 +1,100 @@
+<section class="achievements-section">
+  
+  <!-- Section Title and Progress Header -->
+  <div class="achievements-header-row">
+    <div class="header-titles">
+      <span class="badge-eco">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        {{ 'achievements.badge' | translate }}
+      </span>
+      <h2>{{ 'achievements.title' | translate }}</h2>
+      <p class="section-desc">{{ 'achievements.subtitle' | translate }}</p>
+    </div>
+
+    <div class="progress-pill-card glass-panel">
+      <div class="progress-info">
+        <span class="p-label">{{ 'achievements.unlockedCount' | translate }}</span>
+        <strong class="p-value font-mono text-gold">{{ unlockedCount() }} / {{ totalCount() }}</strong>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="progressPercent()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Filter Pills -->
+  <div class="category-filters">
+    @for (cat of categories; track cat.key) {
+      <button 
+        type="button"
+        class="filter-pill"
+        [class.active]="selectedCategory() === cat.key"
+        (click)="setCategory(cat.key)"
+      >
+        {{ cat.labelKey | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- Achievements Grid -->
+  @if (isLoading()) {
+    <div class="loading-state glass-panel">
+      <div class="loading-spinner"></div>
+    </div>
+  } @else {
+    <div class="achievements-grid">
+      @for (item of filteredAchievements(); track item.id) {
+        <div 
+          class="achievement-card glass-panel"
+          [class.unlocked]="item.isUnlocked"
+          [class.locked]="!item.isUnlocked"
+        >
+          <!-- Top Row: Icon badge + Status -->
+          <div class="card-top-row">
+            <div class="ach-icon-box" [class.unlocked-glow]="item.isUnlocked">
+              <span class="ach-emoji">{{ item.icon_name }}</span>
+            </div>
+
+            @if (item.isUnlocked) {
+              <span class="badge-verified">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                {{ 'achievements.statusUnlocked' | translate }}
+              </span>
+            } @else {
+              <span class="badge-locked">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                {{ 'achievements.statusLocked' | translate }}
+              </span>
+            }
+          </div>
+
+          <!-- Title and Description (Dynamic i18n Translation Keys) -->
+          <div class="card-content">
+            <h4 class="ach-title">{{ (item.title && item.title.startsWith('achievements.') ? item.title : ('achievements.items.' + item.id + '.title')) | translate }}</h4>
+            <p class="ach-desc">{{ (item.description && item.description.startsWith('achievements.') ? item.description : ('achievements.items.' + item.id + '.desc')) | translate }}</p>
+          </div>
+
+          <!-- Footer: Unlock date or lock requirement hint -->
+          <div class="card-footer">
+            @if (item.isUnlocked && item.unlockedAt) {
+              <span class="unlock-date">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                {{ item.unlockedAt }}
+              </span>
+            } @else {
+              <span class="lock-hint">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                {{ 'achievements.lockedHint' | translate }}
+              </span>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="empty-state glass-panel">
+          <p>{{ 'achievements.emptyCategory' | translate }}</p>
+        </div>
+      }
+    </div>
+  }
+
+</section>

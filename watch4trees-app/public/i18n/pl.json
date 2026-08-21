@@ -64,12 +64,60 @@
     "openWatchModule": "Przejdź do Modułu Sesji",
     "forestBadge": "Rejestr Cyfrowych Certyfikatów",
     "forestTitle": "Mój Wirtualny Las & Paszporty Drzew",
-    "treesCountLabel": "Posadzonych Drzew"
+    "treesCountLabel": "Posadzonych Drzew",
+    "tabForest": "Wirtualny Las & Paszporty",
+    "tabAchievements": "Odznaki & Osiągnięcia",
+    "certLocation": "Lokalizacja:",
+    "certDate": "Data:",
+    "certPartner": "Partner:",
+    "certCo2": "Absorpcja CO₂:",
+    "certVerified": "Zweryfikowane w Rejestrze",
+    "certTag": "OFICJALNY CERTYFIKAT"
+  },
+  "achievements": {
+    "badge": "Eko-Grywalizacja",
+    "title": "Osiągnięcia i Odznaki",
+    "subtitle": "Zdobywaj unikalne odznaki za realne zaangażowanie, sadzenie drzew i rozwijanie wirtualnego gaju.",
+    "unlockedCount": "Odblokowane Odznaki",
+    "allFilter": "Wszystkie",
+    "onboardingFilter": "Wdrożenie",
+    "wateringFilter": "Nawadnianie",
+    "gamingFilter": "Gry Partnerskie",
+    "impactFilter": "Realny Wpływ",
+    "streakFilter": "Streaki",
+    "statusUnlocked": "Odblokowano",
+    "statusLocked": "Zablokowane",
+    "emptyCategory": "Brak osiągnięć w tej kategorii.",
+    "lockedHint": "Wypełnij warunki w aplikacji, aby odblokować tę odznakę.",
+    "items": {
+      "first_seed": {
+        "title": "Pierwsze Nasiono",
+        "desc": "Zdobądź swoją pierwszą kroplę wody i rozpocznij przygodę."
+      },
+      "water_master": {
+        "title": "Mistrz Kropel",
+        "desc": "Napełnij konewkę i uzyskaj 10 kropel do zasadzenia drzewa."
+      },
+      "green_player": {
+        "title": "Gracz Ekolog",
+        "desc": "Poświęć czas w grze partnerskiej, zamieniając zabawę w sadzonki."
+      },
+      "forest_guardian": {
+        "title": "Strażnik Puszczy",
+        "desc": "Zasadź co najmniej 10 prawdziwych drzew."
+      },
+      "eco_hero_month": {
+        "title": "Eko Bohater Miesiąca",
+        "desc": "Utrzymaj 30-dniowy streak aktywności bez przerwy."
+      }
+    }
   },
   "watch": {
     "backToDashboard": "Wróć do Pulpitu",
     "moduleTitle": "Moduł Sesji Reklamowej & Match-Fundingu",
     "pickerBadge": "Wybór Długości Sesji",
+    "esgGoalLabel": "Cel ESG",
+    "ssvActive": "SSV Aktywne (Server-Side Verified)",
     "pickerTitle": "Ile czasu chcesz poświęcić planecie?",
     "pickerSub": "Wybierz format sesji. Każda obejrzana sekunda generuje przychód na sadzonki drzew u certyfikowanych partnerów.",
     "sessionQuickTitle": "Szybki Strzał",
@@ -250,6 +298,8 @@
     "treePlantedMsg": "🌳 Gratulacje! Ufundowałeś posadzenie prawdziwego drzewa! Certyfikat został wygenerowany.",
     "wateredTitle": "Podlano drzewo",
     "wateredMsg": "Podlano drzewo (-1 💧, +15 pkt). Stan: {{drops}}/10 kropel.",
-    "wateringErrorTitle": "Błąd podlewania"
+    "wateringErrorTitle": "Błąd podlewania",
+    "achievementUnlockedTitle": "🏆 Nowe Osiągnięcie!",
+    "achievementUnlockedMsg": "Odblokowano odznakę: {{title}} {{icon}}!"
   }
 }

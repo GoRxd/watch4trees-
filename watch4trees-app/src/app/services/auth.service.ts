@@ -1,9 +1,12 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../models';
+import { User, Achievement } from '../models';
 import { SafeStorage } from '../utils/storage.helper';
 import { STORAGE_KEYS, ECO_METRICS } from '../constants';
 import { SupabaseService } from './supabase.service';
+import { ToastService } from './toast.service';
+import { TranslationService } from './translation.service';
+import { RealtimeChannel } from '@supabase/supabase-js';
 
 export type { User } from '../models';
 
@@ -13,6 +16,10 @@ export type { User } from '../models';
 export class AuthService {
   private router = inject(Router);
   private supabase = inject(SupabaseService);
+  private toast = inject(ToastService);
+  private i18n = inject(TranslationService);
+
+  private achievementsChannel: RealtimeChannel | null = null;
 
   // Current user signal
   currentUser = signal<User | null>(this.loadStoredUser());
@@ -22,6 +29,10 @@ export class AuthService {
 
   constructor() {
     this.initAuthStateListener();
+    const stored = this.currentUser();
+    if (stored) {
+      this.subscribeToRealtimeAchievements(stored.id);
+    }
   }
 
   private loadStoredUser(): User | null {
@@ -37,10 +48,66 @@ export class AuthService {
     this.supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         await this.syncUserFromDatabase(session.user);
+        this.subscribeToRealtimeAchievements(session.user.id);
       } else if (event === 'SIGNED_OUT') {
+        this.unsubscribeRealtimeAchievements();
         this.saveUser(null);
       }
     });
+  }
+
+  private subscribeToRealtimeAchievements(userId: string) {
+    if (this.achievementsChannel) {
+      this.achievementsChannel.unsubscribe();
+    }
+
+    this.achievementsChannel = this.supabase.client
+      .channel(`user-achievements-${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'user_achievements',
+          filter: `user_id=eq.${userId}`
+        },
+        async (payload) => {
+          try {
+            const achievementId = payload.new?.['achievement_id'];
+            if (!achievementId) return;
+
+            // Fetch achievement details for the toast
+            const { data } = await this.supabase.client
+              .from('achievements')
+              .select('*')
+              .eq('id', achievementId)
+              .single();
+
+            const ach = data as Achievement;
+            const itemKey = `achievements.items.${achievementId}.title`;
+            const titleKey = (ach?.title && ach.title.startsWith('achievements.')) ? ach.title : itemKey;
+            const translatedTitle = this.i18n.translate(titleKey);
+            const title = (translatedTitle !== titleKey) ? translatedTitle : (ach?.title || achievementId);
+            const icon = ach?.icon_name || '🏆';
+
+            this.toast.success(
+              'toast.achievementUnlockedMsg',
+              'toast.achievementUnlockedTitle',
+              { title, icon }
+            );
+          } catch (err) {
+            console.error('[AuthService] Realtime achievement handler error:', err);
+          }
+        }
+      )
+      .subscribe();
+  }
+
+  private unsubscribeRealtimeAchievements() {
+    if (this.achievementsChannel) {
+      this.achievementsChannel.unsubscribe();
+      this.achievementsChannel = null;
+    }
   }
 
   private async syncUserFromDatabase(authUser: any): Promise<User> {
