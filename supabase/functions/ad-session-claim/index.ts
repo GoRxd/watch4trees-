@@ -1,5 +1,6 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { verifySessionToken } from '../_shared/crypto.ts';
+import { enforceGlobalIpRateLimit, enforceRateLimit } from '../_shared/rate-limiter.ts';
 import { getSupabaseAdmin, getSupabaseUserClient } from '../_shared/supabase-admin.ts';
 
 Deno.serve(async (req: Request) => {
@@ -8,6 +9,14 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const supabaseAdmin = getSupabaseAdmin();
+
+    // 1. Global IP Flood Protection (max 60 req/min per IP)
+    const globalRateLimitResponse = await enforceGlobalIpRateLimit(req, supabaseAdmin, 60, 60);
+    if (globalRateLimitResponse) {
+      return globalRateLimitResponse;
+    }
+
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
@@ -24,6 +33,18 @@ Deno.serve(async (req: Request) => {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    // 2. User Endpoint Rate Limiting (max 1 claim attempt / 15 seconds)
+    const endpointRateLimitResponse = await enforceRateLimit(req, supabaseAdmin, {
+      action: 'ad_session_claim',
+      userId: user.id,
+      maxRequests: 1,
+      windowSeconds: 15,
+      errorMessage: 'Zbyt częste próby zatwierdzania nagrody. Odczekaj chwilę.',
+    });
+    if (endpointRateLimitResponse) {
+      return endpointRateLimitResponse;
     }
 
     const body = await req.json().catch(() => ({}));
@@ -91,8 +112,6 @@ Deno.serve(async (req: Request) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    const supabaseAdmin = getSupabaseAdmin();
 
     // --------------------------------------------------------------------------
     // 5. Anti-Replay & Double-Spend Prevention:
@@ -196,7 +215,6 @@ Deno.serve(async (req: Request) => {
         updated_at: new Date().toISOString()
       })
       .eq('user_id', user.id);
-
 
     return new Response(JSON.stringify({
       success: true,

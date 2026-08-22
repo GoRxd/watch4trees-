@@ -76,6 +76,7 @@ export class WatchComponent implements OnDestroy {
   // Server-Side Anti-Fraud Session State
   sessionToken = signal<string | null>(null);
   serverQuiz = signal<QuizQuestion | null>(null);
+  isStarting = signal<boolean>(false);
   isSubmitting = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
 
@@ -88,65 +89,76 @@ export class WatchComponent implements OnDestroy {
   });
 
   async startSession(session: AdSessionConfig) {
+    // Client-side throttling guard: prevent rapid duplicate calls
+    if (this.isStarting()) return;
+
     this.selectedSession.set(session);
     this.errorMessage.set(null);
+    this.isStarting.set(true);
     this.isSubmitting.set(false);
 
-    // Call Supabase Edge Function to initialize signed session token & server quiz
-    const res = await this.db.startAdSession(session.id);
-    if (!res.success || !res.sessionToken || !res.quiz) {
-      const err = res.error || 'toast.sessionStartError';
-      
-      if (typeof err === 'string' && err.includes('ActiveSessionInProgress')) {
-        this.toast.warning(err, 'toast.sessionInProgressTitle');
-      } else if (typeof err === 'string' && err.includes('Daily limit')) {
-        this.toast.warning(err, 'toast.dailyLimitTitle');
-      } else {
-        this.toast.error(err, 'toast.sessionErrorTitle');
+    try {
+      // Call Supabase Edge Function to initialize signed session token & server quiz
+      const res = await this.db.startAdSession(session.id);
+      if (!res.success || !res.sessionToken || !res.quiz) {
+        const err = res.error || res.message || 'toast.sessionStartError';
+        
+        if (typeof err === 'string' && err.includes('ActiveSessionInProgress')) {
+          this.toast.warning(err, 'toast.sessionInProgressTitle');
+        } else if (typeof err === 'string' && (err.includes('Daily limit') || err.includes('TooManyRequests') || err.includes('Rate limit') || err.includes('Zbyt częste'))) {
+          const msg = res.message || err;
+          this.toast.warning(msg, 'toast.rateLimitTitle');
+        } else {
+          this.toast.error(err, 'toast.sessionErrorTitle');
+        }
+        return;
       }
-      return;
-    }
 
-    const totalSeconds = res.durationSeconds || session.durationSeconds;
-    this.sessionToken.set(res.sessionToken);
-    this.serverQuiz.set(res.quiz);
-    this.timerTotal.set(totalSeconds);
-    this.currentTimer.set(totalSeconds);
-    this.progressPercent.set(0);
-    this.state.set('playing');
+      const totalSeconds = res.durationSeconds || session.durationSeconds;
+      this.sessionToken.set(res.sessionToken);
+      this.serverQuiz.set(res.quiz);
+      this.timerTotal.set(totalSeconds);
+      this.currentTimer.set(totalSeconds);
+      this.progressPercent.set(0);
+      this.state.set('playing');
 
-    if (this.timerInterval) {
-      clearInterval(this.timerInterval);
-    }
-
-    const durationMs = totalSeconds * 1000;
-    const startTime = Date.now();
-
-    this.timerInterval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const remainingMs = Math.max(0, durationMs - elapsed);
-      const remainingSec = Math.ceil(remainingMs / 1000);
-      const progress = Math.min(100, (elapsed / durationMs) * 100);
-
-      this.currentTimer.set(remainingSec);
-      this.progressPercent.set(progress);
-
-      if (remainingMs <= 0) {
+      if (this.timerInterval) {
         clearInterval(this.timerInterval);
-        this.timerInterval = null;
-        this.currentTimer.set(0);
-        this.progressPercent.set(100);
-
-        // Smooth transition after reaching 100%
-        setTimeout(() => {
-          this.state.set('quiz');
-        }, 400);
       }
-    }, 40);
+
+      const durationMs = totalSeconds * 1000;
+      const startTime = Date.now();
+
+      this.timerInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remainingMs = Math.max(0, durationMs - elapsed);
+        const remainingSec = Math.ceil(remainingMs / 1000);
+        const progress = Math.min(100, (elapsed / durationMs) * 100);
+
+        this.currentTimer.set(remainingSec);
+        this.progressPercent.set(progress);
+
+        if (remainingMs <= 0) {
+          clearInterval(this.timerInterval);
+          this.timerInterval = null;
+          this.currentTimer.set(0);
+          this.progressPercent.set(100);
+
+          // Smooth transition after reaching 100%
+          setTimeout(() => {
+            this.state.set('quiz');
+          }, 400);
+        }
+      }, 40);
+    } finally {
+      this.isStarting.set(false);
+    }
   }
 
   // Verify anti-fraud attention quiz via Edge Function
   async submitQuizAnswer(selectedOptionId: string) {
+    if (this.isSubmitting()) return;
+
     const token = this.sessionToken();
     if (!token) {
       this.state.set('idle');
@@ -156,39 +168,52 @@ export class WatchComponent implements OnDestroy {
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
 
-    const res = await this.db.claimAdReward(token, selectedOptionId);
-    this.isSubmitting.set(false);
+    try {
+      const res = await this.db.claimAdReward(token, selectedOptionId);
 
-    if (res.success) {
-      const user = this.auth.currentUser();
-      if (user) {
-        this.auth.updateUser({
-          waterDrops: res.current_drops ?? (user.waterDrops + this.selectedSession().waterReward),
-          ecoPoints: res.eco_points ?? (user.ecoPoints + this.selectedSession().pointsReward),
-          dailyLimitRemaining: res.dailyLimitRemaining ?? Math.max(0, user.dailyLimitRemaining - this.selectedSession().adCount),
-          activeStreak: res.streak_days ?? user.activeStreak
-        });
-      }
-      // Transition to dedicated Reward screen in UI
-      this.state.set('reward');
-    } else {
-      const isQuizError = res.quizVerified === false || 
-        (typeof res.error === 'string' && (
-          res.error.includes('quiz') || 
-          res.error.includes('Incorrect') || 
-          res.error.includes('human presence')
-        ));
-
-      if (isQuizError) {
-        // Human attention verification failed: void session and transition directly to UI cancellation screen
-        this.sessionToken.set(null);
-        this.serverQuiz.set(null);
-        this.state.set('quiz_failed');
+      if (res.success) {
+        const user = this.auth.currentUser();
+        if (user) {
+          this.auth.updateUser({
+            waterDrops: res.current_drops ?? (user.waterDrops + this.selectedSession().waterReward),
+            ecoPoints: res.eco_points ?? (user.ecoPoints + this.selectedSession().pointsReward),
+            dailyLimitRemaining: res.dailyLimitRemaining ?? Math.max(0, user.dailyLimitRemaining - this.selectedSession().adCount),
+            activeStreak: res.streak_days ?? user.activeStreak
+          });
+        }
+        // Transition to dedicated Reward screen in UI
+        this.state.set('reward');
       } else {
-        const errorKeyOrMsg = res.error || 'toast.rewardErrorMsg';
-        this.errorMessage.set(this.i18n.translate(errorKeyOrMsg));
-        this.toast.error(errorKeyOrMsg, 'toast.rewardErrorTitle');
+        const isRateLimit = res.error === 'TooManyRequests' || 
+          (typeof res.error === 'string' && (res.error.includes('Rate limit') || res.error.includes('Zbyt częste')));
+
+        if (isRateLimit) {
+          const msg = res.message || res.error || 'toast.rateLimitMsg';
+          this.errorMessage.set(msg);
+          this.toast.warning(msg, 'toast.rateLimitTitle');
+          return;
+        }
+
+        const isQuizError = res.quizVerified === false || 
+          (typeof res.error === 'string' && (
+            res.error.includes('quiz') || 
+            res.error.includes('Incorrect') || 
+            res.error.includes('human presence')
+          ));
+
+        if (isQuizError) {
+          // Human attention verification failed: void session and transition directly to UI cancellation screen
+          this.sessionToken.set(null);
+          this.serverQuiz.set(null);
+          this.state.set('quiz_failed');
+        } else {
+          const errorKeyOrMsg = res.error || 'toast.rewardErrorMsg';
+          this.errorMessage.set(this.i18n.translate(errorKeyOrMsg));
+          this.toast.error(errorKeyOrMsg, 'toast.rewardErrorTitle');
+        }
       }
+    } finally {
+      this.isSubmitting.set(false);
     }
   }
 

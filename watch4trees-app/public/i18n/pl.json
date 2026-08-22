@@ -33,7 +33,9 @@
     "createAccountLink": "Załóż darmowe konto",
     "alreadyHaveAccount": "Posiadasz już konto?",
     "loginLink": "Zaloguj się tutaj",
-    "logout": "Wyloguj się"
+    "logout": "Wyloguj się",
+    "lockoutWarning": "Zbyt wiele nieudanych prób logowania. Ze względów bezpieczeństwa formularz został zablokowany na {{seconds}}s.",
+    "tooManyAttempts": "Zwolnij tempo. Odczekaj {{seconds}}s przed kolejną próbą."
   },
   "dashboard": {
     "dropsLabel": "Kropel",
@@ -299,6 +301,8 @@
     "wateredTitle": "Podlano drzewo",
     "wateredMsg": "Podlano drzewo (-1 💧, +15 pkt). Stan: {{drops}}/10 kropel.",
     "wateringErrorTitle": "Błąd podlewania",
+    "rateLimitTitle": "Zwolnij tempo ⏳",
+    "rateLimitMsg": "Zbyt wiele zapytań w krótkim czasie. Odczekaj chwilę przed kolejną akcją.",
     "achievementUnlockedTitle": "🏆 Nowe Osiągnięcie!",
     "achievementUnlockedMsg": "Odblokowano odznakę: {{title}} {{icon}}!"
   }

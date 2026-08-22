@@ -159,6 +159,8 @@ export interface AdSessionStartResponse {
   adCount?: number;
   quiz?: QuizQuestion;
   error?: string;
+  message?: string;
+  retryAfterSeconds?: number;
   dailyLimitRemaining?: number;
 }
 
@@ -172,6 +174,8 @@ export interface AdSessionClaimResponse {
   dailyLimitRemaining?: number;
   streak_days?: number;
   error?: string;
+  message?: string;
+  retryAfterSeconds?: number;
   quizVerified?: boolean;
 }
 
@@ -185,4 +189,6 @@ export interface TreeWaterResponse {
   tree_planted_now?: boolean;
   new_tree?: PlantedTree;
   error?: string;
+  message?: string;
+  retryAfterSeconds?: number;
 }

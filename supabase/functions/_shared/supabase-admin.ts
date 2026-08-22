@@ -4,7 +4,7 @@ const LOCAL_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const LOCAL_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
 
 export function getSupabaseAdmin() {
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') || 'http://127.0.0.1:54321';
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') || 'http://127.0.0.1:15421';
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || LOCAL_SERVICE_KEY;
 
   return createClient(supabaseUrl, supabaseServiceKey, {
@@ -16,7 +16,7 @@ export function getSupabaseAdmin() {
 }
 
 export function getSupabaseUserClient(authHeader: string) {
-  const supabaseUrl = Deno.env.get('SUPABASE_URL') || 'http://127.0.0.1:54321';
+  const supabaseUrl = Deno.env.get('SUPABASE_URL') || 'http://127.0.0.1:15421';
   const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') || LOCAL_ANON_KEY;
 
   return createClient(supabaseUrl, supabaseAnonKey, {

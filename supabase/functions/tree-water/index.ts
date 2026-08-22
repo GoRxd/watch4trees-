@@ -1,4 +1,5 @@
 import { corsHeaders } from '../_shared/cors.ts';
+import { enforceGlobalIpRateLimit, enforceRateLimit } from '../_shared/rate-limiter.ts';
 import { getSupabaseAdmin, getSupabaseUserClient } from '../_shared/supabase-admin.ts';
 
 Deno.serve(async (req: Request) => {
@@ -7,6 +8,14 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const supabaseAdmin = getSupabaseAdmin();
+
+    // 1. Global IP Flood Protection (max 60 req/min per IP)
+    const globalRateLimitResponse = await enforceGlobalIpRateLimit(req, supabaseAdmin, 60, 60);
+    if (globalRateLimitResponse) {
+      return globalRateLimitResponse;
+    }
+
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
@@ -25,11 +34,21 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // 2. User Endpoint Rate Limiting (max 3 water actions / 5 seconds - animation is ~900ms)
+    const endpointRateLimitResponse = await enforceRateLimit(req, supabaseAdmin, {
+      action: 'tree_water',
+      userId: user.id,
+      maxRequests: 3,
+      windowSeconds: 5,
+      errorMessage: 'Zbyt szybkie podlewanie. Daj ziemi chwilę na wchłonięcie wody.',
+    });
+    if (endpointRateLimitResponse) {
+      return endpointRateLimitResponse;
+    }
+
     const body = await req.json().catch(() => ({}));
     const drops = Math.max(1, Math.min(10, Number(body.drops) || 1));
     const requestedProjectId = body.projectId || null;
-
-    const supabaseAdmin = getSupabaseAdmin();
 
     const { data: balance, error: balanceError } = await supabaseAdmin
       .from('user_balance')

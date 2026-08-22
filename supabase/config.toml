@@ -2,22 +2,35 @@
 project_id = "watch4trees"
 
 [api]
-port = 54321
+port = 15421
 schemas = ["public", "storage", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
-port = 54322
+port = 15422
 
 [studio]
-port = 54323
+port = 15423
+
+[local_smtp]
+port = 15424
+
+[analytics]
+enabled = false
 
 [auth]
 site_url = "http://localhost:4200"
 additional_redirect_urls = ["https://localhost:4200"]
 jwt_expiry = 3600
 enable_signup = true
+
+[auth.rate_limit]
+# Rate limits for authentication requests (Brute-Force & Credential Stuffing Shield)
+token_refresh = 30
+sign_in_sign_ups = 10
+email_sent = 3
+anonymous_users = 30
 
 [storage]
 enabled = true

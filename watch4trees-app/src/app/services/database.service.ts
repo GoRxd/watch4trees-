@@ -280,4 +280,56 @@ export class DatabaseService {
       return { success: false, error: err.message };
     }
   }
+
+  // ----------------------------------------------------------------------------
+  // 6. Server-Side Auth Rate Limiting & Lockout Management
+  // ----------------------------------------------------------------------------
+  async checkAuthLockout(email?: string): Promise<{ allowed: boolean; lockoutRemainingSeconds?: number; message?: string }> {
+    try {
+      const { data, error } = await this.supabase.client.functions.invoke<{ allowed: boolean; lockoutRemainingSeconds?: number; message?: string }>(
+        'auth-attempt',
+        { body: { email, action: 'check' } }
+      );
+
+      if (error) {
+        let errorBody: any = null;
+        if ((error as any).context && typeof (error as any).context.json === 'function') {
+          try {
+            errorBody = await (error as any).context.json();
+          } catch (_) {}
+        }
+        if (errorBody) return errorBody;
+      }
+
+      return data ?? { allowed: true, lockoutRemainingSeconds: 0 };
+    } catch (err) {
+      console.error('[DatabaseService] Exception in checkAuthLockout:', err);
+      return { allowed: true, lockoutRemainingSeconds: 0 };
+    }
+  }
+
+  async recordAuthAttempt(email: string, isSuccess: boolean): Promise<{ allowed: boolean; lockoutRemainingSeconds?: number; message?: string }> {
+    try {
+      const action = isSuccess ? 'record_success' : 'record_failed';
+      const { data, error } = await this.supabase.client.functions.invoke<{ allowed: boolean; lockoutRemainingSeconds?: number; message?: string }>(
+        'auth-attempt',
+        { body: { email, action } }
+      );
+
+      if (error) {
+        let errorBody: any = null;
+        if ((error as any).context && typeof (error as any).context.json === 'function') {
+          try {
+            errorBody = await (error as any).context.json();
+          } catch (_) {}
+        }
+        if (errorBody) return errorBody;
+      }
+
+      return data ?? { allowed: true, lockoutRemainingSeconds: 0 };
+    } catch (err) {
+      console.error('[DatabaseService] Exception in recordAuthAttempt:', err);
+      return { allowed: true, lockoutRemainingSeconds: 0 };
+    }
+  }
 }

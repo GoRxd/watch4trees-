@@ -1,6 +1,7 @@
 import { corsHeaders } from '../_shared/cors.ts';
 import { signSessionToken } from '../_shared/crypto.ts';
 import { getRandomQuiz } from '../_shared/quizzes.ts';
+import { enforceGlobalIpRateLimit, enforceRateLimit } from '../_shared/rate-limiter.ts';
 import { getSupabaseAdmin, getSupabaseUserClient } from '../_shared/supabase-admin.ts';
 
 const SESSION_CONFIGS = {
@@ -17,6 +18,14 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const supabaseAdmin = getSupabaseAdmin();
+
+    // 1. Global IP Flood Protection (max 60 req/min per IP)
+    const globalRateLimitResponse = await enforceGlobalIpRateLimit(req, supabaseAdmin, 60, 60);
+    if (globalRateLimitResponse) {
+      return globalRateLimitResponse;
+    }
+
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Missing Authorization header' }), {
@@ -35,18 +44,27 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // 2. User Endpoint Rate Limiting (max 2 start attempts / 30 seconds - shortest ad is 15s)
+    const endpointRateLimitResponse = await enforceRateLimit(req, supabaseAdmin, {
+      action: 'ad_session_start',
+      userId: user.id,
+      maxRequests: 2,
+      windowSeconds: 30,
+      errorMessage: 'Zbyt częste próby uruchamiania sesji wideo. Odczekaj chwilę.',
+    });
+    if (endpointRateLimitResponse) {
+      return endpointRateLimitResponse;
+    }
+
     const body = await req.json().catch(() => ({}));
     const sessionType: SessionType = (body.sessionType in SESSION_CONFIGS) ? body.sessionType : 'quick';
     const config = SESSION_CONFIGS[sessionType];
 
-    const supabaseAdmin = getSupabaseAdmin();
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
       .select('daily_watched_count, last_watch_date, streak_days, active_session_until')
       .eq('id', user.id)
       .single();
-
-    console.log('[ad-session-start] user.id:', user.id, 'profileError:', profileError, 'profile:', profile);
 
     if (profileError || !profile) {
       return new Response(JSON.stringify({ error: 'User profile not found', details: profileError }), {
@@ -97,7 +115,6 @@ Deno.serve(async (req: Request) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
 
     // Generate random quiz for attention verification
     const quiz = getRandomQuiz();

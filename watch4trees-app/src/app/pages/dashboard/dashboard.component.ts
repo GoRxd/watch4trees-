@@ -149,7 +149,15 @@ export class DashboardComponent implements OnInit {
       }
     } else if (res.error) {
       console.error('[DashboardComponent] Error watering tree:', res.error);
-      this.toast.error(res.error, 'toast.wateringErrorTitle');
+      const isRateLimit = res.error === 'TooManyRequests' || 
+        (typeof res.error === 'string' && (res.error.includes('Rate limit') || res.error.includes('Zbyt szybkie') || res.error.includes('Too many')));
+
+      if (isRateLimit) {
+        const msg = res.message || res.error;
+        this.toast.warning(msg, 'toast.rateLimitTitle');
+      } else {
+        this.toast.error(res.error, 'toast.wateringErrorTitle');
+      }
     }
   }
 }

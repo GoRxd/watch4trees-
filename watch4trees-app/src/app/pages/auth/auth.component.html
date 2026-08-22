@@ -23,8 +23,14 @@
       </p>
     </div>
 
-    <!-- Error Banner -->
-    @if (errorMessage()) {
+    <!-- Lockout Security Banner -->
+    @if (lockoutRemaining() > 0) {
+      <div class="error-banner animate-pulse-glow">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>{{ 'auth.tooManyAttempts' | translate:{ seconds: lockoutRemaining().toString() } }}</span>
+      </div>
+    } @else if (errorMessage()) {
+      <!-- Standard Error Banner -->
       <div class="error-banner">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         <span>{{ errorMessage() }}</span>
@@ -33,7 +39,11 @@
 
     <!-- Quick Demo Login Banner -->
     <div class="demo-quick-login-box">
-      <button class="btn-demo-quick" (click)="loginDemo()">
+      <button 
+        class="btn-demo-quick" 
+        [disabled]="isSubmitting() || lockoutRemaining() > 0"
+        (click)="loginDemo()"
+      >
         <div class="d-icon-box">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="#E9C46A"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
@@ -50,7 +60,11 @@
 
     <!-- Social Login -->
     <div class="social-login-row">
-      <button class="btn-social-google" (click)="loginWithGoogle()">
+      <button 
+        class="btn-social-google" 
+        [disabled]="isSubmitting() || lockoutRemaining() > 0"
+        (click)="loginWithGoogle()"
+      >
         <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
           <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
           <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/>
@@ -69,6 +83,7 @@
           type="email" 
           [placeholder]="'auth.emailPlaceholder' | translate"
           class="eco-input" 
+          [disabled]="isSubmitting() || lockoutRemaining() > 0"
           [value]="emailInput()" 
           (input)="emailInput.set($any($event.target).value)" 
           required
@@ -81,14 +96,26 @@
           type="password" 
           [placeholder]="'auth.passwordPlaceholder' | translate"
           class="eco-input" 
+          [disabled]="isSubmitting() || lockoutRemaining() > 0"
           [value]="passwordInput()" 
           (input)="passwordInput.set($any($event.target).value)" 
           required
         >
       </div>
 
-      <button type="submit" class="btn-eco-primary btn-full">
-        <span>{{ (isRegisterMode() ? 'auth.submitRegister' : 'auth.submitLogin') | translate }}</span>
+      <button 
+        type="submit" 
+        class="btn-eco-primary btn-full"
+        [disabled]="isSubmitting() || lockoutRemaining() > 0"
+      >
+        @if (lockoutRemaining() > 0) {
+          <span>⏳ {{ 'auth.tooManyAttempts' | translate:{ seconds: lockoutRemaining().toString() } }}</span>
+        } @else if (isSubmitting()) {
+          <span class="btn-spinner"></span>
+          <span>{{ 'common.loading' | translate }}</span>
+        } @else {
+          <span>{{ (isRegisterMode() ? 'auth.submitRegister' : 'auth.submitLogin') | translate }}</span>
+        }
       </button>
     </form>
 

@@ -33,7 +33,9 @@
     "createAccountLink": "Create free account",
     "alreadyHaveAccount": "Already have an account?",
     "loginLink": "Sign in here",
-    "logout": "Log out"
+    "logout": "Log out",
+    "lockoutWarning": "Too many failed login attempts. For security reasons, the form is locked for {{seconds}}s.",
+    "tooManyAttempts": "Please slow down. Wait {{seconds}}s before trying again."
   },
   "dashboard": {
     "dropsLabel": "Drops",
@@ -299,6 +301,8 @@
     "wateredTitle": "Tree watered",
     "wateredMsg": "Tree watered (-1 💧, +15 pts). Status: {{drops}}/10 drops.",
     "wateringErrorTitle": "Watering error",
+    "rateLimitTitle": "Please Slow Down ⏳",
+    "rateLimitMsg": "Too many requests in a short time. Please wait a moment before trying again.",
     "achievementUnlockedTitle": "🏆 New Achievement!",
     "achievementUnlockedMsg": "Unlocked badge: {{title}} {{icon}}!"
   }
