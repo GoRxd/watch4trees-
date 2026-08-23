@@ -1,96 +1,104 @@
-<section class="achievements-section">
-  
+<section class="flex w-full flex-col gap-7" aria-labelledby="achievements-heading">
+
   <!-- Section Title and Progress Header -->
-  <div class="achievements-header-row">
-    <div class="header-titles">
+  <div class="achievements-header-row flex flex-wrap items-end justify-between gap-6 max-md:flex-col max-md:items-stretch">
+    <div class="flex flex-col items-start gap-1.5">
       <span class="badge-eco">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        <ng-icon name="ph:drop" class="size-3 shrink-0" aria-hidden="true" />
         {{ 'achievements.badge' | translate }}
       </span>
-      <h2>{{ 'achievements.title' | translate }}</h2>
-      <p class="section-desc">{{ 'achievements.subtitle' | translate }}</p>
+      <h2 id="achievements-heading" class="m-0 text-[clamp(1.4rem,3.2vw,2rem)]">{{ 'achievements.title' | translate }}</h2>
+      <p class="m-0 max-w-[38rem] text-[0.94rem] leading-normal text-ink-soft">{{ 'achievements.subtitle' | translate }}</p>
     </div>
 
-    <div class="progress-pill-card glass-panel">
-      <div class="progress-info">
-        <span class="p-label">{{ 'achievements.unlockedCount' | translate }}</span>
-        <strong class="p-value font-mono text-gold">{{ unlockedCount() }} / {{ totalCount() }}</strong>
+    <div class="glass-panel flex min-w-55 flex-col gap-2 rounded-lg bg-[rgb(11_20_14/0.85)] px-5 py-3.5 max-md:w-full">
+      <div class="flex items-baseline justify-between gap-3">
+        <span class="text-[0.78rem] font-medium text-ink-muted">{{ 'achievements.unlockedCount' | translate }}</span>
+        <strong class="text-base font-bold text-gold tabular-nums font-mono">{{ unlockedCount() }} / {{ totalCount() }}</strong>
       </div>
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" [style.width.%]="progressPercent()"></div>
+      <div class="eco-progress-track h-1.5" role="progressbar" [attr.aria-valuenow]="unlockedCount()" [attr.aria-valuemin]="0" [attr.aria-valuemax]="totalCount()">
+        <div class="eco-progress-fill progress-shine" [style.width.%]="progressPercent()"></div>
       </div>
     </div>
   </div>
 
   <!-- Category Filter Pills -->
-  <div class="category-filters">
+  <nav class="category-filters flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" [attr.aria-label]="'a11y.achievementFilters' | translate">
     @for (cat of categories; track cat.key) {
-      <button 
+      <button
         type="button"
         class="filter-pill"
+        role="tab"
+        [attr.aria-selected]="selectedCategory() === cat.key"
         [class.active]="selectedCategory() === cat.key"
         (click)="setCategory(cat.key)"
       >
         {{ cat.labelKey | translate }}
       </button>
     }
-  </div>
+  </nav>
 
   <!-- Achievements Grid -->
   @if (isLoading()) {
-    <div class="loading-state glass-panel">
-      <div class="loading-spinner"></div>
+    <div class="glass-panel animate-pulse rounded-lg p-12" aria-busy="true">
+      <div class="mx-auto size-9 animate-spin rounded-full border-[3px] border-sage/20 border-t-sage"></div>
     </div>
   } @else {
-    <div class="achievements-grid">
-      @for (item of filteredAchievements(); track item.id) {
-        <div 
-          class="achievement-card glass-panel"
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(min(100%,17.5rem),1fr))] gap-4 max-md:grid-cols-1" role="tabpanel">
+      @for (item of filteredAchievements(); track item.id; let i = $index) {
+        <article
+          appReveal
+          [revealDelay]="i * 60"
+          appSpotlight
+          class="achievement-card glass-panel spotlight-card relative flex min-h-50 flex-col gap-4 overflow-hidden rounded-lg p-5"
           [class.unlocked]="item.isUnlocked"
           [class.locked]="!item.isUnlocked"
         >
           <!-- Top Row: Icon badge + Status -->
-          <div class="card-top-row">
-            <div class="ach-icon-box" [class.unlocked-glow]="item.isUnlocked">
-              <span class="ach-emoji">{{ item.icon_name }}</span>
-            </div>
+          <header class="flex items-center justify-between gap-3">
+            <span
+              class="ach-icon-box flex size-11.5 shrink-0 items-center justify-center rounded-sm border border-line bg-white/5 transition-colors duration-300"
+              [class.is-unlocked]="item.isUnlocked"
+            >
+              <ng-icon name="ph:star" class="size-5.5 text-ink-muted transition-colors duration-300" aria-hidden="true" />
+            </span>
 
             @if (item.isUnlocked) {
               <span class="badge-verified">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <ng-icon name="ph:check" class="size-3 shrink-0" aria-hidden="true" />
                 {{ 'achievements.statusUnlocked' | translate }}
               </span>
             } @else {
-              <span class="badge-locked">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span class="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/6 px-2.5 py-1 text-xs font-semibold leading-none text-ink-muted">
+                <ng-icon name="ph:lock-simple" class="size-3 shrink-0" aria-hidden="true" />
                 {{ 'achievements.statusLocked' | translate }}
               </span>
             }
-          </div>
+          </header>
 
-          <!-- Title and Description (Dynamic i18n Translation Keys) -->
-          <div class="card-content">
-            <h4 class="ach-title">{{ (item.title && item.title.startsWith('achievements.') ? item.title : ('achievements.items.' + item.id + '.title')) | translate }}</h4>
-            <p class="ach-desc">{{ (item.description && item.description.startsWith('achievements.') ? item.description : ('achievements.items.' + item.id + '.desc')) | translate }}</p>
+          <!-- Title and Description -->
+          <div class="flex flex-col gap-1.5">
+            <h4 class="m-0 text-[1.08rem] font-semibold text-white">{{ (item.title && item.title.startsWith('achievements.') ? item.title : ('achievements.items.' + item.id + '.title')) | translate }}</h4>
+            <p class="m-0 text-[0.85rem] leading-snug text-ink-soft">{{ (item.description && item.description.startsWith('achievements.') ? item.description : ('achievements.items.' + item.id + '.desc')) | translate }}</p>
           </div>
 
           <!-- Footer: Unlock date or lock requirement hint -->
-          <div class="card-footer">
+          <footer class="mt-auto flex items-center border-t border-white/6 pt-3">
             @if (item.isUnlocked && item.unlockedAt) {
-              <span class="unlock-date">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span class="inline-flex items-center gap-1.5 font-mono text-xs font-medium text-sage tabular-nums">
+                <ng-icon name="ph:calendar-blank" class="size-3 shrink-0 text-sage/70" aria-hidden="true" />
                 {{ item.unlockedAt }}
               </span>
             } @else {
-              <span class="lock-hint">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span class="inline-flex items-center gap-1.5 text-xs text-ink-muted">
+                <ng-icon name="ph:question" class="size-3 shrink-0" aria-hidden="true" />
                 {{ 'achievements.lockedHint' | translate }}
               </span>
             }
-          </div>
-        </div>
+          </footer>
+        </article>
       } @empty {
-        <div class="empty-state glass-panel">
+        <div class="glass-panel rounded-lg p-12 text-center text-ink-soft">
           <p>{{ 'achievements.emptyCategory' | translate }}</p>
         </div>
       }

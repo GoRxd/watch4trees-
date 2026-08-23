@@ -1,16 +1,22 @@
-<button class="btn-lang-toggle" (click)="i18n.toggleLanguage()" [title]="i18n.currentLang() === 'pl' ? 'Switch to English' : 'Przełącz na polski'">
-  <span class="lang-flag-badge">
+<button
+  class="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-[rgb(11_20_14/0.85)] px-3.5
+         text-sm font-bold text-white shadow-sm select-none cursor-pointer [font-family:var(--font-sans)]
+         [-webkit-tap-highlight-color:transparent] transition-all duration-200 [transition-timing-function:var(--ease-spring)]
+         hover:-translate-y-px hover:border-sage hover:bg-jade/15 active:translate-y-px active:scale-95 max-[640px]:min-h-10 max-[640px]:gap-1.5 max-[640px]:px-2.5 max-[640px]:text-[0.8rem]"
+  (click)="i18n.toggleLanguage()"
+  [attr.title]="(i18n.currentLang() === 'pl' ? 'a11y.langToEnglish' : 'a11y.langToPolish') | translate"
+  [attr.aria-label]="(i18n.currentLang() === 'pl' ? 'a11y.langToEnglish' : 'a11y.langToPolish') | translate"
+>
+  <span class="flex shrink-0 items-center justify-center overflow-hidden rounded-xs leading-none shadow-sm" aria-hidden="true">
     @if (i18n.currentLang() === 'pl') {
-      <!-- SVG Polish Flag -->
-      <svg class="svg-flag" viewBox="0 0 640 480" width="18" height="13">
+      <svg width="18" height="13" viewBox="0 0 640 480" class="block rounded-xxs">
         <g fill-rule="evenodd">
           <path fill="#fff" d="M640 480H0V0h640z"/>
           <path fill="#dc143c" d="M640 480H0V240h640z"/>
         </g>
       </svg>
     } @else {
-      <!-- SVG UK Flag -->
-      <svg class="svg-flag" viewBox="0 0 640 480" width="18" height="13">
+      <svg width="18" height="13" viewBox="0 0 640 480" class="block rounded-xxs">
         <path fill="#012169" d="M0 0h640v480H0z"/>
         <path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-178L0 64V0h75z"/>
         <path fill="#C8102E" d="m424 281 216 159v40L369 281h55zm-184-82L23 40V0l270 200h-53zM640 43l-223 166h53L640 82V43zM0 437l221-165h-53L0 475v-38z"/>
@@ -19,6 +25,5 @@
       </svg>
     }
   </span>
-  <span class="lang-code">{{ i18n.currentLang() === 'pl' ? 'PL' : 'EN' }}</span>
-  <span class="lang-switch-arrow">⇄</span>
+  <span class="tracking-wide text-mint">{{ i18n.currentLang() === 'pl' ? 'PL' : 'EN' }}</span>
 </button>

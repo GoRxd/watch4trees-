@@ -1,43 +1,31 @@
 @if (auth.currentUser(); as user) {
-  <div class="user-hud-stats" [class.mode-compact]="mode === 'compact'">
+  <div class="inline-flex items-center gap-2" [class.mode-compact]="mode === 'compact'" [attr.aria-label]="'a11y.accountStats' | translate">
     <!-- Water Drops Inventory -->
-    <div class="hud-item hud-water" [title]="'dashboard.dropsLabel' | translate">
-      <svg class="hud-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="rgba(56, 189, 248, 0.2)" stroke="#38BDF8"/>
-      </svg>
-      <div class="hud-info">
-        <strong class="text-blue font-mono">{{ user.waterDrops }}</strong>
-        @if (mode !== 'compact') {
-          <span class="hud-label">{{ 'dashboard.dropsLabel' | translate }}</span>
-        }
-      </div>
+    <div class="hud-chip hud-water" [title]="'dashboard.dropsLabel' | translate">
+      <ng-icon name="ph:drop-duotone" class="hud-icon text-water" aria-hidden="true" />
+      <span class="hud-value font-mono tabular-nums text-water">{{ user.waterDrops }}</span>
+      @if (mode !== 'compact') {
+        <span class="hud-label">{{ 'dashboard.dropsLabel' | translate }}</span>
+      }
     </div>
 
     <!-- Eco Points -->
-    <div class="hud-item hud-points" [title]="'dashboard.pointsLabel' | translate">
-      <svg class="hud-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="rgba(82, 183, 136, 0.2)" stroke="#52B788"/>
-      </svg>
-      <div class="hud-info">
-        <strong class="text-sage font-mono">{{ user.ecoPoints }}</strong>
-        @if (mode !== 'compact') {
-          <span class="hud-label">{{ 'dashboard.pointsLabel' | translate }}</span>
-        }
-      </div>
+    <div class="hud-chip hud-points" [title]="'dashboard.pointsLabel' | translate">
+      <ng-icon name="ph:leaf-duotone" class="hud-icon text-sage" aria-hidden="true" />
+      <span class="hud-value font-mono tabular-nums text-sage">{{ user.ecoPoints }}</span>
+      @if (mode !== 'compact') {
+        <span class="hud-label">{{ 'dashboard.pointsLabel' | translate }}</span>
+      }
     </div>
 
     <!-- Streak -->
     @if (showStreak) {
-      <div class="hud-item hud-streak" [title]="'dashboard.streakLabel' | translate">
-        <svg class="hud-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" fill="rgba(233, 196, 106, 0.2)" stroke="#E9C46A"/>
-        </svg>
-        <div class="hud-info">
-          <strong class="text-gold font-mono">{{ user.activeStreak }}@if (mode !== 'compact') {<span> {{ 'dashboard.daysUnit' | translate }}</span>}</strong>
-          @if (mode !== 'compact') {
-            <span class="hud-label">{{ 'dashboard.streakLabel' | translate }}</span>
-          }
-        </div>
+      <div class="hud-chip hud-streak" [title]="'dashboard.streakLabel' | translate">
+        <ng-icon name="ph:flame-duotone" class="hud-icon animate-drop-pulse text-gold" aria-hidden="true" />
+        <span class="hud-value font-mono tabular-nums text-gold">{{ user.activeStreak }}@if (mode !== 'compact') {<span> {{ 'dashboard.daysUnit' | translate }}</span>}</span>
+        @if (mode !== 'compact') {
+          <span class="hud-label">{{ 'dashboard.streakLabel' | translate }}</span>
+        }
       </div>
     }
   </div>

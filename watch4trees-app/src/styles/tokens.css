@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Watch4Trees Design Tokens - Eco Dark "Obsidian Grove"
+   Single source of truth. Tailwind v4 CSS-first theme.
+   Z-index scale: content 0-10 / sticky nav 50 / drawer 900-901 / toast 1000 / skip-link 1010
+   ========================================================================== */
+
+@import "tailwindcss";
+
+/* Explicit source detection: without this, Tailwind scans only src/styles/
+   (rooted at this file) and generates nothing for Angular templates. */
+@source "../";
+@source "../../index.html";
+
+@theme {
+  /* Surfaces */
+  --color-obsidian: #080e0b;
+  --color-surface: #0d1712;
+  --color-elevated: #13221b;
+  --color-card: rgb(13 23 18 / 0.82);
+  --color-card-hover: rgb(18 32 25 / 0.92);
+  --color-input: rgb(10 18 14 / 0.85);
+
+  /* Brand accents (green family dominant, gold = sponsor/reward, water = drops) */
+  --color-pine: #064e3b;
+  --color-emerald: #059669;
+  --color-jade: #10b981;
+  --color-sage: #6ee7b7;
+  --color-mint: #a7f3d0;
+  --color-gold: #f59e0b;
+  --color-honey: #fde68a;
+  --color-bark: #d97706;
+  --color-water: #38bdf8;
+  --color-lagoon: #0284c7;
+
+  /* Text hierarchy (strict WCAG AA on obsidian) */
+  --color-ink: #f8fafc;
+  --color-ink-soft: #cbd5e1;
+  --color-ink-muted: #94a3b8;
+  --color-ink-dim: #64748b;
+
+  /* Hairlines */
+  --color-line: rgb(255 255 255 / 0.08);
+  --color-line-strong: rgb(255 255 255 / 0.14);
+
+  /* Typography: one sans family, Space Grotesk reserved for numerals */
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Space Grotesk", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Organic radius scale (shape lock: soft cards, pill controls) */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* Tinted shadows (never pure black on dark) */
+  --shadow-card: 0 16px 36px -8px rgb(0 0 0 / 0.5);
+  --shadow-elevated: 0 24px 48px -12px rgb(0 0 0 / 0.65);
+  --shadow-pop: 0 12px 32px -6px rgb(16 185 129 / 0.25);
+
+  /* Motion personality (all GPU-only, reduced-motion aware) */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-float: float 5s ease-in-out infinite;
+  --animate-drop-pulse: drop-pulse 2.6s ease-in-out infinite;
+  --animate-pop-in: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-shine: shine 2.4s ease-in-out infinite;
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-ring-pulse: ring-pulse 2s ease-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes drop-pulse {
+    0% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.9; }
+  }
+  @keyframes pop-in {
+    from { opacity: 0; transform: scale(0.92) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes shine {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(250%); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes ring-pulse {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.9); opacity: 0; }
+  }
+}

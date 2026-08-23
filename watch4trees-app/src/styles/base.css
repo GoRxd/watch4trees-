@@ -1,0 +1,126 @@
+/* Base layer: document defaults, a11y primitives, texture */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Offset = sticky navbar height + breathing room so anchors never hide under it */
+    scroll-padding-top: 6.5rem;
+    background-color: var(--color-obsidian);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  section[id] {
+    scroll-margin-top: 6.5rem;
+  }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    line-height: 1.65;
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgb(16 185 129 / 0.16) 0%, transparent 70%),
+      radial-gradient(circle 700px at 95% 30%, rgb(5 150 105 / 0.10) 0%, transparent 65%),
+      radial-gradient(circle 600px at 5% 70%, rgb(52 211 153 / 0.08) 0%, transparent 65%),
+      var(--color-obsidian);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.035em;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  h1 { font-size: clamp(2.4rem, 5.2vw, 3.8rem); font-weight: 800; letter-spacing: -0.04em; }
+  h2 { font-size: clamp(1.85rem, 3.8vw, 2.6rem); }
+  h3 { font-size: clamp(1.3rem, 2.6vw, 1.75rem); font-weight: 600; }
+  h4 { font-size: 1.15rem; font-weight: 600; }
+  h5 { font-size: 1rem; font-weight: 600; }
+
+  p {
+    color: var(--color-ink-soft);
+    line-height: 1.65;
+    max-width: 65ch;
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-emerald);
+    color: #ffffff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-obsidian);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(52 211 153 / 0.20);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(52 211 153 / 0.40);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-sage);
+    outline-offset: 3px;
+  }
+
+  dd, dt {
+    margin: 0;
+  }
+}
+
+/* Screen-reader utility + skip link (a11y primitives) */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1.5rem;
+  z-index: 1010;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-full);
+  background: var(--color-jade);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
+  transition: top 0.2s var(--ease-out-expo);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 1.5rem;
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* Ultra-subtle grain to break flat digital surfaces.
+   Fixed + pointer-events-none + no blend mode = composited once,
+   zero per-frame scroll cost (blend modes force full-page re-composite). */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}

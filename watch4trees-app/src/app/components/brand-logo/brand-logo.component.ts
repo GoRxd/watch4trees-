@@ -8,8 +8,7 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
   selector: 'app-brand-logo',
   standalone: true,
   imports: [CommonModule, TranslatePipe],
-  templateUrl: './brand-logo.component.html',
-  styleUrls: ['./brand-logo.component.scss']
+  templateUrl: './brand-logo.component.html'
 })
 export class BrandLogoComponent {
   private router = inject(Router);

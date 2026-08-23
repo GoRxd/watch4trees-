@@ -7,7 +7,9 @@ export const STORAGE_KEYS = {
   LANG: 'w4t_lang',
   BALANCE_PREFIX: 'w4t_balance_',
   TREES_PREFIX: 'w4t_trees_',
-  PROFILES_PREFIX: 'w4t_profile_'
+  PROFILES_PREFIX: 'w4t_profile_',
+  AUTH_LOCKOUT: 'w4t_auth_lockout',
+  PROMO_DISMISSED: 'w4t_promo_dismissed'
 } as const;
 
 export const ECO_METRICS = {

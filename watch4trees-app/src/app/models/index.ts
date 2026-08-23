@@ -105,7 +105,6 @@ export interface PlantedTreeCertificate {
   id: string;
   serialNumber: string;
   species: string;
-  speciesIcon: string;
   plantedDate: string;
   location: string;
   foundation: string;
@@ -121,14 +120,12 @@ export interface AdSessionConfig {
   adCount: number;
   waterReward: number;
   pointsReward: number;
-  icon: string;
   badgeKey: string;
 }
 
 export interface SponsorInfo {
   name: string;
   tagline: string;
-  logo: string;
   esgGoal: string;
 }
 

@@ -1,71 +1,76 @@
-<div class="auth-page-wrapper">
+<main id="main-content" class="page-wrapper flex items-center justify-center p-6 max-md:p-4" role="main">
 
-  <div class="auth-card glass-panel-elevated">
-    <!-- Back to Home Link -->
-    <div class="auth-back-row">
-      <a class="btn-back" [routerLink]="'/'">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        <span>{{ 'auth.backHome' | translate }}</span>
-      </a>
-      
-      <!-- Language toggle -->
-      <app-lang-toggle></app-lang-toggle>
-    </div>
+  <!-- The form card is the centered anchor; the showcase panel hangs off its right
+       edge (absolute, lower layer, vertically inset) like a child card, without
+       shifting the form off screen center. -->
+  <div class="relative w-full max-w-[28rem]">
 
-    <!-- Auth Header -->
-    <div class="auth-header text-center">
-      <div class="auth-logo-center">
-        <app-brand-logo size="lg" [showSubtitle]="false" routeTarget="/"></app-brand-logo>
+    <!-- Form Card -->
+    <article class="glass-panel-elevated relative z-2 flex flex-col gap-5 rounded-xl p-9 animate-pop-in max-md:p-6" aria-labelledby="auth-heading">
+      <!-- Back to Home + Language -->
+      <header class="flex items-center justify-between gap-3">
+        <a class="btn-back" [routerLink]="'/'" [attr.aria-label]="'a11y.backHome' | translate">
+          <ng-icon name="ph:arrow-left" class="size-3.5 shrink-0" aria-hidden="true" />
+          <span>{{ 'auth.backHome' | translate }}</span>
+        </a>
+        <app-lang-toggle></app-lang-toggle>
+      </header>
+
+      <!-- Auth Header -->
+      <div class="text-center">
+        <div class="mb-3 flex justify-center">
+          <app-brand-logo size="lg" [showSubtitle]="false" routeTarget="/"></app-brand-logo>
+        </div>
+        <h2 id="auth-heading" class="m-0 text-[clamp(1.5rem,3vw,1.85rem)] tracking-tight">{{ (isRegisterMode() ? 'auth.registerTitle' : 'auth.loginTitle') | translate }}</h2>
+        <p class="mx-auto mt-2 max-w-[30rem] leading-relaxed text-ink-muted">{{ (isRegisterMode() ? 'auth.registerSub' : 'auth.loginSub') | translate }}</p>
       </div>
-      <h2>{{ (isRegisterMode() ? 'auth.registerTitle' : 'auth.loginTitle') | translate }}</h2>
-      <p class="auth-subtitle">
-        {{ (isRegisterMode() ? 'auth.registerSub' : 'auth.loginSub') | translate }}
-      </p>
-    </div>
 
-    <!-- Lockout Security Banner -->
-    @if (lockoutRemaining() > 0) {
-      <div class="error-banner animate-pulse-glow">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span>{{ 'auth.tooManyAttempts' | translate:{ seconds: lockoutRemaining().toString() } }}</span>
-      </div>
-    } @else if (errorMessage()) {
-      <!-- Standard Error Banner -->
-      <div class="error-banner">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span>{{ errorMessage() }}</span>
-      </div>
-    }
+      <!-- Lockout Security Banner -->
+      @if (lockoutRemaining() > 0) {
+        <div class="alert-glow-pulse flex items-center justify-center gap-2.5 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-[#fca5a5]" role="alert">
+          <ng-icon name="ph:clock" class="size-4 shrink-0" aria-hidden="true" />
+          <span>{{ 'auth.tooManyAttempts' | translate:{ seconds: lockoutRemaining().toString() } }}</span>
+        </div>
+      } @else if (errorMessage()) {
+        <div class="flex items-center justify-center gap-2.5 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-3 text-center text-sm text-[#fca5a5]" role="alert">
+          <ng-icon name="ph:x-circle" class="size-4 shrink-0" aria-hidden="true" />
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
 
-    <!-- Quick Demo Login Banner -->
-    <div class="demo-quick-login-box">
-      <button 
-        class="btn-demo-quick" 
+      <!-- Quick Demo Login Banner -->
+      <button
+        class="group flex cursor-pointer items-center gap-4 rounded-lg border border-gold/25 bg-gold/8 p-4 text-left
+               transition-all duration-200 [transition-timing-function:var(--ease-spring)]
+               hover:-translate-y-0.5 hover:border-gold/45 [-webkit-tap-highlight-color:transparent]
+               disabled:cursor-not-allowed disabled:opacity-60"
         [disabled]="isSubmitting() || lockoutRemaining() > 0"
         (click)="loginDemo()"
       >
-        <div class="d-icon-box">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="#E9C46A"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <div class="d-text">
-          <strong>{{ 'auth.quickDemoBtn' | translate }}</strong>
-          <span>{{ 'auth.quickDemoSub' | translate }}</span>
-        </div>
+        <span class="flex size-10 shrink-0 items-center justify-center rounded-md bg-gold/15 transition-transform duration-300 group-hover:scale-110" aria-hidden="true">
+          <ng-icon name="ph:lightning-duotone" class="size-5 text-gold" />
+        </span>
+        <span class="d-text flex min-w-0 flex-col">
+          <strong class="text-sm font-bold text-honey">{{ 'auth.quickDemoBtn' | translate }}</strong>
+          <span class="text-xs leading-snug text-ink-muted">{{ 'auth.quickDemoSub' | translate }}</span>
+        </span>
       </button>
-    </div>
 
-    <div class="divider-text">
-      <span>{{ 'auth.orDivider' | translate }}</span>
-    </div>
+      <div class="flex items-center gap-4" role="separator" aria-hidden="true">
+        <span class="h-px flex-1 bg-line"></span>
+        <span class="font-mono text-[0.7rem] tracking-wide text-ink-dim">{{ 'auth.orDivider' | translate }}</span>
+        <span class="h-px flex-1 bg-line"></span>
+      </div>
 
-    <!-- Social Login -->
-    <div class="social-login-row">
-      <button 
-        class="btn-social-google" 
+      <!-- Social Login -->
+      <button
+        class="flex min-h-12 w-full cursor-pointer items-center justify-center gap-3 rounded-full bg-white font-sans text-sm font-bold text-slate-800 select-none
+               transition-all duration-200 [transition-timing-function:var(--ease-spring)] hover:-translate-y-px hover:brightness-97
+               active:translate-y-px active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
         [disabled]="isSubmitting() || lockoutRemaining() > 0"
         (click)="loginWithGoogle()"
       >
-        <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+        <svg class="google-icon size-5 shrink-0" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
           <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
           <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/>
           <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1s.7 5.4 1.9 7.8l3.7-2.9z"/>
@@ -73,66 +78,117 @@
         </svg>
         <span>{{ 'auth.googleBtn' | translate }}</span>
       </button>
-    </div>
 
-    <!-- Email Form -->
-    <form class="auth-form" (submit)="submitAuth($event)">
-      <div class="form-group">
-        <label>{{ 'auth.emailLabel' | translate }}</label>
-        <input 
-          type="email" 
-          [placeholder]="'auth.emailPlaceholder' | translate"
-          class="eco-input" 
+      <!-- Email Form -->
+      <form class="auth-form flex flex-col gap-4" (submit)="submitAuth($event)">
+        <div class="form-group flex flex-col gap-2">
+          <label for="auth-email-input" class="text-sm font-semibold text-ink-soft">{{ 'auth.emailLabel' | translate }}</label>
+          <input
+            id="auth-email-input"
+            type="email"
+            [placeholder]="'auth.emailPlaceholder' | translate"
+            class="eco-input"
+            [disabled]="isSubmitting() || lockoutRemaining() > 0"
+            [value]="emailInput()"
+            (input)="emailInput.set($any($event.target).value)"
+            required
+          >
+        </div>
+
+        <div class="form-group flex flex-col gap-2">
+          <label for="auth-password-input" class="text-sm font-semibold text-ink-soft">{{ 'auth.passwordLabel' | translate }}</label>
+          <input
+            id="auth-password-input"
+            type="password"
+            [placeholder]="'auth.passwordPlaceholder' | translate"
+            class="eco-input"
+            [disabled]="isSubmitting() || lockoutRemaining() > 0"
+            [value]="passwordInput()"
+            (input)="passwordInput.set($any($event.target).value)"
+            required
+          >
+        </div>
+
+        <button
+          type="submit"
+          class="btn-eco-primary btn-full mt-1"
           [disabled]="isSubmitting() || lockoutRemaining() > 0"
-          [value]="emailInput()" 
-          (input)="emailInput.set($any($event.target).value)" 
-          required
         >
-      </div>
+          @if (lockoutRemaining() > 0) {
+            <span class="font-mono tabular-nums">{{ 'auth.tooManyAttempts' | translate:{ seconds: lockoutRemaining().toString() } }}</span>
+          } @else if (isSubmitting()) {
+            <span class="btn-spinner" aria-hidden="true"></span>
+            <span>{{ 'common.loading' | translate }}</span>
+          } @else {
+            <span>{{ (isRegisterMode() ? 'auth.submitRegister' : 'auth.submitLogin') | translate }}</span>
+            <ng-icon name="ph:arrow-right" class="size-4 shrink-0" aria-hidden="true" />
+          }
+        </button>
+      </form>
 
-      <div class="form-group">
-        <label>{{ 'auth.passwordLabel' | translate }}</label>
-        <input 
-          type="password" 
-          [placeholder]="'auth.passwordPlaceholder' | translate"
-          class="eco-input" 
-          [disabled]="isSubmitting() || lockoutRemaining() > 0"
-          [value]="passwordInput()" 
-          (input)="passwordInput.set($any($event.target).value)" 
-          required
-        >
-      </div>
-
-      <button 
-        type="submit" 
-        class="btn-eco-primary btn-full"
-        [disabled]="isSubmitting() || lockoutRemaining() > 0"
-      >
-        @if (lockoutRemaining() > 0) {
-          <span>⏳ {{ 'auth.tooManyAttempts' | translate:{ seconds: lockoutRemaining().toString() } }}</span>
-        } @else if (isSubmitting()) {
-          <span class="btn-spinner"></span>
-          <span>{{ 'common.loading' | translate }}</span>
+      <!-- Toggle Mode Footer -->
+      <footer class="text-center text-sm text-ink-muted">
+        @if (!isRegisterMode()) {
+          <span>
+            {{ 'auth.dontHaveAccount' | translate }}
+            <a class="cursor-pointer font-semibold text-sage underline-offset-4 transition-colors duration-200 hover:text-mint hover:underline" (click)="toggleMode()" role="button" tabindex="0" (keydown.enter)="toggleMode()">{{ 'auth.createAccountLink' | translate }}</a>
+          </span>
         } @else {
-          <span>{{ (isRegisterMode() ? 'auth.submitRegister' : 'auth.submitLogin') | translate }}</span>
+          <span>
+            {{ 'auth.alreadyHaveAccount' | translate }}
+            <a class="cursor-pointer font-semibold text-sage underline-offset-4 transition-colors duration-200 hover:text-mint hover:underline" (click)="toggleMode()" role="button" tabindex="0" (keydown.enter)="toggleMode()">{{ 'auth.loginLink' | translate }}</a>
+          </span>
         }
-      </button>
-    </form>
+      </footer>
 
-    <!-- Toggle Mode Footer -->
-    <div class="auth-footer-toggle text-center">
-      @if (!isRegisterMode()) {
-        <span>
-          {{ 'auth.dontHaveAccount' | translate }} 
-          <a (click)="toggleMode()">{{ 'auth.createAccountLink' | translate }}</a>
+    </article>
+
+    <!-- Brand Showcase Panel (desktop): child card sliding out from behind the form -->
+    <aside class="glass-panel relative hidden flex-col justify-between overflow-hidden rounded-xl border-jade/22 p-9 lg:absolute lg:bottom-6 lg:left-full lg:top-6 lg:z-1 lg:-ml-8 lg:flex lg:w-[17rem] lg:pl-16" aria-hidden="true">
+      <div class="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(16,185,129,0.16)_0%,transparent_70%)]"></div>
+
+      <div class="relative z-2 flex flex-col gap-6">
+        <span class="badge-eco self-start">
+          <ng-icon name="ph:leaf-duotone" class="size-3 shrink-0" />
+          {{ 'hero.badgeEco' | translate }}
         </span>
-      } @else {
-        <span>
-          {{ 'auth.alreadyHaveAccount' | translate }} 
-          <a (click)="toggleMode()">{{ 'auth.loginLink' | translate }}</a>
-        </span>
-      }
-    </div>
+        <p class="m-0 font-sans text-2xl leading-snug font-semibold text-white">
+          {{ 'hero.title1' | translate }}<br>
+          <span class="text-sage">{{ 'hero.title2' | translate }}</span>
+        </p>
+        <p class="m-0 max-w-[24rem] text-sm leading-relaxed text-ink-muted">{{ 'footer.desc' | translate }}</p>
+      </div>
+
+      <!-- Brand centerpiece: fills the vertical breathing room between copy and proof points -->
+      <div class="relative z-2 my-auto flex justify-center py-8">
+        <div class="relative flex size-44 items-center justify-center">
+          <span class="animate-drop-pulse absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.2)_0%,transparent_70%)]" aria-hidden="true"></span>
+          <span class="absolute inset-7 rounded-full border border-jade/20" aria-hidden="true"></span>
+          <ng-icon name="ph:tree-evergreen-duotone" class="animate-float relative size-24 text-emerald [filter:drop-shadow(0_12px_24px_rgba(16,185,129,0.35))]" aria-hidden="true" />
+          <span class="animate-float absolute -top-1 right-5 flex size-11 items-center justify-center rounded-xl border border-water/30 bg-water/10 [animation-delay:0.6s]" aria-hidden="true">
+            <ng-icon name="ph:drop-duotone" size="20px" class="text-water" />
+          </span>
+          <span class="animate-float absolute bottom-3 left-3 flex size-11 items-center justify-center rounded-xl border border-gold/30 bg-gold/10 [animation-delay:1.1s]" aria-hidden="true">
+            <ng-icon name="ph:medal-duotone" size="20px" class="text-gold" />
+          </span>
+        </div>
+      </div>
+
+      <ul class="relative z-2 mt-auto flex list-none flex-col gap-4 p-0 pt-8">
+        <li class="flex items-start gap-3">
+          <ng-icon name="ph:tree-evergreen-duotone" class="mt-0.5 size-5 shrink-0 text-emerald" />
+          <span class="text-sm leading-snug text-ink-soft">{{ 'ideology.pos1' | translate }}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <ng-icon name="ph:shield-check-duotone" class="mt-0.5 size-5 shrink-0 text-water" />
+          <span class="text-sm leading-snug text-ink-soft">{{ 'ideology.pos2' | translate }}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <ng-icon name="ph:certificate-duotone" class="mt-0.5 size-5 shrink-0 text-gold" />
+          <span class="text-sm leading-snug text-ink-soft">{{ 'ideology.pos3' | translate }}</span>
+        </li>
+      </ul>
+    </aside>
 
   </div>
-</div>
+</main>

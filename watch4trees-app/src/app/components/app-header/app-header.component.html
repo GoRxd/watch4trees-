@@ -1,4 +1,4 @@
-<header class="app-top-bar glass-panel">
+<header class="app-top-bar" role="banner">
   <!-- Left Side: Brand Logo (Always clickable to return to dashboard) -->
   <div class="top-bar-left">
     <app-brand-logo 
@@ -11,11 +11,11 @@
 
   <!-- Right Side: Desktop Controls, Mobile Compact HUD, Hamburger Button -->
   <div class="top-bar-right">
-    <div class="desktop-nav-items">
+    <nav class="desktop-nav-items" [attr.aria-label]="'a11y.navApp' | translate">
       <app-user-hud mode="compact" [showStreak]="true"></app-user-hud>
       <app-lang-toggle></app-lang-toggle>
       <app-user-profile></app-user-profile>
-    </div>
+    </nav>
 
     <!-- Mobile Compact HUD (Shown only on small screens) -->
     <div class="mobile-hud-compact">
@@ -23,10 +23,16 @@
     </div>
 
     <!-- Hamburger Toggle Button -->
-    <button class="btn-hamburger" (click)="toggleMobileMenu()" [title]="'Menu'" aria-label="Toggle navigation">
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
+    <button
+      class="btn-hamburger"
+      (click)="toggleMobileMenu()"
+      [title]="'common.menu' | translate"
+      [attr.aria-label]="'a11y.mobileMenu' | translate"
+      [attr.aria-expanded]="isMobileMenuOpen()"
+    >
+      <span class="bar" aria-hidden="true"></span>
+      <span class="bar" aria-hidden="true"></span>
+      <span class="bar" aria-hidden="true"></span>
     </button>
   </div>
 </header>

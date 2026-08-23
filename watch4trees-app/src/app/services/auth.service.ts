@@ -88,12 +88,11 @@ export class AuthService {
             const titleKey = (ach?.title && ach.title.startsWith('achievements.')) ? ach.title : itemKey;
             const translatedTitle = this.i18n.translate(titleKey);
             const title = (translatedTitle !== titleKey) ? translatedTitle : (ach?.title || achievementId);
-            const icon = ach?.icon_name || '🏆';
 
             this.toast.success(
               'toast.achievementUnlockedMsg',
               'toast.achievementUnlockedTitle',
-              { title, icon }
+              { title }
             );
           } catch (err) {
             console.error('[AuthService] Realtime achievement handler error:', err);

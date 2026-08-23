@@ -1,8 +1,11 @@
 import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgIcon } from '@ng-icons/core';
 import { DatabaseService } from '../../services/database.service';
 import { AuthService } from '../../services/auth.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+import { RevealDirective } from '../../directives/reveal.directive';
+import { SpotlightDirective } from '../../directives/spotlight.directive';
 import { Achievement, UserAchievement } from '../../models';
 
 export interface AchievementViewModel extends Achievement {
@@ -15,9 +18,8 @@ export interface AchievementViewModel extends Achievement {
 @Component({
   selector: 'app-achievements-list',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
-  templateUrl: './achievements-list.component.html',
-  styleUrls: ['./achievements-list.component.scss']
+  imports: [CommonModule, NgIcon, TranslatePipe, RevealDirective, SpotlightDirective],
+  templateUrl: './achievements-list.component.html'
 })
 export class AchievementsListComponent implements OnInit {
   private db = inject(DatabaseService);

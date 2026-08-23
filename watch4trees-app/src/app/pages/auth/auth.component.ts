@@ -1,6 +1,7 @@
 import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
 import { AuthService } from '../../services/auth.service';
 import { DatabaseService } from '../../services/database.service';
 import { TranslationService } from '../../services/translation.service';
@@ -8,19 +9,17 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { LangToggleComponent } from '../../components/lang-toggle/lang-toggle.component';
 import { BrandLogoComponent } from '../../components/brand-logo/brand-logo.component';
 import { SafeStorage } from '../../utils/storage.helper';
+import { STORAGE_KEYS } from '../../constants';
 
 interface AuthLockoutLocalState {
   lockoutUntil: number; // Unix timestamp in ms
 }
 
-const AUTH_LOCKOUT_STORAGE_KEY = 'w4t_auth_lockout';
-
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe, LangToggleComponent, BrandLogoComponent],
-  templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss']
+  imports: [CommonModule, RouterModule, NgIcon, TranslatePipe, LangToggleComponent, BrandLogoComponent],
+  templateUrl: './auth.component.html'
 })
 export class AuthComponent implements OnInit, OnDestroy {
   auth = inject(AuthService);
@@ -48,7 +47,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   private restoreLocalLockoutState() {
-    const saved = SafeStorage.getJSON<AuthLockoutLocalState>(AUTH_LOCKOUT_STORAGE_KEY);
+    const saved = SafeStorage.getJSON<AuthLockoutLocalState>(STORAGE_KEYS.AUTH_LOCKOUT);
     if (!saved || !saved.lockoutUntil) return;
 
     const now = Date.now();
@@ -57,15 +56,15 @@ export class AuthComponent implements OnInit, OnDestroy {
       this.startLockout(remainingSec, saved.lockoutUntil);
       this.errorMessage.set(this.i18n.translate('auth.lockoutWarning', { seconds: remainingSec.toString() }));
     } else {
-      SafeStorage.removeItem(AUTH_LOCKOUT_STORAGE_KEY);
+      SafeStorage.removeItem(STORAGE_KEYS.AUTH_LOCKOUT);
     }
   }
 
   private saveLocalLockout(lockoutUntilMs: number) {
     if (lockoutUntilMs > Date.now()) {
-      SafeStorage.setJSON(AUTH_LOCKOUT_STORAGE_KEY, { lockoutUntil: lockoutUntilMs });
+      SafeStorage.setJSON(STORAGE_KEYS.AUTH_LOCKOUT, { lockoutUntil: lockoutUntilMs });
     } else {
-      SafeStorage.removeItem(AUTH_LOCKOUT_STORAGE_KEY);
+      SafeStorage.removeItem(STORAGE_KEYS.AUTH_LOCKOUT);
     }
   }
 
@@ -106,7 +105,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     const pass = this.passwordInput().trim();
 
     if (!email || !pass) {
-      this.errorMessage.set(this.i18n.currentLang() === 'pl' ? 'Wypełnij wszystkie pola!' : 'Please fill all fields!');
+      this.errorMessage.set(this.i18n.translate('auth.fillAllFields'));
       return;
     }
 

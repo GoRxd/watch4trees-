@@ -1,37 +1,43 @@
-<div class="toast-wrapper" aria-live="polite">
+<div class="pointer-events-none fixed top-6 right-6 z-1000 flex w-[calc(100vw-2rem)] max-w-[26rem] flex-col gap-3 max-sm:top-auto max-sm:right-4 max-sm:bottom-6 max-sm:left-4 max-sm:w-auto">
   @for (toast of toastService.toasts(); track toast.id) {
-    <div 
-      class="toast-card" 
-      [ngClass]="'toast-' + toast.type"
-      [class.toast-closing]="toast.isClosing"
+    <div
+      class="toast-card pointer-events-auto relative flex items-start gap-3 overflow-hidden rounded-xl border py-3 pr-2 pl-3.5 backdrop-blur-md"
+      [class.toast-success]="toast.type === 'success'"
+      [class.toast-error]="toast.type === 'error'"
+      [class.toast-warning]="toast.type === 'warning'"
+      [class.toast-info]="toast.type === 'info'"
+      [class.toast-leaving]="toast.isClosing"
       role="alert"
     >
-      <div class="toast-icon">
+      <span class="flex size-9 shrink-0 items-center justify-center rounded-sm border" aria-hidden="true">
         @switch (toast.type) {
-          @case ('success') { <span>🌿</span> }
-          @case ('error') { <span>⚠️</span> }
-          @case ('warning') { <span>⏳</span> }
-          @case ('info') { <span>💧</span> }
+          @case ('success') { <ng-icon name="ph:check" class="size-5 text-jade" /> }
+          @case ('error') { <ng-icon name="ph:x" class="size-5 text-red-400" /> }
+          @case ('warning') { <ng-icon name="ph:clock" class="size-5 text-gold" /> }
+          @case ('info') { <ng-icon name="ph:drop-duotone" class="size-5 text-water" /> }
         }
-      </div>
+      </span>
 
-      <div class="toast-content">
+      <div class="min-w-0 flex-1 pt-0.5">
         @if (toast.title) {
-          <div class="toast-title">{{ toast.title }}</div>
+          <div class="mb-0.5 text-sm font-bold tracking-tight text-white">{{ toast.title }}</div>
         }
-        <div class="toast-message">{{ toast.message }}</div>
+        <div class="text-[0.875rem] leading-snug break-words text-ink-soft">{{ toast.message }}</div>
       </div>
 
-      <button 
-        type="button" 
-        class="toast-close" 
+      <button
+        type="button"
+        class="-mt-1.5 -mr-1 flex size-11 cursor-pointer items-center justify-center rounded-sm p-3 text-ink-muted transition-colors hover:bg-white/10 hover:text-white [-webkit-tap-highlight-color:transparent]"
         (click)="toastService.dismiss(toast.id)"
-        aria-label="Zamknij powiadomienie"
+        [attr.aria-label]="'common.close' | translate"
       >
-        ✕
+        <ng-icon name="ph:x" class="size-3.5 shrink-0" aria-hidden="true" />
       </button>
 
-      <div class="toast-progress-bar" [style.animationDuration.ms]="toast.durationMs || 4500"></div>
+      <span
+        class="toast-progress absolute inset-x-0 bottom-0 h-[3px] origin-left"
+        [style.animationDuration.ms]="toast.durationMs || 4500"
+      ></span>
     </div>
   }
 </div>

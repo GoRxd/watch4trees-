@@ -1,43 +1,47 @@
 <!-- Top Navigation Bar -->
-<header class="navbar-container">
-  <div class="navbar-content glass-panel">
+<header class="fixed inset-x-0 top-4 z-50 mx-auto w-full max-w-[1320px] px-6 max-md:top-2.5 max-md:px-2.5" role="banner">
+  <div class="landing-topbar glass-panel flex flex-nowrap items-center justify-between gap-4 rounded-lg !bg-[rgb(11_20_14/0.88)] px-5 py-3 backdrop-blur-xl">
     <app-brand-logo (clicked)="scrollToSection('hero')"></app-brand-logo>
 
-    <nav class="nav-menu">
-      <a class="nav-link" (click)="scrollToSection('how-it-works')">{{ 'nav.howItWorks' | translate }}</a>
-      <a class="nav-link" (click)="scrollToSection('ideology')">{{ 'nav.ideology' | translate }}</a>
-      <a class="nav-link" (click)="scrollToSection('gamification')">{{ 'nav.forest' | translate }}</a>
-      <a class="nav-link" (click)="scrollToSection('transparency')">{{ 'nav.transparency' | translate }}</a>
-      <a class="nav-link" (click)="scrollToSection('b2b')">{{ 'nav.b2b' | translate }}</a>
-      <a class="nav-link" (click)="scrollToSection('faq')">{{ 'nav.faq' | translate }}</a>
+    <nav class="landing-nav-menu hidden min-w-0 flex-1 flex-nowrap items-center justify-center gap-4 overflow-hidden lg:flex" [attr.aria-label]="'a11y.navLanding' | translate">
+      <a class="nav-link whitespace-nowrap cursor-pointer font-sans text-sm font-medium text-ink-muted transition-colors duration-200 hover:text-sage" (click)="scrollToSection('how-it-works')" role="button" tabindex="0" (keydown.enter)="scrollToSection('how-it-works')">{{ 'nav.howItWorks' | translate }}</a>
+      <a class="nav-link whitespace-nowrap cursor-pointer font-sans text-sm font-medium text-ink-muted transition-colors duration-200 hover:text-sage" (click)="scrollToSection('ideology')" role="button" tabindex="0" (keydown.enter)="scrollToSection('ideology')">{{ 'nav.ideology' | translate }}</a>
+      <a class="nav-link whitespace-nowrap cursor-pointer font-sans text-sm font-medium text-ink-muted transition-colors duration-200 hover:text-sage" (click)="scrollToSection('gamification')" role="button" tabindex="0" (keydown.enter)="scrollToSection('gamification')">{{ 'nav.forest' | translate }}</a>
+      <a class="nav-link whitespace-nowrap cursor-pointer font-sans text-sm font-medium text-ink-muted transition-colors duration-200 hover:text-sage" (click)="scrollToSection('transparency')" role="button" tabindex="0" (keydown.enter)="scrollToSection('transparency')">{{ 'nav.transparency' | translate }}</a>
+      <a class="nav-link whitespace-nowrap cursor-pointer font-sans text-sm font-medium text-ink-muted transition-colors duration-200 hover:text-sage" (click)="scrollToSection('b2b')" role="button" tabindex="0" (keydown.enter)="scrollToSection('b2b')">{{ 'nav.b2b' | translate }}</a>
+      <a class="nav-link whitespace-nowrap cursor-pointer font-sans text-sm font-medium text-ink-muted transition-colors duration-200 hover:text-sage" (click)="scrollToSection('faq')" role="button" tabindex="0" (keydown.enter)="scrollToSection('faq')">{{ 'nav.faq' | translate }}</a>
     </nav>
 
-    <div class="nav-actions">
+    <div class="flex shrink-0 items-center gap-2">
       <app-lang-toggle></app-lang-toggle>
 
       @if (!auth.isAuthenticated()) {
-        <button class="btn-eco-secondary btn-nav-login" (click)="goToAuth()">
+        <button class="btn-eco-secondary landing-nav-login !min-h-10 !px-4 !py-2 !text-xs" (click)="goToAuth()">
           <span>{{ 'auth.loginBtnNav' | translate }}</span>
         </button>
       }
 
-      <button class="btn-eco-primary btn-nav-cta" (click)="goToAuth()">
+      <button class="btn-eco-primary btn-nav-cta !min-h-10.5 !px-4 !py-2 !text-xs" (click)="goToAuth()">
         @if (!auth.isAuthenticated()) {
           <span>{{ 'nav.cta' | translate }}</span>
         } @else {
-          <span class="btn-cta-inner">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            </svg>
+          <span class="inline-flex items-center gap-1.5">
+            <ng-icon name="ph:house-simple" class="shrink-0" aria-hidden="true" />
             {{ 'auth.goToDashboard' | translate }}
           </span>
         }
       </button>
 
-      <button class="btn-hamburger" (click)="toggleMobileMenu()" [title]="'Menu'" aria-label="Toggle navigation">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
+      <button
+        class="btn-hamburger landing-hamburger"
+        (click)="toggleMobileMenu()"
+        [title]="'common.menu' | translate"
+        [attr.aria-label]="'a11y.mobileMenu' | translate"
+        [attr.aria-expanded]="isMobileMenuOpen()"
+      >
+        <span class="bar" aria-hidden="true"></span>
+        <span class="bar" aria-hidden="true"></span>
+        <span class="bar" aria-hidden="true"></span>
       </button>
     </div>
   </div>
@@ -51,80 +55,43 @@
 </header>
 
 <!-- MAIN LANDING CONTENT -->
-<main class="landing-main">
+<main id="main-content" class="flex flex-col gap-24 pt-36 pb-4 max-lg:gap-16 max-md:pt-28" role="main">
 
   <!-- ==================== 1. HERO SECTION ==================== -->
-  <section id="hero" class="hero-section">
-    <div class="hero-grid">
-      
+  <section id="hero" class="section-container" aria-labelledby="hero-main-title">
+    <div class="grid grid-cols-[1.15fr_0.85fr] items-center gap-14 max-xl:grid-cols-1 max-xl:gap-12">
+
       <!-- Hero Left: Value Proposition -->
-      <div class="hero-text-col">
-        <div class="hero-badge-row">
-          <span class="badge-eco">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/>
-            </svg>
-            {{ 'hero.badgeEco' | translate }}
-          </span>
-          <span class="badge-verified">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-            {{ 'hero.badgeVerified' | translate }}
-          </span>
-        </div>
-        
-        <h1 class="hero-title">
-          {{ 'hero.title1' | translate }} <br>
-          <span class="gradient-text">{{ 'hero.title2' | translate }}</span>
+      <div>
+        <h1 id="hero-main-title" class="hero-title mb-6 text-[clamp(2.4rem,5vw,3.7rem)] leading-[1.08]" appReveal>
+          {{ 'hero.title1' | translate }}<br>
+          <span class="text-sage">{{ 'hero.title2' | translate }}</span>
         </h1>
-        
-        <p class="hero-description">
+
+        <p class="mb-8 max-w-[36rem] text-lg leading-relaxed text-ink-soft" appReveal revealDelay="90">
           {{ 'hero.desc' | translate }}
         </p>
 
-        <div class="hero-cta-group">
-          <button class="btn-eco-primary btn-large" (click)="goToAuth()">
+        <div class="flex flex-wrap items-center gap-4" appReveal revealDelay="180">
+          <button class="btn-eco-primary btn-large group" (click)="goToAuth()">
             <span>{{ 'hero.startBtn' | translate }}</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
+            <ng-icon name="ph:arrow-right" class="size-4 shrink-0 transition-transform duration-300 [transition-timing-function:var(--ease-spring)] group-hover:translate-x-1" aria-hidden="true" />
           </button>
           <button class="btn-eco-secondary btn-large" (click)="scrollToSection('how-it-works')">
             <span>{{ 'hero.howBtn' | translate }}</span>
           </button>
         </div>
-
-        <!-- Real-time global impact stats -->
-        <div class="hero-trust-bar">
-          <div class="trust-stat">
-            <span class="stat-number text-sage font-mono">{{ 'hero.statTrees' | translate }}</span>
-            <span class="stat-label">{{ 'hero.statTreesLabel' | translate }}</span>
-          </div>
-          <div class="trust-divider"></div>
-          <div class="trust-stat">
-            <span class="stat-number text-gold font-mono">{{ 'hero.statCo2' | translate }}</span>
-            <span class="stat-label">{{ 'hero.statCo2Label' | translate }}</span>
-          </div>
-          <div class="trust-divider"></div>
-          <div class="trust-stat">
-            <span class="stat-number text-blue font-mono">{{ 'hero.statTrans' | translate }}</span>
-            <span class="stat-label">{{ 'hero.statTransLabel' | translate }}</span>
-          </div>
-        </div>
       </div>
 
       <!-- Hero Right: Interactive Tree Simulator Card -->
-      <div class="hero-interactive-col">
-        <div class="interactive-preview-card glass-panel-elevated">
-          <div class="card-top-tag">
-            <span class="badge-eco">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-              {{ 'demo.badge' | translate }}
+      <div appReveal revealDelay="140">
+        <article class="glass-panel-elevated spotlight-card relative flex flex-col gap-6 p-8 animate-float" [attr.aria-label]="'a11y.simulator' | translate">
+          <header class="flex items-center justify-start">
+            <span class="badge-verified">
+              <ng-icon name="ph:seal-check" class="size-3 shrink-0" aria-hidden="true" />
+              {{ 'demo.tag' | translate }}
             </span>
-            <span class="tag-status">{{ 'demo.tag' | translate }}</span>
-          </div>
+          </header>
 
           <!-- Shared Tree Stage Component -->
           <app-tree-stage
@@ -138,123 +105,151 @@
           ></app-tree-stage>
 
           <!-- Interactive Action -->
-          <div class="demo-actions">
+          <div class="flex flex-col gap-2.5">
             @if (!demoTreePlanted()) {
               <button class="btn-eco-primary btn-full" (click)="addDemoWater()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                </svg>
+                <ng-icon name="ph:drop" class="size-4 shrink-0" aria-hidden="true" />
                 <span>{{ 'demo.waterBtn' | translate }}</span>
               </button>
             } @else {
               <button class="btn-eco-secondary btn-full" (click)="resetDemo()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-                </svg>
+                <ng-icon name="ph:arrow-clockwise" class="size-4 shrink-0" aria-hidden="true" />
                 <span>{{ 'demo.resetBtn' | translate }}</span>
               </button>
             }
           </div>
-        </div>
+        </article>
       </div>
 
     </div>
   </section>
 
-  <!-- ==================== 2. HOW IT WORKS (3 SIMPLE STEPS) ==================== -->
-  <section id="how-it-works" class="section-container">
-    <div class="section-header text-center">
-      <span class="badge-eco">{{ 'howItWorks.badge' | translate }}</span>
-      <h2 class="section-title">{{ 'howItWorks.title' | translate }}</h2>
-      <p class="section-subtitle">
-        {{ 'howItWorks.subtitle' | translate }}
-      </p>
-    </div>
-
-    <div class="steps-grid">
-      
-      <!-- Step 1 -->
-      <div class="step-card glass-panel">
-        <div class="step-badge font-mono">{{ 'howItWorks.step1Badge' | translate }}</div>
-        <div class="step-icon-wrapper">
-          <svg class="step-svg" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-        </div>
-        <h3 class="step-title">{{ 'howItWorks.step1Title' | translate }}</h3>
-        <p class="step-desc">{{ 'howItWorks.step1Desc' | translate }}</p>
+  <!-- ==================== 1B. IMPACT TARGETS STRIP (below hero) ==================== -->
+  <!-- [TODO_TEMPLATE: Replace target values with real totals from Open Impact Ledger API] -->
+  <section class="section-container" [attr.aria-label]="'a11y.liveStats' | translate">
+    <dl class="impact-strip glass-panel mx-auto flex max-w-[53rem] items-center justify-center gap-8 rounded-lg px-8 py-6 max-md:flex-col max-md:gap-4 max-md:px-6" appReveal>
+      <div class="trust-stat flex flex-col-reverse gap-0.5 text-center max-md:items-center">
+        <dt class="text-xs leading-tight text-ink-muted">{{ 'hero.statTreesLabel' | translate }}</dt>
+        <dd class="font-mono text-2xl font-extrabold leading-none text-sage tabular-nums">{{ 'hero.statTrees' | translate }}</dd>
       </div>
-
-      <!-- Step 2 -->
-      <div class="step-card glass-panel">
-        <div class="step-badge font-mono">{{ 'howItWorks.step2Badge' | translate }}</div>
-        <div class="step-icon-wrapper">
-          <svg class="step-svg" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
-            <line x1="7" y1="2" x2="7" y2="22"/>
-            <line x1="17" y1="2" x2="17" y2="22"/>
-            <line x1="2" y1="12" x2="22" y2="12"/>
-            <line x1="2" y1="7" x2="7" y2="7"/>
-            <line x1="2" y1="17" x2="7" y2="17"/>
-            <line x1="17" y1="17" x2="22" y2="17"/>
-            <line x1="17" y1="7" x2="22" y2="7"/>
-          </svg>
-        </div>
-        <h3 class="step-title">{{ 'howItWorks.step2Title' | translate }}</h3>
-        <p class="step-desc">{{ 'howItWorks.step2Desc' | translate }}</p>
+      <div class="h-9 w-px shrink-0 bg-line max-md:h-px max-md:w-full" aria-hidden="true"></div>
+      <div class="trust-stat flex flex-col-reverse gap-0.5 text-center max-md:items-center">
+        <dt class="text-xs leading-tight text-ink-muted">{{ 'hero.statCo2Label' | translate }}</dt>
+        <dd class="font-mono text-2xl font-extrabold leading-none text-sage tabular-nums">{{ 'hero.statCo2' | translate }}</dd>
       </div>
-
-      <!-- Step 3 -->
-      <div class="step-card glass-panel">
-        <div class="step-badge font-mono">{{ 'howItWorks.step3Badge' | translate }}</div>
-        <div class="step-icon-wrapper">
-          <svg class="step-svg" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/>
-            <path d="M12 7V21"/>
-          </svg>
-        </div>
-        <h3 class="step-title">{{ 'howItWorks.step3Title' | translate }}</h3>
-        <p class="step-desc">{{ 'howItWorks.step3Desc' | translate }}</p>
+      <div class="h-9 w-px shrink-0 bg-line max-md:h-px max-md:w-full" aria-hidden="true"></div>
+      <div class="trust-stat flex flex-col-reverse gap-0.5 text-center max-md:items-center">
+        <dt class="text-xs leading-tight text-ink-muted">{{ 'hero.statTransLabel' | translate }}</dt>
+        <dd class="font-mono text-2xl font-extrabold leading-none text-sage tabular-nums">{{ 'hero.statTrans' | translate }}</dd>
       </div>
+    </dl>
+  </section>
 
-    </div>
+  <!-- ==================== 2. HOW IT WORKS (ASYMMETRIC BENTO GRID) ==================== -->
+  <section id="how-it-works" class="section-container" aria-labelledby="how-it-works-heading">
+    <header class="mb-13 text-center" appReveal>
+      <h2 id="how-it-works-heading" class="mb-3 text-[clamp(1.85rem,4vw,2.5rem)] tracking-tight">{{ 'howItWorks.title' | translate }}</h2>
+      <p class="mx-auto max-w-[41rem] leading-relaxed text-ink-muted">{{ 'howItWorks.subtitle' | translate }}</p>
+    </header>
+
+    <ol class="grid grid-cols-[1fr_1fr_1.08fr] gap-7 max-xl:grid-cols-1">
+
+      <!-- Bento Cell 1: Choose Session -->
+      <li appReveal>
+        <article class="glass-panel spotlight-card relative flex h-full flex-col gap-4 rounded-lg p-8">
+          <span class="step-badge-pill absolute top-6 right-6 rounded-xs border border-jade/28 bg-jade/12 px-2.5 py-1 font-mono text-xs font-extrabold text-sage tabular-nums">{{ 'howItWorks.step1Badge' | translate }}</span>
+          <span class="mb-1 flex size-12.5 items-center justify-center rounded-md border border-line bg-jade/8">
+            <ng-icon name="ph:clock" class="size-6.5 text-water" aria-hidden="true" />
+          </span>
+          <h3 class="text-[1.3rem] text-white">{{ 'howItWorks.step1Title' | translate }}</h3>
+          <p class="text-[0.95rem] leading-relaxed text-ink-soft">{{ 'howItWorks.step1Desc' | translate }}</p>
+
+          <footer class="mt-auto flex flex-wrap gap-2 border-t border-white/6 pt-4">
+            <span class="mini-pill active">{{ 'howItWorks.step1Meta1' | translate }}</span>
+            <span class="mini-pill">{{ 'howItWorks.step1Meta2' | translate }}</span>
+          </footer>
+        </article>
+      </li>
+
+      <!-- Bento Cell 2: Rewarded Video ESG -->
+      <li appReveal revealDelay="100">
+        <article class="glass-panel spotlight-card relative flex h-full flex-col gap-4 rounded-lg p-8">
+          <span class="step-badge-pill absolute top-6 right-6 rounded-xs border border-jade/28 bg-jade/12 px-2.5 py-1 font-mono text-xs font-extrabold text-sage tabular-nums">{{ 'howItWorks.step2Badge' | translate }}</span>
+          <span class="mb-1 flex size-12.5 items-center justify-center rounded-md border border-line bg-jade/8">
+            <ng-icon name="ph:list-checks" class="size-6.5 text-emerald" aria-hidden="true" />
+          </span>
+          <h3 class="text-[1.3rem] text-white">{{ 'howItWorks.step2Title' | translate }}</h3>
+          <p class="text-[0.95rem] leading-relaxed text-ink-soft">{{ 'howItWorks.step2Desc' | translate }}</p>
+
+          <footer class="mt-auto flex flex-wrap gap-2 border-t border-white/6 pt-4">
+            <span class="mini-pill">
+              <ng-icon name="ph:shield-check" class="size-3 shrink-0" aria-hidden="true" />
+              {{ 'howItWorks.step2Meta1' | translate }}
+            </span>
+            <span class="mini-pill">
+              <ng-icon name="ph:sparkle-duotone" class="size-3 shrink-0 text-gold" aria-hidden="true" />
+              {{ 'howItWorks.step2Meta2' | translate }}
+            </span>
+          </footer>
+        </article>
+      </li>
+
+      <!-- Bento Cell 3: Real Tree Planted & Passport -->
+      <li class="bento-heroic-cell" appReveal revealDelay="200">
+        <article class="bento-heroic glass-panel relative flex h-full flex-col gap-4 rounded-lg p-8">
+          <span class="step-badge-pill absolute top-6 right-6 rounded-xs border border-gold/32 bg-gold/12 px-2.5 py-1 font-mono text-xs font-extrabold text-gold tabular-nums">{{ 'howItWorks.step3Badge' | translate }}</span>
+          <span class="mb-1 flex size-12.5 items-center justify-center rounded-md border border-line bg-jade/8">
+            <ng-icon name="ph:tree-evergreen-duotone" class="size-6.5 text-gold" aria-hidden="true" />
+          </span>
+          <h3 class="text-[1.3rem] text-white">{{ 'howItWorks.step3Title' | translate }}</h3>
+          <p class="text-[0.95rem] leading-relaxed text-ink-soft">{{ 'howItWorks.step3Desc' | translate }}</p>
+
+          <footer class="mt-auto flex flex-wrap gap-2 border-t border-white/6 pt-4">
+            <span class="mini-pill">
+              <ng-icon name="ph:map-pin" class="size-3 shrink-0" aria-hidden="true" />
+              {{ 'howItWorks.step3Meta1' | translate }}
+            </span>
+            <span class="mini-pill">{{ 'transparency.partners.poland' | translate }}</span>
+          </footer>
+        </article>
+      </li>
+
+    </ol>
   </section>
 
   <!-- ==================== 3. IDEOLOGY: PURPOSE-FIRST VS CLICK-TO-EARN ==================== -->
-  <section id="ideology" class="section-container ideology-section">
-    <div class="ideology-card glass-panel-elevated">
-      <div class="ideology-grid">
-        <div class="ideology-left">
-          <span class="badge-eco">{{ 'ideology.badge' | translate }}</span>
-          <h2 class="ideology-title">{{ 'ideology.title' | translate }}</h2>
-          <p class="ideology-text">{{ 'ideology.p1' | translate }}</p>
-          <p class="ideology-text">{{ 'ideology.p2' | translate }}</p>
-          
-          <div class="motto-box">
-            <span class="motto-quote">{{ 'ideology.quote' | translate }}</span>
-          </div>
+  <section id="ideology" class="section-container" aria-labelledby="ideology-heading">
+    <div class="glass-panel-elevated p-11 max-md:rounded-lg max-md:p-7" appReveal>
+      <div class="grid grid-cols-[1.1fr_0.9fr] items-center gap-14 max-xl:grid-cols-1 max-xl:gap-10">
+        <div>
+          <h2 id="ideology-heading" class="mb-5 text-[clamp(1.75rem,3.5vw,2.3rem)] tracking-tight">{{ 'ideology.title' | translate }}</h2>
+          <p class="mb-4 leading-relaxed text-ink-soft">{{ 'ideology.p1' | translate }}</p>
+          <p class="mb-4 leading-relaxed text-ink-soft">{{ 'ideology.p2' | translate }}</p>
+
+          <blockquote class="mt-6 rounded-r-md border-l-[3px] border-sage bg-pine/25 px-6 py-5">
+            <p class="m-0 font-sans text-[1.05rem] font-semibold italic leading-snug text-sage">{{ 'ideology.quote' | translate }}</p>
+          </blockquote>
         </div>
 
-        <div class="ideology-right">
-          <div class="comparison-card glass-panel">
-            <div class="comp-col negative">
-              <div class="comp-col-header">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FCA5A5" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-                <h4>{{ 'ideology.negTitle' | translate }}</h4>
+        <div>
+          <div class="glass-panel relative flex flex-col gap-7 rounded-lg p-8" role="region" [attr.aria-label]="'a11y.comparison' | translate">
+            <div>
+              <div class="mb-3.5 flex items-center gap-2.5">
+                <ng-icon name="ph:x-circle" class="size-4.5 text-[#fca5a5]" aria-hidden="true" />
+                <h4 class="m-0 text-[1.1rem] text-[#fca5a5]">{{ 'ideology.negTitle' | translate }}</h4>
               </div>
-              <ul>
+              <ul class="m-0 flex list-none flex-col gap-2.5 p-0 text-sm text-ink-muted">
                 <li>{{ 'ideology.neg1' | translate }}</li>
                 <li>{{ 'ideology.neg2' | translate }}</li>
                 <li>{{ 'ideology.neg3' | translate }}</li>
               </ul>
             </div>
-            <div class="comp-col positive">
-              <div class="comp-col-header">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                <h4>{{ 'ideology.posTitle' | translate }}</h4>
+            <div>
+              <div class="mb-3.5 flex items-center gap-2.5">
+                <ng-icon name="ph:check-circle" class="size-4.5 text-emerald" aria-hidden="true" />
+                <h4 class="m-0 text-[1.1rem] text-sage">{{ 'ideology.posTitle' | translate }}</h4>
               </div>
-              <ul>
+              <ul class="m-0 flex list-none flex-col gap-2.5 p-0 text-sm text-[#f0fdf4]">
                 <li>{{ 'ideology.pos1' | translate }}</li>
                 <li>{{ 'ideology.pos2' | translate }}</li>
                 <li>{{ 'ideology.pos3' | translate }}</li>
@@ -268,246 +263,312 @@
   </section>
 
   <!-- ==================== 4. VIRTUAL FOREST & GAMIFICATION ==================== -->
-  <section id="gamification" class="section-container">
-    <div class="section-header text-center">
-      <span class="badge-eco">{{ 'gamification.badge' | translate }}</span>
-      <h2 class="section-title">{{ 'gamification.title' | translate }}</h2>
-      <p class="section-subtitle">{{ 'gamification.subtitle' | translate }}</p>
-    </div>
+  <section id="gamification" class="section-container" aria-labelledby="gamification-heading">
+    <header class="mb-13" appReveal>
+      <h2 id="gamification-heading" class="mb-3 text-[clamp(1.85rem,4vw,2.5rem)] tracking-tight">{{ 'gamification.title' | translate }}</h2>
+      <p class="max-w-[41rem] leading-relaxed text-ink-muted">{{ 'gamification.subtitle' | translate }}</p>
+    </header>
 
-    <div class="gamification-features-grid">
-      
-      <div class="feature-box glass-panel">
-        <div class="f-icon-box">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
-        </div>
-        <h3>{{ 'gamification.f1Title' | translate }}</h3>
-        <p>{{ 'gamification.f1Desc' | translate }}</p>
-      </div>
+    <div class="grid grid-cols-12 gap-7 max-xl:gap-5 max-lg:grid-cols-1">
 
-      <div class="feature-box glass-panel">
-        <div class="f-icon-box">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-        </div>
-        <h3>{{ 'gamification.f2Title' | translate }}</h3>
-        <p>{{ 'gamification.f2Desc' | translate }}</p>
-      </div>
+      <article class="glass-panel spotlight-card relative col-span-7 flex flex-col gap-3 overflow-hidden rounded-lg p-9 max-lg:col-auto" appReveal>
+        <span class="mb-1 flex size-12 items-center justify-center rounded-md border border-line bg-jade/8">
+          <ng-icon name="ph:seal-check-duotone" class="size-6 text-emerald" aria-hidden="true" />
+        </span>
+        <h3 class="text-xl text-white">{{ 'gamification.f1Title' | translate }}</h3>
+        <p class="text-[0.95rem] leading-relaxed text-ink-soft">{{ 'gamification.f1Desc' | translate }}</p>
+      </article>
 
-      <div class="feature-box glass-panel">
-        <div class="f-icon-box">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/><path d="M14 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-        </div>
-        <h3>{{ 'gamification.f3Title' | translate }}</h3>
-        <p>{{ 'gamification.f3Desc' | translate }}</p>
-      </div>
+      <article class="feature-box-tinted glass-panel spotlight-card relative col-span-5 flex flex-col gap-3 overflow-hidden rounded-lg p-8 max-lg:col-auto" appReveal revealDelay="90">
+        <span class="mb-1 flex size-12 items-center justify-center rounded-md border border-line bg-jade/8">
+          <ng-icon name="ph:flame-duotone" class="size-6 text-gold" aria-hidden="true" />
+        </span>
+        <h3 class="text-xl text-white">{{ 'gamification.f2Title' | translate }}</h3>
+        <p class="text-[0.95rem] leading-relaxed text-ink-soft">{{ 'gamification.f2Desc' | translate }}</p>
+      </article>
 
-      <div class="feature-box glass-panel">
-        <div class="f-icon-box">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-        </div>
-        <h3>{{ 'gamification.f4Title' | translate }}</h3>
-        <p>{{ 'gamification.f4Desc' | translate }}</p>
-      </div>
+      <article class="feature-box-tinted glass-panel spotlight-card relative col-span-5 flex flex-col gap-3 overflow-hidden rounded-lg p-8 max-lg:col-auto" appReveal>
+        <span class="mb-1 flex size-12 items-center justify-center rounded-md border border-line bg-jade/8">
+          <ng-icon name="ph:users-three-duotone" class="size-6 text-water" aria-hidden="true" />
+        </span>
+        <h3 class="text-xl text-white">{{ 'gamification.f3Title' | translate }}</h3>
+        <p class="text-[0.95rem] leading-relaxed text-ink-soft">{{ 'gamification.f3Desc' | translate }}</p>
+      </article>
+
+      <article class="glass-panel spotlight-card relative col-span-7 flex flex-col gap-3 overflow-hidden rounded-lg p-9 max-lg:col-auto" appReveal revealDelay="90">
+        <span class="mb-1 flex size-12 items-center justify-center rounded-md border border-line bg-jade/8">
+          <ng-icon name="ph:medal-duotone" class="size-6 text-emerald" aria-hidden="true" />
+        </span>
+        <h3 class="text-xl text-white">{{ 'gamification.f4Title' | translate }}</h3>
+        <p class="text-[0.95rem] leading-relaxed text-ink-soft">{{ 'gamification.f4Desc' | translate }}</p>
+      </article>
 
     </div>
   </section>
 
-  <!-- ==================== 5. TRANSPARENCY & FINANCIAL SPLIT ==================== -->
-  <section id="transparency" class="section-container">
-    <div class="transparency-card glass-panel-elevated">
-      <div class="transparency-header">
-        <span class="badge-eco">{{ 'transparency.badge' | translate }}</span>
-        <h2>{{ 'transparency.title' | translate }}</h2>
-        <p>{{ 'transparency.desc' | translate }}</p>
-      </div>
+  <!-- ==================== 5. TRANSPARENCY & OPEN LEDGER ==================== -->
+  <section id="transparency" class="section-container" aria-labelledby="transparency-heading">
+    <div class="glass-panel-elevated mx-auto w-full max-w-[62rem] p-11 max-md:rounded-lg max-md:p-7" appReveal>
+      <header class="mx-auto mb-11 flex max-w-[42rem] flex-col items-center text-center">
+        <span class="badge-eco mb-3">{{ 'transparency.badge' | translate }}</span>
+        <h2 id="transparency-heading" class="mb-3 text-[clamp(1.75rem,3.5vw,2.3rem)] tracking-tight">{{ 'transparency.title' | translate }}</h2>
+        <p class="leading-relaxed text-ink-soft">{{ 'transparency.desc' | translate }}</p>
+      </header>
 
       <!-- Financial Split Graph -->
-      <div class="split-visual-wrapper glass-panel">
-        <div class="split-header-row">
+      <figure class="glass-panel mx-auto w-full max-w-[54rem] rounded-lg p-8 text-left max-md:p-6">
+        <figcaption class="mb-5 flex items-center justify-between gap-4 max-md:flex-col max-md:items-start max-md:gap-2.5">
           <h3>{{ 'transparency.splitTitle' | translate }}</h3>
-          <span class="badge-verified">{{ 'transparency.splitBadge' | translate }}</span>
+          <span class="badge-verified">
+            <ng-icon name="ph:seal-check" class="size-3 shrink-0" aria-hidden="true" />
+            {{ 'transparency.splitBadge' | translate }}
+          </span>
+        </figcaption>
+
+        <div class="split-bar flex h-12 w-full overflow-hidden rounded-md text-sm font-bold shadow-card max-md:h-11" role="img" [attr.aria-label]="'a11y.splitBar' | translate">
+          <div class="flex w-[85%] items-center justify-center overflow-hidden px-4 whitespace-nowrap text-ellipsis text-white [background:linear-gradient(135deg,#059669_0%,#10b981_100%)]">
+            <span class="bar-label-desktop max-md:hidden">{{ 'transparency.foundationShare' | translate }}</span>
+            <span class="hidden font-mono font-extrabold tabular-nums max-md:inline">85%</span>
+          </div>
+          <div class="flex w-[15%] items-center justify-center overflow-hidden px-2 whitespace-nowrap text-ellipsis bg-[#1e293b] text-ink-soft">
+            <span class="bar-label-desktop max-md:hidden">{{ 'transparency.hostShare' | translate }}</span>
+            <span class="hidden font-mono font-extrabold tabular-nums max-md:inline">15%</span>
+          </div>
         </div>
 
-        <div class="split-bar">
-          <div class="bar-foundation" style="width: 85%;">
-            <span>{{ 'transparency.foundationShare' | translate }}</span>
-          </div>
-          <div class="bar-host" style="width: 15%;">
-            <span>{{ 'transparency.hostShare' | translate }}</span>
-          </div>
-        </div>
-
-        <div class="split-details-grid">
-          <div class="split-detail-item">
-            <div class="detail-marker marker-green"></div>
+        <div class="mt-7 grid grid-cols-2 gap-8 text-[0.92rem] text-ink-soft max-md:grid-cols-1 max-md:gap-5">
+          <div class="flex gap-3.5">
+            <span class="mt-1.75 size-2.5 shrink-0 rounded-full bg-jade" aria-hidden="true"></span>
             <div>
-              <strong>{{ 'transparency.foundationTitle' | translate }}</strong>
-              <p>{{ 'transparency.foundationDesc' | translate }}</p>
+              <strong class="mb-1 block text-[0.95rem] text-white">{{ 'transparency.foundationTitle' | translate }}</strong>
+              <p class="m-0">{{ 'transparency.foundationDesc' | translate }}</p>
             </div>
           </div>
-          <div class="split-detail-item">
-            <div class="detail-marker marker-gray"></div>
+          <div class="flex gap-3.5">
+            <span class="mt-1.75 size-2.5 shrink-0 rounded-full bg-ink-dim" aria-hidden="true"></span>
             <div>
-              <strong>{{ 'transparency.hostTitle' | translate }}</strong>
-              <p>{{ 'transparency.hostDesc' | translate }}</p>
+              <strong class="mb-1 block text-[0.95rem] text-white">{{ 'transparency.hostTitle' | translate }}</strong>
+              <p class="m-0">{{ 'transparency.hostDesc' | translate }}</p>
             </div>
           </div>
         </div>
-      </div>
+      </figure>
 
-      <!-- Partner Badges -->
-      <div class="partner-orgs-row">
-        <div class="partner-chip">
-          <span class="partner-tag-country font-mono">PL</span>
-          <span>{{ 'transparency.partners.poland' | translate }}</span>
-        </div>
-        <div class="partner-chip">
-          <span class="partner-tag-country font-mono">GL</span>
-          <span>{{ 'transparency.partners.global' | translate }}</span>
-        </div>
-        <div class="partner-chip">
-          <span class="partner-tag-country font-mono">MG</span>
-          <span>{{ 'transparency.partners.eden' | translate }}</span>
-        </div>
-        <div class="partner-chip">
-          <span class="partner-tag-country font-mono">FSC</span>
-          <span>{{ 'transparency.partners.audit' | translate }}</span>
+      <!-- Partner Marquee (single marquee on this page) -->
+      <div class="marquee mt-10" [attr.aria-label]="'a11y.partnersRow' | translate">
+        <div class="marquee-track">
+          @for (partner of marqueePartners; track $index) {
+            <span class="partner-chip inline-flex shrink-0 items-center gap-2.5 rounded-full border border-line border-t-line-strong bg-card px-5 py-2.5 text-sm font-semibold transition-all duration-200 hover:-translate-y-px hover:border-jade/22"
+                  [attr.aria-hidden]="$index >= 4 ? true : null">
+              <span class="rounded-xxs bg-jade/15 px-1.5 py-0.5 font-mono text-[0.72rem] font-bold text-sage">{{ partner.tag }}</span>
+              {{ partner.nameKey | translate }}
+            </span>
+          }
         </div>
       </div>
     </div>
   </section>
 
   <!-- ==================== 6. B2B & ESG SPONSORSHIP ==================== -->
-  <section id="b2b" class="section-container">
-    <div class="b2b-banner glass-panel">
-      <div class="b2b-content">
-        <span class="badge-gold">{{ 'b2b.badge' | translate }}</span>
-        <h2>{{ 'b2b.title' | translate }}</h2>
-        <p>{{ 'b2b.desc' | translate }}</p>
-        
-        <div class="b2b-perks">
-          <div class="perk-item">
-            <div class="perk-check-box">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <span>{{ 'b2b.perk1' | translate }}</span>
-          </div>
-          <div class="perk-item">
-            <div class="perk-check-box">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <span>{{ 'b2b.perk2' | translate }}</span>
-          </div>
-          <div class="perk-item">
-            <div class="perk-check-box">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            <span>{{ 'b2b.perk3' | translate }}</span>
+  <section id="b2b" class="section-container" aria-labelledby="b2b-heading">
+    <article class="b2b-banner glass-panel relative w-full overflow-hidden rounded-xl p-11 max-md:rounded-lg max-md:p-7" appReveal>
+      <div class="grid grid-cols-[1.15fr_0.85fr] items-center gap-12 max-xl:grid-cols-1 max-xl:gap-8">
+
+        <!-- Left: Value Proposition & Perks -->
+        <div class="flex flex-col items-start">
+          <span class="badge-gold mb-3">{{ 'b2b.badge' | translate }}</span>
+          <h2 id="b2b-heading" class="mb-4 text-[clamp(1.75rem,3.5vw,2.3rem)] tracking-tight">{{ 'b2b.title' | translate }}</h2>
+          <p class="mb-7 leading-relaxed text-ink-soft">{{ 'b2b.desc' | translate }}</p>
+
+          <ul class="mb-8 flex list-none flex-col gap-3.5 p-0">
+            <li class="perk-item flex items-center gap-3.5 text-base text-ink">
+              <span class="flex size-5.5 shrink-0 items-center justify-center rounded-full border border-jade/30 bg-jade/15">
+                <ng-icon name="ph:check" class="size-3 text-emerald" aria-hidden="true" />
+              </span>
+              <span>{{ 'b2b.perk1' | translate }}</span>
+            </li>
+            <li class="perk-item flex items-center gap-3.5 text-base text-ink">
+              <span class="flex size-5.5 shrink-0 items-center justify-center rounded-full border border-jade/30 bg-jade/15">
+                <ng-icon name="ph:check" class="size-3 text-emerald" aria-hidden="true" />
+              </span>
+              <span>{{ 'b2b.perk2' | translate }}</span>
+            </li>
+            <li class="perk-item flex items-center gap-3.5 text-base text-ink">
+              <span class="flex size-5.5 shrink-0 items-center justify-center rounded-full border border-jade/30 bg-jade/15">
+                <ng-icon name="ph:check" class="size-3 text-emerald" aria-hidden="true" />
+              </span>
+              <span>{{ 'b2b.perk3' | translate }}</span>
+            </li>
+          </ul>
+
+          <div>
+            <a href="mailto:partnerzy@watch4trees.org" class="btn-eco-primary group">
+              <span>{{ 'b2b.cta' | translate }}</span>
+              <ng-icon name="ph:envelope" class="size-4 shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5" aria-hidden="true" />
+            </a>
           </div>
         </div>
 
-        <div class="b2b-action">
-          <a href="mailto:partnerzy@watch4trees.org" class="btn-eco-primary">
-            <span>{{ 'b2b.cta' | translate }}</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </a>
+        <!-- Right: Visual ESG Match-Funding Multiplier Card -->
+        <div>
+          <aside class="glass-panel-elevated flex flex-col gap-6 rounded-xl border-gold/25 bg-[rgb(10_18_14/0.95)] p-9 shadow-elevated max-md:p-6" [attr.aria-label]="'b2b.multiplierBadge' | translate">
+            <div class="flex items-center justify-between">
+              <span class="badge-gold">{{ 'b2b.multiplierBadge' | translate }}</span>
+            </div>
+
+            <!-- Multiplier Interactive Diagram -->
+            <div class="multiplier-schematic flex items-center justify-between gap-1.5 rounded-md border border-dashed border-white/12 bg-white/2 px-3 py-4 max-md:gap-0.5 max-md:px-2 max-md:py-3.5" aria-hidden="true">
+              <div class="schematic-node flex flex-col items-center gap-2 text-center">
+                <span class="node-icon-box flex size-10 items-center justify-center rounded-sm border border-jade/30 bg-jade/12 shadow-[0_0_12px_rgba(16,185,129,0.15)]">
+                  <ng-icon name="ph:user" class="size-5 text-emerald" />
+                </span>
+                <span class="font-mono text-[0.76rem] text-ink-muted">{{ 'b2b.nodeUser' | translate }}</span>
+              </div>
+
+              <span class="font-mono text-lg font-extrabold text-ink-dim">+</span>
+
+              <div class="schematic-node flex flex-col items-center gap-2 text-center">
+                <span class="flex size-10 items-center justify-center rounded-sm border border-gold/30 bg-gold/12 shadow-[0_0_12px_rgba(245,158,11,0.15)]">
+                  <ng-icon name="ph:buildings" class="size-5 text-gold" />
+                </span>
+                <span class="font-mono text-[0.76rem] text-ink-muted">{{ 'b2b.nodeSponsor' | translate }}</span>
+              </div>
+
+              <span class="font-mono text-lg font-extrabold text-ink-dim">=</span>
+
+              <div class="schematic-node flex flex-col items-center gap-2 text-center">
+                <span class="flex size-10 items-center justify-center rounded-sm border border-jade/45 bg-emerald/20 shadow-[0_0_16px_rgba(16,185,129,0.28)]">
+                  <ng-icon name="ph:tree-evergreen-duotone" class="size-5.5 text-jade" />
+                </span>
+                <span class="font-mono text-[0.76rem] font-bold text-sage">{{ 'b2b.nodeResult' | translate }}</span>
+              </div>
+            </div>
+
+            <!-- Formula Box -->
+            <div class="rounded-md border border-jade/20 bg-jade/8 px-4 py-3.5 text-center">
+              <p class="m-0 font-mono text-sm font-semibold text-sage">{{ 'b2b.multiplierFormula' | translate }}</p>
+            </div>
+
+            <!-- Telemetry Metrics -->
+            <!-- [TODO_TEMPLATE: Replace illustrative values with measured campaign data from backend] -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="flex flex-col gap-0.5 rounded-md border border-line bg-white/3 px-4 py-3.5">
+                <span class="font-mono text-xl font-extrabold leading-tight text-gold tabular-nums">{{ 'b2b.statEngagementVal' | translate }}</span>
+                <span class="text-xs leading-snug text-ink-muted">{{ 'b2b.statEngagement' | translate }}</span>
+              </div>
+              <div class="flex flex-col gap-0.5 rounded-md border border-line bg-white/3 px-4 py-3.5">
+                <span class="font-mono text-xl font-extrabold leading-tight text-sage tabular-nums">{{ 'b2b.statCertsVal' | translate }}</span>
+                <span class="text-xs leading-snug text-ink-muted">{{ 'b2b.statCerts' | translate }}</span>
+              </div>
+            </div>
+          </aside>
         </div>
+
       </div>
-    </div>
+    </article>
   </section>
 
-  <!-- ==================== 7. FAQ ACCORDION ==================== -->
-  <section id="faq" class="section-container">
-    <div class="section-header text-center">
-      <span class="badge-eco">{{ 'faq.badge' | translate }}</span>
-      <h2 class="section-title">{{ 'faq.title' | translate }}</h2>
-    </div>
+  <!-- ==================== 7. FAQ ==================== -->
+  <section id="faq" class="section-container" aria-labelledby="faq-heading">
+    <div class="grid grid-cols-[0.85fr_1.35fr] items-start gap-14 max-xl:grid-cols-1 max-xl:gap-8">
+      <header class="sticky top-26 max-xl:static">
+        <h2 id="faq-heading" class="text-[clamp(1.85rem,4vw,2.5rem)] tracking-tight" appReveal>{{ 'faq.title' | translate }}</h2>
+      </header>
 
-    <div class="faq-list">
-      
-      <!-- FAQ 1 -->
-      <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 0">
-        <div class="faq-question" (click)="toggleFaq(0)">
-          <h4>{{ 'faq.q1' | translate }}</h4>
-          <span class="faq-toggle-icon font-mono">{{ activeFaqIndex() === 0 ? '−' : '+' }}</span>
-        </div>
-        @if (activeFaqIndex() === 0) {
-          <div class="faq-answer">
-            <p>{{ 'faq.a1' | translate }}</p>
+      <div class="flex flex-col gap-4">
+
+        <!-- FAQ 1 -->
+        <div class="faq-item" [class.open]="activeFaqIndex() === 0" appReveal>
+          <button class="faq-question" (click)="toggleFaq(0)" [attr.aria-expanded]="activeFaqIndex() === 0">
+            <h4>{{ 'faq.q1' | translate }}</h4>
+            <span class="faq-toggle-icon font-mono" aria-hidden="true">{{ activeFaqIndex() === 0 ? '-' : '+' }}</span>
+          </button>
+          <div class="faq-answer-shell grid transition-[grid-template-rows] duration-300 ease-out" [class.grid-rows-open]="activeFaqIndex() === 0">
+            <div class="overflow-hidden">
+              <p>{{ 'faq.a1' | translate }}</p>
+            </div>
           </div>
-        }
-      </div>
-
-      <!-- FAQ 2 -->
-      <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 1">
-        <div class="faq-question" (click)="toggleFaq(1)">
-          <h4>{{ 'faq.q2' | translate }}</h4>
-          <span class="faq-toggle-icon font-mono">{{ activeFaqIndex() === 1 ? '−' : '+' }}</span>
         </div>
-        @if (activeFaqIndex() === 1) {
-          <div class="faq-answer">
-            <p>{{ 'faq.a2' | translate }}</p>
-          </div>
-        }
-      </div>
 
-      <!-- FAQ 3 -->
-      <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 2">
-        <div class="faq-question" (click)="toggleFaq(2)">
-          <h4>{{ 'faq.q3' | translate }}</h4>
-          <span class="faq-toggle-icon font-mono">{{ activeFaqIndex() === 2 ? '−' : '+' }}</span>
+        <!-- FAQ 2 -->
+        <div class="faq-item" [class.open]="activeFaqIndex() === 1" appReveal revealDelay="60">
+          <button class="faq-question" (click)="toggleFaq(1)" [attr.aria-expanded]="activeFaqIndex() === 1">
+            <h4>{{ 'faq.q2' | translate }}</h4>
+            <span class="faq-toggle-icon font-mono" aria-hidden="true">{{ activeFaqIndex() === 1 ? '-' : '+' }}</span>
+          </button>
+          <div class="faq-answer-shell grid transition-[grid-template-rows] duration-300 ease-out" [class.grid-rows-open]="activeFaqIndex() === 1">
+            <div class="overflow-hidden">
+              <p>{{ 'faq.a2' | translate }}</p>
+            </div>
+          </div>
         </div>
-        @if (activeFaqIndex() === 2) {
-          <div class="faq-answer">
-            <p>{{ 'faq.a3' | translate }}</p>
-          </div>
-        }
-      </div>
 
-      <!-- FAQ 4 -->
-      <div class="faq-item glass-panel" [class.open]="activeFaqIndex() === 3">
-        <div class="faq-question" (click)="toggleFaq(3)">
-          <h4>{{ 'faq.q4' | translate }}</h4>
-          <span class="faq-toggle-icon font-mono">{{ activeFaqIndex() === 3 ? '−' : '+' }}</span>
+        <!-- FAQ 3 -->
+        <div class="faq-item" [class.open]="activeFaqIndex() === 2" appReveal revealDelay="120">
+          <button class="faq-question" (click)="toggleFaq(2)" [attr.aria-expanded]="activeFaqIndex() === 2">
+            <h4>{{ 'faq.q3' | translate }}</h4>
+            <span class="faq-toggle-icon font-mono" aria-hidden="true">{{ activeFaqIndex() === 2 ? '-' : '+' }}</span>
+          </button>
+          <div class="faq-answer-shell grid transition-[grid-template-rows] duration-300 ease-out" [class.grid-rows-open]="activeFaqIndex() === 2">
+            <div class="overflow-hidden">
+              <p>{{ 'faq.a3' | translate }}</p>
+            </div>
+          </div>
         </div>
-        @if (activeFaqIndex() === 3) {
-          <div class="faq-answer">
-            <p>{{ 'faq.a4' | translate }}</p>
-          </div>
-        }
-      </div>
 
+        <!-- FAQ 4 -->
+        <div class="faq-item" [class.open]="activeFaqIndex() === 3" appReveal revealDelay="180">
+          <button class="faq-question" (click)="toggleFaq(3)" [attr.aria-expanded]="activeFaqIndex() === 3">
+            <h4>{{ 'faq.q4' | translate }}</h4>
+            <span class="faq-toggle-icon font-mono" aria-hidden="true">{{ activeFaqIndex() === 3 ? '-' : '+' }}</span>
+          </button>
+          <div class="faq-answer-shell grid transition-[grid-template-rows] duration-300 ease-out" [class.grid-rows-open]="activeFaqIndex() === 3">
+            <div class="overflow-hidden">
+              <p>{{ 'faq.a4' | translate }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
   <!-- ==================== 8. CTA / EARLY ACCESS ==================== -->
-  <section id="join" class="section-container join-section">
-    <div class="join-card glass-panel-elevated text-center">
-      <span class="badge-eco">{{ 'join.badge' | translate }}</span>
-      <h2 class="join-title">{{ 'join.title' | translate }}</h2>
-      <p class="join-subtitle">{{ 'join.subtitle' | translate }}</p>
+  <section id="join" class="section-container flex justify-center" aria-labelledby="join-heading">
+    <div class="join-card glass-panel-elevated relative w-full max-w-[52rem] overflow-hidden rounded-xl p-12 text-center max-md:p-9" appReveal>
+      <span class="badge-eco mb-5">{{ 'join.badge' | translate }}</span>
+      <h2 id="join-heading" class="mx-auto mb-4 max-w-[42rem] text-[clamp(2rem,4vw,2.75rem)] font-extrabold leading-tight text-white">{{ 'join.title' | translate }}</h2>
+      <p class="mx-auto mb-10 max-w-[35rem] leading-relaxed text-ink-soft">{{ 'join.subtitle' | translate }}</p>
 
       @if (!emailSubscribed()) {
-        <form class="newsletter-form" (submit)="submitNewsletter($event)">
-          <input 
-            type="email" 
-            [placeholder]="'join.emailPlaceholder' | translate" 
-            class="eco-input rounded-full" 
-            [value]="emailInput()" 
-            (input)="emailInput.set($any($event.target).value)" 
+        <!-- [TODO_TEMPLATE: Submit email to Supabase newsletter subscription RPC] -->
+        <form class="mx-auto flex w-full max-w-[34rem] items-center justify-center gap-3 max-md:flex-col max-md:items-stretch max-md:gap-3.5" (submit)="submitNewsletter($event)" novalidate>
+          <label for="newsletter-email-input" class="sr-only">{{ 'a11y.newsletterEmail' | translate }}</label>
+          <input
+            id="newsletter-email-input"
+            type="email"
+            [placeholder]="'join.emailPlaceholder' | translate"
+            class="eco-input eco-input-rounded flex-1"
+            [class.eco-input-invalid]="emailError()"
+            [value]="emailInput()"
+            (input)="onEmailInput($any($event.target).value)"
             required
           >
-          <button type="submit" class="btn-eco-primary">
+          <button type="submit" class="btn-eco-primary shrink-0 !py-3.5">
             <span>{{ 'join.btn' | translate }}</span>
+            <ng-icon name="ph:paper-plane-tilt" class="size-4 shrink-0" aria-hidden="true" />
           </button>
         </form>
+        @if (emailError()) {
+          <p class="form-error-inline mx-auto mt-3.5 max-w-[34rem] text-center text-sm text-[#fca5a5]" role="alert">{{ emailError() }}</p>
+        }
       } @else {
-        <div class="subscribed-success">
-          <div class="success-icon-box">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <h3>{{ 'join.successTitle' | translate }}</h3>
-          <p>{{ 'join.successDesc' | translate }}</p>
+        <div class="subscribed-success mx-auto flex w-full max-w-[34rem] flex-col items-center justify-center gap-3 rounded-xl border border-sage bg-pine/25 px-8 py-10 text-center" role="status" aria-live="polite">
+          <span class="mb-1 flex size-13 items-center justify-center rounded-full bg-jade/15">
+            <ng-icon name="ph:confetti-duotone" class="size-7 text-emerald" aria-hidden="true" />
+          </span>
+          <h3 class="m-0 text-[1.35rem] text-sage">{{ 'join.successTitle' | translate }}</h3>
+          <p class="m-0 text-[0.95rem] text-ink-soft">{{ 'join.successDesc' | translate }}</p>
         </div>
       }
     </div>
@@ -516,39 +577,36 @@
 </main>
 
 <!-- FOOTER -->
-<footer class="landing-footer glass-panel">
-  <div class="footer-container">
-    <div class="footer-brand-col">
+<footer class="landing-footer glass-panel mx-auto mt-18 max-w-[1280px] rounded-b-none px-8 pt-18 pb-9" role="contentinfo">
+  <div class="mb-12 grid grid-cols-[1.5fr_1fr_1fr] gap-12 max-xl:grid-cols-[1fr_1fr] max-md:grid-cols-1 max-md:gap-8">
+    <address class="not-italic">
       <app-brand-logo [subtitle]="'footer.subtitle' | translate" [clickable]="false"></app-brand-logo>
-      <p class="footer-desc">
-        {{ 'footer.desc' | translate }}
-      </p>
-    </div>
+      <p class="mt-4 max-w-80 text-[0.9rem] leading-relaxed text-ink-muted">{{ 'footer.desc' | translate }}</p>
+    </address>
 
-    <div class="footer-links-col">
-      <h5>{{ 'footer.navTitle' | translate }}</h5>
-      <a (click)="scrollToSection('how-it-works')">{{ 'nav.howItWorks' | translate }}</a>
-      <a (click)="scrollToSection('ideology')">{{ 'nav.ideology' | translate }}</a>
-      <a (click)="scrollToSection('transparency')">{{ 'nav.transparency' | translate }}</a>
-      <a (click)="scrollToSection('b2b')">{{ 'nav.b2b' | translate }}</a>
-    </div>
+    <nav class="flex flex-col items-start gap-3 text-[0.9rem] text-ink-muted" [attr.aria-label]="'a11y.footerNav' | translate">
+      <h5 class="mb-1 text-[0.95rem] text-white">{{ 'footer.navTitle' | translate }}</h5>
+      <a class="cursor-pointer transition-colors duration-200 hover:text-sage" (click)="scrollToSection('how-it-works')" role="button" tabindex="0" (keydown.enter)="scrollToSection('how-it-works')">{{ 'nav.howItWorks' | translate }}</a>
+      <a class="cursor-pointer transition-colors duration-200 hover:text-sage" (click)="scrollToSection('ideology')" role="button" tabindex="0" (keydown.enter)="scrollToSection('ideology')">{{ 'nav.ideology' | translate }}</a>
+      <a class="cursor-pointer transition-colors duration-200 hover:text-sage" (click)="scrollToSection('transparency')" role="button" tabindex="0" (keydown.enter)="scrollToSection('transparency')">{{ 'nav.transparency' | translate }}</a>
+      <a class="cursor-pointer transition-colors duration-200 hover:text-sage" (click)="scrollToSection('b2b')" role="button" tabindex="0" (keydown.enter)="scrollToSection('b2b')">{{ 'nav.b2b' | translate }}</a>
+      <a class="cursor-pointer transition-colors duration-200 hover:text-sage" (click)="scrollToSection('faq')" role="button" tabindex="0" (keydown.enter)="scrollToSection('faq')">{{ 'nav.faq' | translate }}</a>
+    </nav>
 
-    <div class="footer-links-col">
-      <h5>{{ 'footer.partnersTitle' | translate }}</h5>
-      <span class="footer-partner-link">🇵🇱 Posadzimy.pl</span>
-      <span class="footer-partner-link">🌎 One Tree Planted</span>
-      <span class="footer-partner-link">🇲🇬 Eden Reforestation</span>
-    </div>
-
-    <div class="footer-links-col">
-      <h5>{{ 'footer.techTitle' | translate }}</h5>
-      <span>{{ 'footer.tech1' | translate }}</span>
-      <span>{{ 'footer.tech2' | translate }}</span>
-      <span>{{ 'footer.tech3' | translate }}</span>
+    <div class="flex flex-col items-start gap-3 text-[0.9rem]">
+      <h5 class="mb-1 text-[0.95rem] text-white">{{ 'footer.partnersTitle' | translate }}</h5>
+      <span class="text-ink-soft">Posadzimy.pl (PL)</span>
+      <span class="text-ink-soft">One Tree Planted (Global)</span>
+      <span class="text-ink-soft">Eden Reforestation (Madagascar)</span>
     </div>
   </div>
 
-  <div class="footer-bottom">
-    <p>{{ 'footer.copyright' | translate }}</p>
+  <div class="flex flex-wrap items-center justify-between gap-4 border-t border-white/8 pt-8 text-xs text-ink-dim max-md:flex-col max-md:justify-center max-md:text-center">
+    <p class="m-0 text-inherit">{{ 'footer.copyright' | translate }}</p>
+    <nav class="inline-flex items-center gap-3.5" [attr.aria-label]="'legal.privacyNav' | translate">
+      <a class="text-ink-muted no-underline transition-colors duration-200 hover:text-sage" [routerLink]="'/privacy'">{{ 'legal.privacyNav' | translate }}</a>
+      <span class="h-3 w-px bg-line" aria-hidden="true"></span>
+      <a class="text-ink-muted no-underline transition-colors duration-200 hover:text-sage" [routerLink]="'/terms'">{{ 'legal.termsNav' | translate }}</a>
+    </nav>
   </div>
 </footer>

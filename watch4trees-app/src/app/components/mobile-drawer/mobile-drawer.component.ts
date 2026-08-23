@@ -1,6 +1,7 @@
 import { Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
 import { AuthService } from '../../services/auth.service';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
@@ -13,12 +14,12 @@ import { LangToggleComponent } from '../lang-toggle/lang-toggle.component';
   imports: [
     CommonModule,
     RouterModule,
+    NgIcon,
     TranslatePipe,
     BrandLogoComponent,
     LangToggleComponent
   ],
-  templateUrl: './mobile-drawer.component.html',
-  styleUrls: ['./mobile-drawer.component.scss']
+  templateUrl: './mobile-drawer.component.html'
 })
 export class MobileDrawerComponent {
   auth = inject(AuthService);

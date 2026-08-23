@@ -1,6 +1,7 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+﻿import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
 import { AuthService } from '../../services/auth.service';
 import { DatabaseService } from '../../services/database.service';
 import { TranslationService } from '../../services/translation.service';
@@ -9,8 +10,12 @@ import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
 import { TreeStageComponent } from '../../components/tree-stage/tree-stage.component';
 import { AchievementsListComponent } from '../../components/achievements-list/achievements-list.component';
+import { RevealDirective } from '../../directives/reveal.directive';
+import { SpotlightDirective } from '../../directives/spotlight.directive';
+import { CountUpDirective } from '../../directives/count-up.directive';
 import { PlantedTreeCertificate } from '../../models';
-import { ECO_METRICS } from '../../constants';
+import { ECO_METRICS, STORAGE_KEYS } from '../../constants';
+import { SafeStorage } from '../../utils/storage.helper';
 
 export type { PlantedTreeCertificate } from '../../models';
 export type DashboardTab = 'forest' | 'achievements';
@@ -19,15 +24,18 @@ export type DashboardTab = 'forest' | 'achievements';
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
-    TranslatePipe, 
+    CommonModule,
+    RouterModule,
+    NgIcon,
+    TranslatePipe,
     AppHeaderComponent,
     TreeStageComponent,
-    AchievementsListComponent
+    AchievementsListComponent,
+    RevealDirective,
+    SpotlightDirective,
+    CountUpDirective
   ],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent implements OnInit {
   auth = inject(AuthService);
@@ -49,6 +57,14 @@ export class DashboardComponent implements OnInit {
   // Planted trees certificates list
   myPlantedTrees = signal<PlantedTreeCertificate[]>([]);
 
+  // Promo banner dismissal (persisted per browser)
+  promoDismissed = signal<boolean>(SafeStorage.getItem(STORAGE_KEYS.PROMO_DISMISSED) === '1');
+
+  dismissPromoBanner() {
+    this.promoDismissed.set(true);
+    SafeStorage.setItem(STORAGE_KEYS.PROMO_DISMISSED, '1');
+  }
+
   ngOnInit() {
     this.loadUserData();
   }
@@ -68,10 +84,9 @@ export class DashboardComponent implements OnInit {
     const certificates: PlantedTreeCertificate[] = dbTrees.map(t => ({
       id: t.id,
       serialNumber: t.certificate_number || t.tree_number,
-      species: t.project?.tree_species || 'Dąb Szypułkowy (Quercus robur)',
-      speciesIcon: t.project?.country_code === 'MG' ? '🌴' : (t.project?.tree_species.includes('Sosna') ? '🌲' : '🌳'),
+      species: t.project?.tree_species || 'DÄ…b SzypuĹ‚kowy (Quercus robur)',
       plantedDate: t.planted_at ? new Date(t.planted_at).toLocaleDateString() : new Date().toLocaleDateString(),
-      location: `${t.project?.name || 'Nadleśnictwo Lipusz'}, ${t.project?.region || 'Polska'}`,
+      location: `${t.project?.name || 'NadleĹ›nictwo Lipusz'}, ${t.project?.region || 'Polska'}`,
       foundation: t.verified_by || t.project?.organization || user.targetFoundation || 'Posadzimy.pl',
       co2PerYearKg: Number(t.project?.co2_absorption_kg_year || ECO_METRICS.CO2_PER_TREE_KG)
     }));
@@ -115,10 +130,9 @@ export class DashboardComponent implements OnInit {
           const newCert: PlantedTreeCertificate = {
             id: res.new_tree.id,
             serialNumber: res.new_tree.certificate_number || res.new_tree.tree_number,
-            species: res.new_tree.project?.tree_species || 'Dąb Szypułkowy (Quercus robur)',
-            speciesIcon: '🌳',
+            species: res.new_tree.project?.tree_species || 'DÄ…b SzypuĹ‚kowy (Quercus robur)',
             plantedDate: new Date().toLocaleDateString(),
-            location: `${res.new_tree.project?.name || 'Nadleśnictwo Lipusz'}, ${res.new_tree.project?.region || 'Polska'}`,
+            location: `${res.new_tree.project?.name || 'NadleĹ›nictwo Lipusz'}, ${res.new_tree.project?.region || 'Polska'}`,
             foundation: res.new_tree.verified_by || user.targetFoundation || 'Posadzimy.pl',
             co2PerYearKg: ECO_METRICS.CO2_PER_TREE_KG
           };
@@ -129,10 +143,9 @@ export class DashboardComponent implements OnInit {
           const certificates: PlantedTreeCertificate[] = dbTrees.map(t => ({
             id: t.id,
             serialNumber: t.certificate_number || t.tree_number,
-            species: t.project?.tree_species || 'Dąb Szypułkowy (Quercus robur)',
-            speciesIcon: '🌳',
+            species: t.project?.tree_species || 'DÄ…b SzypuĹ‚kowy (Quercus robur)',
             plantedDate: t.planted_at ? new Date(t.planted_at).toLocaleDateString() : new Date().toLocaleDateString(),
-            location: `${t.project?.name || 'Nadleśnictwo Lipusz'}, ${t.project?.region || 'Polska'}`,
+            location: `${t.project?.name || 'NadleĹ›nictwo Lipusz'}, ${t.project?.region || 'Polska'}`,
             foundation: t.verified_by || user.targetFoundation || 'Posadzimy.pl',
             co2PerYearKg: Number(t.project?.co2_absorption_kg_year || ECO_METRICS.CO2_PER_TREE_KG)
           }));

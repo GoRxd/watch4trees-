@@ -1,12 +1,14 @@
 import { Component, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
 import { AuthService } from '../../services/auth.service';
 import { DatabaseService } from '../../services/database.service';
 import { TranslationService } from '../../services/translation.service';
 import { ToastService } from '../../services/toast.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AppHeaderComponent } from '../../components/app-header/app-header.component';
+import { RevealDirective } from '../../directives/reveal.directive';
 import { AdSessionConfig, SessionType, SponsorInfo, QuizQuestion } from '../../models';
 
 export type { AdSessionConfig, SessionType, SponsorInfo, QuizQuestion } from '../../models';
@@ -15,19 +17,41 @@ export type { AdSessionConfig, SessionType, SponsorInfo, QuizQuestion } from '..
   selector: 'app-watch',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
-    TranslatePipe, 
-    AppHeaderComponent
+    CommonModule,
+    RouterModule,
+    NgIcon,
+    TranslatePipe,
+    AppHeaderComponent,
+    RevealDirective
   ],
-  templateUrl: './watch.component.html',
-  styleUrls: ['./watch.component.scss']
+  templateUrl: './watch.component.html'
 })
 export class WatchComponent implements OnDestroy {
   auth = inject(AuthService);
   db = inject(DatabaseService);
   i18n = inject(TranslationService);
   toast = inject(ToastService);
+
+  /** Reward screen confetti drizzle (one-shot, CSS-driven, reduced-motion safe). */
+  readonly confettiBits = Array.from({ length: 26 }, (_, i) => {
+    const left = 4 + ((i * 37) % 92);
+    const delay = (i * 90) % 1200;
+    const duration = 1800 + ((i * 53) % 900);
+    const rot = 360 + ((i * 67) % 420);
+    const color = ['#6ee7b7', '#38bdf8', '#f59e0b', '#a7f3d0', '#10b981'][i % 5];
+    return {
+      style:
+        `left:${left}%; --fall-delay:${delay}ms; --fall-duration:${duration}ms;` +
+        ` --fall-rot:${rot}deg; background:${color};`
+    };
+  });
+
+  // Compliance notice dismissal (per visit)
+  complianceDismissed = signal(false);
+
+  dismissComplianceNotice() {
+    this.complianceDismissed.set(true);
+  }
 
   // Available session options
   sessions: AdSessionConfig[] = [
@@ -38,7 +62,6 @@ export class WatchComponent implements OnDestroy {
       adCount: 1,
       waterReward: 1,
       pointsReward: 25,
-      icon: '⚡',
       badgeKey: 'watch.sessionQuickBadge'
     },
     {
@@ -48,7 +71,6 @@ export class WatchComponent implements OnDestroy {
       adCount: 2,
       waterReward: 3,
       pointsReward: 80,
-      icon: '🎯',
       badgeKey: 'watch.sessionFocusBadge'
     },
     {
@@ -58,7 +80,6 @@ export class WatchComponent implements OnDestroy {
       adCount: 4,
       waterReward: 6,
       pointsReward: 180,
-      icon: '🌿',
       badgeKey: 'watch.sessionDeepBadge'
     }
   ];
@@ -81,11 +102,11 @@ export class WatchComponent implements OnDestroy {
   errorMessage = signal<string | null>(null);
 
   // Sponsor Branding
+  // [TODO_TEMPLATE: Replace mock sponsor with real ESG campaign payload from backend; display strings come from i18n]
   currentSponsor = signal<SponsorInfo>({
     name: 'EkoEnergia Green Power',
-    tagline: '100% energii z certyfikowanych farm wiatrowych i słonecznych',
-    logo: '⚡🌱',
-    esgGoal: 'Sadzenie 100 000 drzew w Polsce do końca 2026 r.'
+    tagline: 'watch.sponsorTagline',
+    esgGoal: 'watch.sponsorEsgGoal'
   });
 
   async startSession(session: AdSessionConfig) {

@@ -4,45 +4,52 @@
   <app-app-header [subtitle]="'nav.dashboard' | translate"></app-app-header>
 
   <!-- MAIN DASHBOARD CONTENT -->
-  <main class="dash-main-container">
+  <main id="main-content" class="mx-auto flex w-full max-w-[1280px] flex-col gap-10 px-6 max-md:gap-7 max-md:px-4" role="main">
 
     <!-- ==================== 1. QUICK AD SESSION PROMO BANNER ==================== -->
-    <section class="watch-promo-banner glass-panel-elevated">
-      <div class="promo-content">
-        <div class="promo-text">
+    @if (!promoDismissed()) {
+      <aside class="glass-panel-elevated relative overflow-hidden rounded-xl border-jade/25 p-9 max-md:p-6" [attr.aria-label]="'a11y.promoBanner' | translate" appReveal>
+        <div class="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_60%_120%_at_100%_0%,rgba(16,185,129,0.12)_0%,transparent_60%)]" aria-hidden="true"></div>
+        <button type="button" class="panel-close" (click)="dismissPromoBanner()" [attr.aria-label]="'common.close' | translate">
+          <ng-icon name="ph:x" size="16px" aria-hidden="true" />
+        </button>
+        <div class="relative flex items-center justify-between gap-8 max-md:flex-col max-md:items-stretch max-md:gap-5">
+        <div class="flex flex-col items-start gap-1.5">
           <div class="badge-eco">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+            <ng-icon name="ph:drop-duotone" class="size-3 shrink-0" aria-hidden="true" />
             {{ 'dashboard.promoBadge' | translate }}
           </div>
-          <h2>{{ 'dashboard.promoTitle' | translate }}</h2>
-          <p>{{ 'dashboard.promoDesc' | translate }}</p>
+          <h2 class="mt-1 text-[clamp(1.4rem,3vw,1.85rem)]">{{ 'dashboard.promoTitle' | translate }}</h2>
+          <p class="max-w-[42rem] leading-relaxed text-ink-soft">{{ 'dashboard.promoDesc' | translate }}</p>
         </div>
-        <div class="promo-action">
-          <a [routerLink]="'/watch'" class="btn-eco-primary btn-large">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <div>
+          <a [routerLink]="'/watch'" class="btn-eco-primary btn-large group">
+            <ng-icon name="ph:play-circle-duotone" class="size-5 shrink-0 transition-transform duration-300 group-hover:scale-110" aria-hidden="true" />
             <span>{{ 'dashboard.startWatchBtn' | translate }}</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </a>
         </div>
-      </div>
-    </section>
+        </div>
+      </aside>
+    }
 
     <!-- ==================== 2. GROWING TREE NURTURING CARD & STATS ==================== -->
-    <div class="dash-grid-top">
-      
+    <div class="grid grid-cols-[1.25fr_0.75fr] items-stretch gap-8 max-lg:grid-cols-1">
+
       <!-- Centerpiece: Active Growing Tree Simulator -->
-      <div class="tree-nurture-card glass-panel-elevated">
-        
-        <div class="card-header-row">
+      <article class="glass-panel-elevated flex h-full flex-col gap-6 rounded-xl p-9 max-md:p-6" [attr.aria-label]="'a11y.treeCard' | translate" appReveal>
+
+        <header class="flex items-start justify-between gap-4 max-md:flex-col max-md:gap-2.5">
           <div>
             <span class="badge-eco">{{ 'dashboard.activeTreeBadge' | translate }}</span>
-            <h3 class="tree-title">{{ 'dashboard.activeTreeTitle' | translate }}</h3>
+            <h3 class="mt-2 text-[clamp(1.25rem,2.5vw,1.5rem)]">{{ 'dashboard.activeTreeTitle' | translate }}</h3>
           </div>
-          <span class="badge-verified">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            {{ auth.currentUser()?.targetFoundation }}
-          </span>
-        </div>
+          @if (auth.currentUser(); as user) {
+            <span class="badge-verified shrink-0">
+              <ng-icon name="ph:shield-check" class="size-3 shrink-0" aria-hidden="true" />
+              {{ user.targetFoundation }}
+            </span>
+          }
+        </header>
 
         <!-- Shared Reusable Tree Stage Visualizer -->
         <app-tree-stage
@@ -57,63 +64,68 @@
         ></app-tree-stage>
 
         <!-- Watering Actions -->
-        <div class="tree-actions-row">
-          <button class="btn-eco-primary btn-water" (click)="waterActiveTree()" [disabled]="treeSuccessCelebration()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-            <span>{{ 'dashboard.waterActionBtn' | translate }} (-1 💧)</span>
+        <div class="mt-auto flex items-center gap-4 max-md:flex-col">
+          <button
+            class="btn-eco-primary min-w-45 flex-1 [transition-timing-function:var(--ease-spring)]"
+            [class.watering-active]="isWatering()"
+            (click)="waterActiveTree()"
+            [disabled]="treeSuccessCelebration()"
+          >
+            <ng-icon name="ph:drop-duotone" class="size-4 shrink-0" aria-hidden="true" />
+            <span>{{ 'dashboard.waterActionBtn' | translate }}</span>
           </button>
           <a [routerLink]="'/watch'" class="btn-eco-secondary">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <ng-icon name="ph:plus" class="size-4 shrink-0" aria-hidden="true" />
             <span>{{ 'dashboard.getMoreWaterBtn' | translate }}</span>
           </a>
         </div>
 
-      </div>
+      </article>
 
       <!-- Quick Stats & Impact Side Card -->
-      <div class="impact-summary-card glass-panel">
-        <h3 class="summary-title">{{ 'dashboard.myImpactTitle' | translate }}</h3>
-        
+      <article class="glass-panel relative flex h-full flex-col gap-5 rounded-xl p-9 max-md:p-6" [attr.aria-label]="'a11y.impactStats' | translate" appReveal revealDelay="90">
+        <h3 class="text-[1.25rem] text-white">{{ 'dashboard.myImpactTitle' | translate }}</h3>
+
         @if (auth.currentUser(); as user) {
-          <div class="impact-stats-list">
-            
-            <div class="impact-stat-box">
-              <div class="stat-ico-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
-              </div>
-              <div class="stat-cnt">
-                <strong class="font-mono text-sage">{{ user.treesPlanted }}</strong>
-                <span>{{ 'dashboard.statPlantedTotal' | translate }}</span>
+          <div class="grid grid-cols-2 gap-4 max-[480px]:grid-cols-1">
+
+            <div class="impact-stat-box flex items-center gap-3 rounded-md border border-line border-t-line-strong bg-input px-3 py-3.5 transition-colors duration-200 hover:border-jade/22 hover:bg-[rgb(16_28_20/0.9)]">
+              <span class="flex size-10 shrink-0 items-center justify-center rounded-sm bg-jade/8">
+                <ng-icon name="ph:tree-evergreen-duotone" class="size-5 text-emerald" aria-hidden="true" />
+              </span>
+              <div class="flex min-w-0 flex-col leading-tight">
+                <span class="font-mono text-lg font-bold text-sage tabular-nums" [countUp]="user.treesPlanted" appCountUp>0</span>
+                <span class="mt-0.5 text-xs text-ink-muted">{{ 'dashboard.statPlantedTotal' | translate }}</span>
               </div>
             </div>
 
-            <div class="impact-stat-box">
-              <div class="stat-ico-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-              </div>
-              <div class="stat-cnt">
-                <strong class="font-mono text-blue">{{ user.treesPlanted * ecoMetrics.CO2_PER_TREE_KG }} kg</strong>
-                <span>{{ 'dashboard.statCo2Neutralized' | translate }}</span>
-              </div>
-            </div>
-
-            <div class="impact-stat-box">
-              <div class="stat-ico-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/><path d="M14 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-              </div>
-              <div class="stat-cnt">
-                <strong class="text-gold font-mono">Top 5%</strong>
-                <span>{{ 'dashboard.statLeagueRank' | translate }}</span>
+            <div class="impact-stat-box flex items-center gap-3 rounded-md border border-line border-t-line-strong bg-input px-3 py-3.5 transition-colors duration-200 hover:border-water/30 hover:bg-[rgb(16_28_20/0.9)]">
+              <span class="flex size-10 shrink-0 items-center justify-center rounded-sm bg-jade/8">
+                <ng-icon name="ph:globe-hemisphere-west" class="size-5 text-water" aria-hidden="true" />
+              </span>
+              <div class="flex min-w-0 flex-col leading-tight">
+                <span class="font-mono text-lg font-bold text-water tabular-nums">{{ user.treesPlanted * ecoMetrics.CO2_PER_TREE_KG }} kg</span>
+                <span class="mt-0.5 text-xs text-ink-muted">{{ 'dashboard.statCo2Neutralized' | translate }}</span>
               </div>
             </div>
 
-            <div class="impact-stat-box">
-              <div class="stat-ico-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F43F5E" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            <div class="impact-stat-box flex items-center gap-3 rounded-md border border-line border-t-line-strong bg-input px-3 py-3.5 transition-colors duration-200 hover:border-gold/30 hover:bg-[rgb(16_28_20/0.9)]">
+              <span class="flex size-10 shrink-0 items-center justify-center rounded-sm bg-jade/8">
+                <ng-icon name="ph:flame-duotone" class="size-5 animate-drop-pulse text-gold" aria-hidden="true" />
+              </span>
+              <div class="flex min-w-0 flex-col leading-tight">
+                <span class="font-mono text-lg font-bold text-gold tabular-nums">{{ user.activeStreak }} {{ 'dashboard.daysUnit' | translate }}</span>
+                <span class="mt-0.5 text-xs text-ink-muted">{{ 'dashboard.streakStatLabel' | translate }}</span>
               </div>
-              <div class="stat-cnt">
-                <strong class="text-sage font-mono">{{ user.dailyLimitRemaining }} / {{ ecoMetrics.DEFAULT_DAILY_LIMIT }}</strong>
-                <span>{{ 'dashboard.statDailyAdsLimit' | translate }}</span>
+            </div>
+
+            <div class="impact-stat-box flex items-center gap-3 rounded-md border border-line border-t-line-strong bg-input px-3 py-3.5 transition-colors duration-200 hover:border-jade/22 hover:bg-[rgb(16_28_20/0.9)]">
+              <span class="flex size-10 shrink-0 items-center justify-center rounded-sm bg-jade/8">
+                <ng-icon name="ph:timer" class="size-5 text-emerald" aria-hidden="true" />
+              </span>
+              <div class="flex min-w-0 flex-col leading-tight">
+                <span class="font-mono text-lg font-bold text-sage tabular-nums">{{ user.dailyLimitRemaining }} / {{ ecoMetrics.DEFAULT_DAILY_LIMIT }}</span>
+                <span class="mt-0.5 text-xs text-ink-muted">{{ 'dashboard.statDailyAdsLimit' | translate }}</span>
               </div>
             </div>
 
@@ -121,130 +133,144 @@
         }
 
         <!-- Dedicated Session Launch card -->
-        <div class="session-box-mini">
-          <h4>{{ 'dashboard.readyForSession' | translate }}</h4>
-          <p>{{ 'dashboard.readyForSessionDesc' | translate }}</p>
-          <a [routerLink]="'/watch'" class="btn-eco-primary btn-full">
+        <div class="mt-auto flex flex-col gap-2.5 rounded-lg border border-jade/22 bg-pine/20 p-5">
+          <h4 class="text-base text-sage">{{ 'dashboard.readyForSession' | translate }}</h4>
+          <p class="text-sm leading-normal text-ink-soft">{{ 'dashboard.readyForSessionDesc' | translate }}</p>
+          <a [routerLink]="'/watch'" class="btn-eco-primary btn-full mt-1 group">
             <span>{{ 'dashboard.openWatchModule' | translate }}</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            <ng-icon name="ph:arrow-right" class="size-4 shrink-0 transition-transform duration-300 [transition-timing-function:var(--ease-spring)] group-hover:translate-x-1" aria-hidden="true" />
           </a>
         </div>
-      </div>
+      </article>
 
     </div>
 
     <!-- ==================== 3. TAB NAVIGATION BAR (VIRTUAL FOREST / ACHIEVEMENTS) ==================== -->
-    <div class="dash-tab-nav-wrapper">
-      <div class="dash-tab-nav glass-panel">
+    <div class="flex w-full items-center justify-start">
+      <nav class="glass-panel inline-flex gap-2 rounded-lg !bg-card p-2" role="tablist" [attr.aria-label]="'a11y.forestTabs' | translate">
         <button
           type="button"
           class="dash-tab-btn"
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'forest'"
           [class.active]="activeTab() === 'forest'"
           (click)="activeTab.set('forest')"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
+          <ng-icon name="ph:tree-evergreen" class="shrink-0" aria-hidden="true" />
           <span>{{ 'dashboard.tabForest' | translate }}</span>
         </button>
 
         <button
           type="button"
           class="dash-tab-btn"
+          role="tab"
+          [attr.aria-selected]="activeTab() === 'achievements'"
           [class.active]="activeTab() === 'achievements'"
           (click)="activeTab.set('achievements')"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-2.34"/><path d="M14 14.66V17c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+          <ng-icon name="ph:medal" class="shrink-0" aria-hidden="true" />
           <span>{{ 'dashboard.tabAchievements' | translate }}</span>
         </button>
-      </div>
+      </nav>
     </div>
 
     <!-- ==================== 4. DYNAMIC TAB CONTENT ==================== -->
     @if (activeTab() === 'forest') {
       <!-- MY VIRTUAL FOREST (CERTIFICATES GALLERY) -->
       @defer (on viewport) {
-        <section class="my-forest-section">
-        <div class="section-title-row">
-          <div>
-            <span class="badge-eco">{{ 'dashboard.forestBadge' | translate }}</span>
-            <h2>{{ 'dashboard.forestTitle' | translate }}</h2>
-          </div>
-          <span class="badge-gold">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
-            {{ myPlantedTrees().length }} {{ 'dashboard.treesCountLabel' | translate }}
-          </span>
-        </div>
-
-        <!-- Passports Grid -->
-        <div class="certificates-grid">
-          @for (tree of myPlantedTrees(); track tree.id) {
-            <div class="certificate-card glass-panel">
-              <div class="cert-header">
-                <div class="cert-species-badge">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
-                </div>
-                <div class="cert-serial">
-                  <span class="cert-tag font-mono">{{ 'dashboard.certTag' | translate }}</span>
-                  <strong class="font-mono text-sage">{{ tree.serialNumber }}</strong>
-                </div>
-              </div>
-
-              <h4 class="cert-species">{{ tree.species }}</h4>
-
-              <div class="cert-details">
-                <div class="cert-row">
-                  <span class="c-label">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    {{ 'dashboard.certLocation' | translate }}
-                  </span>
-                  <span class="c-val font-mono">{{ tree.location }}</span>
-                </div>
-                <div class="cert-row">
-                  <span class="c-label">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    {{ 'dashboard.certDate' | translate }}
-                  </span>
-                  <span class="c-val">{{ tree.plantedDate }}</span>
-                </div>
-                <div class="cert-row">
-                  <span class="c-label">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4"/></svg>
-                    {{ 'dashboard.certPartner' | translate }}
-                  </span>
-                  <span class="c-val text-sage font-bold">{{ tree.foundation }}</span>
-                </div>
-                <div class="cert-row">
-                  <span class="c-label">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                    {{ 'dashboard.certCo2' | translate }}
-                  </span>
-                  <span class="c-val text-gold font-mono">~{{ tree.co2PerYearKg }} kg / rok</span>
-                </div>
-              </div>
-
-              <div class="cert-footer">
-                <span class="status-verified">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                  {{ 'dashboard.certVerified' | translate }}
-                </span>
-              </div>
+        <section class="my-forest-section flex flex-col gap-6" role="tabpanel" aria-labelledby="forest-tab-heading">
+          <header class="section-title-row flex items-end justify-between gap-4 max-md:flex-col max-md:items-start max-md:gap-2">
+            <div>
+              <span class="badge-eco">{{ 'dashboard.forestBadge' | translate }}</span>
+              <h2 id="forest-tab-heading" class="mt-2 text-[clamp(1.5rem,3.5vw,2.1rem)]">{{ 'dashboard.forestTitle' | translate }}</h2>
             </div>
-          }
-        </div>
-      </section>
-    } @placeholder {
-      <div class="my-forest-section">
-        <div class="section-title-row">
-          <div>
-            <span class="badge-eco">{{ 'dashboard.forestBadge' | translate }}</span>
-            <h2>{{ 'dashboard.forestTitle' | translate }}</h2>
+            <span class="badge-gold">
+              <ng-icon name="ph:certificate" class="size-3.5 shrink-0" aria-hidden="true" />
+              <span class="tabular-nums font-mono">{{ myPlantedTrees().length }}</span> {{ 'dashboard.treesCountLabel' | translate }}
+            </span>
+          </header>
+
+          <!-- Passports Grid -->
+          <div class="certificates-grid grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-5 max-md:grid-cols-1 max-md:gap-4">
+            @for (tree of myPlantedTrees(); track tree.id; let i = $index) {
+              <article
+                appReveal
+                [revealDelay]="i * 70"
+                appSpotlight
+                class="certificate-card glass-panel spotlight-card relative flex h-full flex-col gap-4 overflow-hidden rounded-lg p-6"
+                [attr.aria-label]="'a11y.certificate' | translate"
+              >
+                <div class="pointer-events-none absolute top-0 right-0 size-25 [background:radial-gradient(circle_at_100%_0%,rgba(52,211,153,0.08)_0%,transparent_70%)]" aria-hidden="true"></div>
+
+                <header class="cert-header flex items-center gap-3">
+                  <span class="flex size-10.5 shrink-0 items-center justify-center rounded-sm border border-line bg-jade/10">
+                    <ng-icon name="ph:leaf-duotone" class="size-5.5 text-emerald" aria-hidden="true" />
+                  </span>
+                  <div class="flex min-w-0 flex-col leading-tight">
+                    <span class="text-[0.65rem] font-bold tracking-widest text-ink-muted">{{ 'dashboard.certTag' | translate }}</span>
+                    <strong class="mt-0.5 truncate font-mono text-sm font-semibold text-sage tabular-nums">{{ tree.serialNumber }}</strong>
+                  </div>
+                </header>
+
+                <h4 class="m-0 text-[1.1rem] font-semibold text-white">{{ tree.species }}</h4>
+
+                <dl class="cert-details flex flex-col gap-2.5 rounded-md border border-line border-t-line-strong bg-[rgb(7_13_9/0.7)] px-4 py-3.5 m-0 text-sm">
+                  <div class="cert-row flex items-baseline justify-between gap-2">
+                    <dt class="c-label inline-flex items-center gap-1.5 text-[0.8rem] whitespace-nowrap text-ink-muted">
+                      <ng-icon name="ph:map-pin" class="size-3.5 shrink-0" aria-hidden="true" />
+                      {{ 'dashboard.certLocation' | translate }}
+                    </dt>
+                    <dd class="c-val m-0 text-right font-medium text-white font-mono tabular-nums">{{ tree.location }}</dd>
+                  </div>
+                  <div class="cert-row flex items-baseline justify-between gap-2">
+                    <dt class="c-label inline-flex items-center gap-1.5 text-[0.8rem] whitespace-nowrap text-ink-muted">
+                      <ng-icon name="ph:calendar-blank" class="size-3.5 shrink-0" aria-hidden="true" />
+                      {{ 'dashboard.certDate' | translate }}
+                    </dt>
+                    <dd class="c-val m-0 text-right font-medium text-white font-mono tabular-nums">{{ tree.plantedDate }}</dd>
+                  </div>
+                  <div class="cert-row flex items-baseline justify-between gap-2">
+                    <dt class="c-label inline-flex items-center gap-1.5 text-[0.8rem] whitespace-nowrap text-ink-muted">
+                      <ng-icon name="ph:buildings" class="size-3.5 shrink-0" aria-hidden="true" />
+                      {{ 'dashboard.certPartner' | translate }}
+                    </dt>
+                    <dd class="c-val m-0 text-right font-bold text-sage">{{ tree.foundation }}</dd>
+                  </div>
+                  <div class="cert-row flex items-baseline justify-between gap-2">
+                    <dt class="c-label inline-flex items-center gap-1.5 text-[0.8rem] whitespace-nowrap text-ink-muted">
+                      <ng-icon name="ph:globe-hemisphere-west" class="size-3.5 shrink-0" aria-hidden="true" />
+                      {{ 'dashboard.certCo2' | translate }}
+                    </dt>
+                    <dd class="c-val m-0 text-right font-bold text-gold font-mono tabular-nums">~{{ tree.co2PerYearKg }} {{ 'dashboard.co2Unit' | translate }}</dd>
+                  </div>
+                </dl>
+
+                <footer class="mt-auto flex items-center justify-between border-t border-white/6 pt-3">
+                  <span class="inline-flex items-center gap-1.5 text-[0.78rem] font-semibold text-sage">
+                    <ng-icon name="ph:seal-check" class="size-3.5 shrink-0" aria-hidden="true" />
+                    {{ 'dashboard.certVerified' | translate }}
+                  </span>
+                  <span class="rounded-xxs border border-line bg-white/4 px-1.5 py-0.5 font-mono text-[0.68rem] text-ink-muted">FSC-CERT</span>
+                </footer>
+              </article>
+            }
+          </div>
+        </section>
+      } @placeholder {
+        <div class="my-forest-section flex flex-col gap-6">
+          <div class="section-title-row flex items-end justify-between gap-4">
+            <div>
+              <span class="badge-eco">{{ 'dashboard.forestBadge' | translate }}</span>
+              <h2>{{ 'dashboard.forestTitle' | translate }}</h2>
+            </div>
           </div>
         </div>
-      </div>
+      }
+    } @else if (activeTab() === 'achievements') {
+      <!-- ACHIEVEMENTS & BADGES MODULE -->
+      <app-achievements-list></app-achievements-list>
     }
-  } @else if (activeTab() === 'achievements') {
-    <!-- ACHIEVEMENTS & BADGES MODULE -->
-    <app-achievements-list></app-achievements-list>
-  }
 
   </main>
+
 </div>

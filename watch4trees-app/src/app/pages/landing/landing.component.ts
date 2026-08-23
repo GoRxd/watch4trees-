@@ -1,6 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
 import { TranslationService } from '../../services/translation.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AuthService } from '../../services/auth.service';
@@ -8,21 +9,23 @@ import { LangToggleComponent } from '../../components/lang-toggle/lang-toggle.co
 import { BrandLogoComponent } from '../../components/brand-logo/brand-logo.component';
 import { TreeStageComponent } from '../../components/tree-stage/tree-stage.component';
 import { MobileDrawerComponent } from '../../components/mobile-drawer/mobile-drawer.component';
+import { RevealDirective } from '../../directives/reveal.directive';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterModule, 
-    TranslatePipe, 
-    LangToggleComponent, 
+    CommonModule,
+    RouterModule,
+    NgIcon,
+    TranslatePipe,
+    LangToggleComponent,
     BrandLogoComponent,
     TreeStageComponent,
-    MobileDrawerComponent
+    MobileDrawerComponent,
+    RevealDirective
   ],
-  templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.scss']
+  templateUrl: './landing.component.html'
 })
 export class LandingComponent {
   i18n = inject(TranslationService);
@@ -33,16 +36,31 @@ export class LandingComponent {
   demoWaterDrops = signal<number>(4);
   demoMaxDrops = 5;
   demoTreePlanted = signal<boolean>(false);
-  
+
   // Newsletter early access capture state
   emailInput = signal<string>('');
   emailSubscribed = signal<boolean>(false);
+  emailError = signal<string>('');
+
+  private emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
   // Active FAQ Accordion index
   activeFaqIndex = signal<number | null>(0);
 
   // Mobile navigation drawer state
   isMobileMenuOpen = signal<boolean>(false);
+
+  // Partner marquee: 4 real chips duplicated for the seamless loop (copies aria-hidden)
+  readonly marqueePartners = [
+    { tag: 'PL', nameKey: 'transparency.partners.poland' },
+    { tag: 'GL', nameKey: 'transparency.partners.global' },
+    { tag: 'MG', nameKey: 'transparency.partners.eden' },
+    { tag: 'FSC', nameKey: 'transparency.partners.audit' },
+    { tag: 'PL', nameKey: 'transparency.partners.poland' },
+    { tag: 'GL', nameKey: 'transparency.partners.global' },
+    { tag: 'MG', nameKey: 'transparency.partners.eden' },
+    { tag: 'FSC', nameKey: 'transparency.partners.audit' }
+  ];
 
   toggleMobileMenu() {
     this.isMobileMenuOpen.update(open => !open);
@@ -73,8 +91,19 @@ export class LandingComponent {
   // [TODO_TEMPLATE: Submit email to Supabase / Backend Newsletter subscription API]
   submitNewsletter(e: Event) {
     e.preventDefault();
-    if (this.emailInput().trim()) {
-      this.emailSubscribed.set(true);
+    const value = this.emailInput().trim();
+    if (!this.emailPattern.test(value)) {
+      this.emailError.set(this.i18n.translate('join.emailInvalid'));
+      return;
+    }
+    this.emailError.set('');
+    this.emailSubscribed.set(true);
+  }
+
+  onEmailInput(value: string) {
+    this.emailInput.set(value);
+    if (this.emailError()) {
+      this.emailError.set('');
     }
   }
 

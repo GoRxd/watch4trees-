@@ -1,13 +1,18 @@
 import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgIcon } from '@ng-icons/core';
 import { TranslatePipe } from '../../pipes/translate.pipe';
+
+interface BurstPiece {
+  icon: string;
+  style: string;
+}
 
 @Component({
   selector: 'app-tree-stage',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
-  templateUrl: './tree-stage.component.html',
-  styleUrls: ['./tree-stage.component.scss']
+  imports: [CommonModule, NgIcon, TranslatePipe],
+  templateUrl: './tree-stage.component.html'
 })
 export class TreeStageComponent {
   currentDrops = input<number>(0);
@@ -21,8 +26,25 @@ export class TreeStageComponent {
   progressLabelKey = input<string | undefined>(undefined);
   hintTextKey = input<string | undefined>(undefined);
 
+  /** Celebration burst pieces: leaf/drop/sparkle flying outward on planting. */
+  readonly burstPieces: BurstPiece[] = Array.from({ length: 16 }, (_, i) => {
+    const icons = ['ph:leaf-duotone', 'ph:drop-duotone', 'ph:sparkle-duotone'];
+    const angle = (i / 16) * Math.PI * 2;
+    const radius = 70 + ((i * 37) % 90);
+    const dx = Math.round(Math.cos(angle) * radius);
+    const dy = Math.round(Math.sin(angle) * radius * 0.7) - 40;
+    const rot = (i % 2 === 0 ? 1 : -1) * (160 + (i * 23) % 120);
+    return {
+      icon: icons[i % icons.length],
+      style:
+        `--burst-dx:${dx}px; --burst-dy:${dy}px; --burst-rot:${rot}deg;` +
+        ` --burst-delay:${i * 45}ms; --burst-duration:${(950 + (i * 61) % 450)}ms;` +
+        `color:${['#6ee7b7', '#38bdf8', '#a7f3d0'][i % 3]}`
+    };
+  });
+
   stageIndex = computed(() => {
-    if (this.isCelebration()) return 3; // Keep mature tree illustration during celebration!
+    if (this.isCelebration()) return 3;
     const current = this.currentDrops();
     const max = this.maxDrops();
     if (current <= 0) return 0;
@@ -36,12 +58,6 @@ export class TreeStageComponent {
   isMature = computed(() => this.currentDrops() >= this.maxDrops());
 
   isFinished = computed(() => this.isCelebration() || this.isMature());
-
-  stageEmoji = computed(() => {
-    if (this.isFinished()) return '🌲';
-    const emojis = ['🌰', '🌱', '🪴', '🌲'];
-    return emojis[this.stageIndex()] || '🌰';
-  });
 
   stageKey = computed(() => {
     const isDemo = this.translationPrefix() === 'demo';
@@ -71,9 +87,5 @@ export class TreeStageComponent {
     const max = this.maxDrops();
     if (max <= 0) return 0;
     return Math.min(100, (this.currentDrops() / max) * 100);
-  });
-
-  dropsUnit = computed(() => {
-    return this.translationPrefix() === 'demo' ? '' : '💧';
   });
 }

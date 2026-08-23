@@ -1,44 +1,51 @@
 @if (isOpen()) {
   <!-- Backdrop Overlay -->
-  <div class="mobile-drawer-backdrop" (click)="onClose()"></div>
+  <div
+    class="fixed inset-0 z-900 bg-black/75 backdrop-blur-md"
+    (click)="onClose()"
+    aria-hidden="true"
+  ></div>
 
   <!-- Animated Drawer Box -->
-  <div class="mobile-drawer glass-panel-elevated">
+  <aside
+    class="glass-panel-elevated fixed top-4 right-4 left-4 z-901 mx-auto flex max-h-[calc(100dvh-2rem)] w-auto max-w-[27.5rem]
+           origin-top flex-col gap-5 overflow-y-auto rounded-xl p-6 animate-pop-in"
+    role="dialog" aria-modal="true" [attr.aria-label]="'a11y.mobileMenu' | translate"
+  >
     <!-- Header with Brand Logo and Close Button -->
-    <div class="mobile-drawer-header">
+    <header class="flex items-center justify-between border-b border-line pb-3.5">
       <app-brand-logo (clicked)="mode() === 'landing' ? onSelectSection('hero') : onClose()" [routeTarget]="mode() === 'landing' ? '/' : '/dashboard'"></app-brand-logo>
-      <button class="btn-drawer-close" (click)="onClose()" aria-label="Close menu">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <button class="btn-drawer-close flex size-11 cursor-pointer items-center justify-center rounded-full border border-line bg-white/6 text-white transition-all duration-200 hover:scale-105 hover:border-red-500/40 hover:bg-red-500/20 [-webkit-tap-highlight-color:transparent]"
+              (click)="onClose()" [attr.aria-label]="'a11y.closeMenu' | translate">
+        <ng-icon name="ph:x" class="size-4.5" aria-hidden="true" />
       </button>
-    </div>
+    </header>
 
     <!-- Authenticated User Profile Summary Card -->
     @if (mode() === 'app' && auth.currentUser(); as user) {
-      <div class="drawer-user-card glass-panel">
-        <div class="drawer-user-info">
-          <div class="drawer-avatar-badge">
-            <span>{{ user.name.charAt(0).toUpperCase() }}</span>
-          </div>
-          <div class="drawer-user-text">
-            <strong>{{ user.name }}</strong>
-            <span>{{ user.email }}</span>
+      <div class="glass-panel flex flex-col gap-3.5 rounded-lg border-line bg-[rgb(7_13_9/0.7)] p-4">
+        <div class="flex items-center gap-3">
+          <span class="flex size-9.5 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald to-jade text-base font-bold text-white" aria-hidden="true">{{ user.name.charAt(0).toUpperCase() }}</span>
+          <div class="min-w-0">
+            <strong class="block truncate font-sans text-base text-white">{{ user.name }}</strong>
+            <span class="block truncate text-sm text-ink-muted">{{ user.email }}</span>
           </div>
         </div>
-        <div class="drawer-user-stats-row">
+        <div class="grid grid-cols-3 gap-1.5 border-t border-white/8 pt-3">
           <div class="d-stat">
-            <svg class="d-stat-svg" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="rgba(56, 189, 248, 0.2)"/></svg>
-            <strong class="font-mono text-blue">{{ user.waterDrops }}</strong>
-            <small>{{ 'dashboard.dropsLabel' | translate }}</small>
+            <ng-icon name="ph:drop-duotone" class="size-4.5 text-water" aria-hidden="true" />
+            <span class="text-[0.95rem] font-bold text-water tabular-nums font-mono">{{ user.waterDrops }}</span>
+            <span class="mt-0.5 text-[0.68rem] text-ink-muted">{{ 'dashboard.dropsLabel' | translate }}</span>
           </div>
           <div class="d-stat">
-            <svg class="d-stat-svg" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="rgba(82, 183, 136, 0.2)"/></svg>
-            <strong class="font-mono text-sage">{{ user.ecoPoints }}</strong>
-            <small>{{ 'dashboard.pointsLabel' | translate }}</small>
+            <ng-icon name="ph:leaf-duotone" class="size-4.5 text-sage" aria-hidden="true" />
+            <span class="text-[0.95rem] font-bold text-sage tabular-nums font-mono">{{ user.ecoPoints }}</span>
+            <span class="mt-0.5 text-[0.68rem] text-ink-muted">{{ 'dashboard.pointsLabel' | translate }}</span>
           </div>
           <div class="d-stat">
-            <svg class="d-stat-svg" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" fill="rgba(233, 196, 106, 0.2)"/></svg>
-            <strong class="font-mono text-gold">{{ user.activeStreak }} {{ 'dashboard.daysUnit' | translate }}</strong>
-            <small>{{ 'dashboard.streakLabel' | translate }}</small>
+            <ng-icon name="ph:flame-duotone" class="size-4.5 text-gold" aria-hidden="true" />
+            <span class="text-[0.95rem] font-bold text-gold tabular-nums font-mono">{{ user.activeStreak }} {{ 'dashboard.daysUnit' | translate }}</span>
+            <span class="mt-0.5 text-[0.68rem] text-ink-muted">{{ 'dashboard.streakLabel' | translate }}</span>
           </div>
         </div>
       </div>
@@ -46,64 +53,64 @@
 
     <!-- Navigation Links: Landing Page Mode -->
     @if (mode() === 'landing') {
-      <nav class="mobile-nav-links">
-        <a class="mobile-nav-item" (click)="onSelectSection('how-it-works')">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <nav class="mobile-nav-links" [attr.aria-label]="'a11y.navLanding' | translate">
+        <a class="mobile-nav-item group" (click)="onSelectSection('how-it-works')" role="button" tabindex="0">
+          <ng-icon name="ph:clock" class="nav-svg-icon text-water transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'nav.howItWorks' | translate }}</span>
         </a>
-        <a class="mobile-nav-item" (click)="onSelectSection('ideology')">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/></svg>
+        <a class="mobile-nav-item group" (click)="onSelectSection('ideology')" role="button" tabindex="0">
+          <ng-icon name="ph:globe-hemisphere-west" class="nav-svg-icon text-gold transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'nav.ideology' | translate }}</span>
         </a>
-        <a class="mobile-nav-item" (click)="onSelectSection('gamification')">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M12 2C12 2 4 8.5 4 15.5C4 19.6421 7.35786 23 11.5 23C12.1834 23 12.8462 22.9084 13.4757 22.7371C18.2573 21.4371 21 16.5 20 12C18.5 5.5 12 2 12 2Z"/><path d="M12 7V21"/></svg>
+        <a class="mobile-nav-item group" (click)="onSelectSection('gamification')" role="button" tabindex="0">
+          <ng-icon name="ph:tree-evergreen" class="nav-svg-icon text-jade transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'nav.forest' | translate }}</span>
         </a>
-        <a class="mobile-nav-item" (click)="onSelectSection('transparency')">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <a class="mobile-nav-item group" (click)="onSelectSection('transparency')" role="button" tabindex="0">
+          <ng-icon name="ph:chart-line-up" class="nav-svg-icon text-water transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'nav.transparency' | translate }}</span>
         </a>
-        <a class="mobile-nav-item" (click)="onSelectSection('b2b')">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#E9C46A" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <a class="mobile-nav-item group" (click)="onSelectSection('b2b')" role="button" tabindex="0">
+          <ng-icon name="ph:buildings" class="nav-svg-icon text-gold transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'nav.b2b' | translate }}</span>
         </a>
-        <a class="mobile-nav-item" (click)="onSelectSection('faq')">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <a class="mobile-nav-item group" (click)="onSelectSection('faq')" role="button" tabindex="0">
+          <ng-icon name="ph:question" class="nav-svg-icon text-ink-muted transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'nav.faq' | translate }}</span>
         </a>
       </nav>
     } @else {
       <!-- Navigation Links: App / Dashboard / Watch Mode -->
-      <nav class="mobile-nav-links">
-        <a class="mobile-nav-item" [routerLink]="'/dashboard'" (click)="onClose()">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#52B788" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <nav class="mobile-nav-links" [attr.aria-label]="'a11y.navApp' | translate">
+        <a class="mobile-nav-item group" [routerLink]="'/dashboard'" (click)="onClose()">
+          <ng-icon name="ph:house-simple" class="nav-svg-icon text-sage transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'nav.dashboard' | translate }}</span>
         </a>
-        <a class="mobile-nav-item" [routerLink]="'/watch'" (click)="onClose()">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <a class="mobile-nav-item group" [routerLink]="'/watch'" (click)="onClose()">
+          <ng-icon name="ph:play-circle" class="nav-svg-icon text-water transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'nav.watch' | translate }}</span>
         </a>
-        <a class="mobile-nav-item" [routerLink]="'/'" (click)="onClose()">
-          <svg class="nav-svg-icon" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <a class="mobile-nav-item group" [routerLink]="'/'" (click)="onClose()">
+          <ng-icon name="ph:arrow-left" class="nav-svg-icon text-ink-muted transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
           <span>{{ 'auth.backHome' | translate }}</span>
         </a>
       </nav>
     }
 
     <!-- Drawer Footer Actions -->
-    <div class="mobile-drawer-footer">
-      <div class="drawer-footer-actions">
+    <footer class="flex flex-col gap-3.5 border-t border-line pt-4">
+      <div class="flex items-center gap-3">
         <app-lang-toggle></app-lang-toggle>
 
         @if (mode() === 'landing') {
           @if (!auth.isAuthenticated()) {
-            <button class="btn-eco-secondary btn-full" (click)="goToAuth()">
+            <button class="btn-eco-secondary btn-full !min-h-11 !px-4 !text-xs" (click)="goToAuth()">
               <span>{{ 'auth.loginBtnNav' | translate }}</span>
             </button>
           }
         } @else {
-          <button class="btn-eco-secondary btn-full" (click)="logout()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          <button class="btn-eco-secondary btn-full !min-h-11 !px-4 !text-xs" (click)="logout()">
+            <ng-icon name="ph:sign-out" class="shrink-0" aria-hidden="true" />
             <span>{{ 'auth.logout' | translate }}</span>
           </button>
         }
@@ -118,6 +125,6 @@
           }
         </button>
       }
-    </div>
-  </div>
+    </footer>
+  </aside>
 }

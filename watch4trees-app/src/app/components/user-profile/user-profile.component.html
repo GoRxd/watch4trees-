@@ -1,13 +1,22 @@
 @if (auth.currentUser(); as user) {
-  <div class="user-profile-chip">
-    <div class="user-avatar-badge">
-      <span class="user-avatar-text">{{ user.name.charAt(0).toUpperCase() }}</span>
-    </div>
-    <span class="user-name">{{ user.name }}</span>
-    <button class="btn-logout" (click)="logout()" [title]="'auth.logout' | translate">
-      <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
-      </svg>
+  <div class="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-[rgb(11_20_14/0.85)]
+              pr-1 pl-3 text-sm font-semibold select-none transition-colors
+              hover:border-[rgb(52_211_153/0.22)] hover:bg-[rgb(16_28_20/0.95)] max-[640px]:min-h-9 max-[640px]:gap-1 max-[640px]:pr-0.5 max-[640px]:pl-2"
+       role="group" [attr.aria-label]="'a11y.profile' | translate">
+    <span class="flex size-6.5 shrink-0 items-center justify-center rounded-full border border-white/20 bg-gradient-to-br from-emerald to-jade" aria-hidden="true">
+      <span class="text-xs font-bold leading-none text-white">{{ user.name.charAt(0).toUpperCase() }}</span>
+    </span>
+
+    <span class="max-w-32 overflow-hidden text-ellipsis whitespace-nowrap font-semibold text-ink max-[640px]:hidden">{{ user.name }}</span>
+
+    <button
+      class="flex size-11 cursor-pointer items-center justify-center rounded-full p-2.5 text-ink-muted
+             transition-colors hover:bg-red-500/15 hover:text-[#fca5a5] [-webkit-tap-highlight-color:transparent]"
+      (click)="logout()"
+      [title]="'auth.logout' | translate"
+      [attr.aria-label]="'auth.logout' | translate"
+    >
+      <ng-icon name="ph:sign-out" class="size-3.5 shrink-0" aria-hidden="true" />
     </button>
   </div>
 }

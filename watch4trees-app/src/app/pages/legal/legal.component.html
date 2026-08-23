@@ -1,0 +1,19 @@
+<main id="main-content" class="flex min-h-dvh items-start justify-center p-6 max-md:p-4" role="main">
+  <article class="glass-panel-elevated flex w-full max-w-[47rem] flex-col gap-4 rounded-xl p-10 animate-pop-in max-md:p-6" aria-labelledby="legal-heading">
+    <header class="mb-1 flex items-center justify-between gap-3">
+      <a class="btn-back" [routerLink]="'/'" [attr.aria-label]="'a11y.backHome' | translate">
+        <ng-icon name="ph:arrow-left" class="size-3.5 shrink-0" aria-hidden="true" />
+        <span>{{ 'auth.backHome' | translate }}</span>
+      </a>
+      <app-lang-toggle></app-lang-toggle>
+    </header>
+
+    <h1 id="legal-heading" class="m-0 text-[clamp(1.6rem,3vw,2.1rem)] tracking-tight">{{ titleKey | translate }}</h1>
+    <p class="m-0 mb-2 font-mono text-[0.82rem] text-ink-dim">{{ 'legal.updatedLabel' | translate }}</p>
+    <div class="mb-3 h-px w-full bg-line" aria-hidden="true"></div>
+
+    @for (key of paragraphs[page]; track key) {
+      <p class="legal-paragraph m-0 leading-relaxed text-ink-soft">{{ key | translate }}</p>
+    }
+  </article>
+</main>

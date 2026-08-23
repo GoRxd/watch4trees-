@@ -24,7 +24,7 @@ describe('TreeStageComponent', () => {
     fixture.componentRef.setInput('maxDrops', 10);
     fixture.detectChanges();
 
-    expect(comp.stageEmoji()).toEqual('🌰');
+    expect(comp.stageIndex()).toEqual(0);
     expect(comp.isMature()).toBeFalse();
   });
 
@@ -35,7 +35,7 @@ describe('TreeStageComponent', () => {
     fixture.componentRef.setInput('maxDrops', 10);
     fixture.detectChanges();
 
-    expect(comp.stageEmoji()).toEqual('🌱');
+    expect(comp.stageIndex()).toEqual(1);
   });
 
   it('should compute young tree stage (7/10 drops)', () => {
@@ -45,7 +45,7 @@ describe('TreeStageComponent', () => {
     fixture.componentRef.setInput('maxDrops', 10);
     fixture.detectChanges();
 
-    expect(comp.stageEmoji()).toEqual('🪴');
+    expect(comp.stageIndex()).toEqual(2);
   });
 
   it('should compute mature stage and 100% progress when fully watered', () => {
@@ -55,7 +55,7 @@ describe('TreeStageComponent', () => {
     fixture.componentRef.setInput('maxDrops', 10);
     fixture.detectChanges();
 
-    expect(comp.stageEmoji()).toEqual('🌲');
+    expect(comp.stageIndex()).toEqual(3);
     expect(comp.isMature()).toBeTrue();
     expect(comp.progressPercentage()).toEqual(100);
   });

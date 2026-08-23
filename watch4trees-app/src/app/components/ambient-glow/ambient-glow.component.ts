@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
   selector: 'app-ambient-glow',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './ambient-glow.component.html',
-  styleUrls: ['./ambient-glow.component.scss']
+  templateUrl: './ambient-glow.component.html'
 })
 export class AmbientGlowComponent {}

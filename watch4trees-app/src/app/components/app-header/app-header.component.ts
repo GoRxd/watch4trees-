@@ -6,6 +6,7 @@ import { UserHudComponent } from '../user-hud/user-hud.component';
 import { LangToggleComponent } from '../lang-toggle/lang-toggle.component';
 import { UserProfileComponent } from '../user-profile/user-profile.component';
 import { MobileDrawerComponent } from '../mobile-drawer/mobile-drawer.component';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-app-header',
@@ -13,22 +14,18 @@ import { MobileDrawerComponent } from '../mobile-drawer/mobile-drawer.component'
   imports: [
     CommonModule,
     RouterModule,
+    TranslatePipe,
     BrandLogoComponent,
     UserHudComponent,
     LangToggleComponent,
     UserProfileComponent,
     MobileDrawerComponent
   ],
-  templateUrl: './app-header.component.html',
-  styleUrls: ['./app-header.component.scss']
+  templateUrl: './app-header.component.html'
 })
 export class AppHeaderComponent {
   // Inputs for customizable header appearance
-  subtitle = input<string>('Eko-Pulpit Ogrodnika');
-  backUrl = input<string | null>(null);
-  backLabel = input<string | null>(null);
-  titleBadge = input<string | null>(null);
-  showCenterHud = input<boolean>(true);
+  subtitle = input<string>('');
 
   // Self-contained mobile drawer state
   isMobileMenuOpen = signal<boolean>(false);
