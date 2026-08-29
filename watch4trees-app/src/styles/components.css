@@ -649,11 +649,6 @@
   }
 }
 
-@media (max-width: 480px) {
-  .landing-topbar .brand-wordmark {
-    display: none;
-  }
-}
 
 @media (max-width: 1100px) {
   .app-top-bar {
@@ -677,7 +672,7 @@
 
 @media (max-width: 768px) {
   .app-top-bar {
-    padding: 0.5rem 0.85rem;
+    padding: 0.45rem 0.75rem;
     margin-left: 0.5rem;
     margin-right: 0.5rem;
     margin-bottom: 1.4rem;
@@ -705,6 +700,41 @@
 
   .btn-hamburger {
     display: flex;
+  }
+}
+
+/* Mobile navbar space optimization:
+   1. Poniżej 380px: ukryj HUD w app-top-bar (krople i punkty), zostawiając pełne logo + hamburger.
+   2. Poniżej 360px: zmniejsz padding i odległości landing-topbar, aby nazwa mieściła się bez zawijania.
+   3. Poniżej 260px: na ultraniskich szerokościach (smartwatch / ekstremalne zwężenie) zwiń wordmark do samej ikony. */
+@media (max-width: 380px) {
+  .mobile-hud-compact {
+    display: none !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .landing-topbar {
+    padding-inline: 0.5rem;
+    gap: 0.35rem;
+  }
+
+  .landing-topbar .btn-nav-cta {
+    min-height: 2rem !important;
+    padding: 0.35rem 0.5rem !important;
+    font-size: 0.65rem !important;
+  }
+
+  .app-top-bar {
+    padding-inline: 0.5rem;
+    gap: 0.35rem;
+  }
+}
+
+@media (max-width: 260px) {
+  .landing-topbar .brand-wordmark,
+  .app-top-bar .brand-wordmark {
+    display: none;
   }
 }
 
