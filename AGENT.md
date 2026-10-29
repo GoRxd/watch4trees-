@@ -1,124 +1,120 @@
-# 🤖 AGENT.md – Zasady i Standardy Developerskie Projektu Watch4Trees
+# 🤖 AGENT.md – Developer & AI Engineering Standards for Watch4Trees
 
-Ten dokument definiuje nienegocjowalne reguły techniczne, architektoniczne i jakościowe dla każdego agenta AI oraz programisty pracującego w repozytorium **Watch4Trees**.  
-**Przed dokonaniem jakiejkolwiek zmiany lub utworzeniem nowego kodu przeczytaj poniższe zasady i bezwzględnie ich przestrzegaj.**
+This document outlines the non-negotiable architectural, technical, and code quality standards for any AI agent or software engineer contributing to the **Watch4Trees** repository.  
+**Review and adhere to these guidelines prior to creating or modifying any codebase files.**
 
 ---
 
-## 1. 🚫 ZAKAZ STARYCH DYREKTYW (Angular 19 Control Flow)
+## 1. 🚫 STRICT CONTROL FLOW BAN (Angular 19 Control Flow Only)
 
-- **BEZWZGLĘDNY ZAKAZ** używania dyrektyw mikro-składniowych `*ngIf`, `*ngFor`, `*ngSwitch`.
-- **Wymóg:** Korzystaj **wyłącznie** z natywnego Angular Control Flow:
+- **ABSOLUTE BAN** on legacy micro-syntax directives: `*ngIf`, `*ngFor`, `*ngSwitch`.
+- **Requirement:** Exclusively use modern, native Angular Control Flow:
   - `@if (condition) { ... } @else if (...) { ... } @else { ... }`
-  - `@if (observable$ | async; as data) { ... }` lub `@if (signal(); as val) { ... }`
-  - `@for (item of items; track item.id) { ... } @empty { ... }` (zawsze z unikalnym `track`)
+  - `@if (observable$ | async; as data) { ... }` or `@if (signal(); as val) { ... }`
+  - `@for (item of items; track item.id) { ... } @empty { ... }` (always provide a unique `track` key)
 
 ---
 
-## 2. 📁 STRUKTURA I FOLDERY KOMPONENTÓW (Dedykowany folder i podział na .ts, .html, .scss)
+## 2. 📁 COMPONENT STRUCTURE & FILE ISOLATION (Dedicated Directory per Component)
 
-- **Dedykowany folder na każdy komponent:** Każdy komponent w projekcie (zarówno w `src/app/pages/`, jak i w `src/app/components/`) **musi** posiadać swój własny podfolder o nazwie komponentu (np. `src/app/components/brand-logo/`, `src/app/pages/dashboard/`).
-- **Obowiązkowy podział na 3 pliki wewnątrz folderu:**
-  1. `[nazwa].component.ts` – deklaracja klasy, `@Component({ standalone: true, templateUrl: './[nazwa].component.html', styleUrls: ['./[nazwa].component.scss'] })`, wstrzykiwanie zależności i czysta logika.
-  2. `[nazwa].component.html` – semantyczny szablon HTML z Control Flow i pipe'ami i18n.
-  3. `[nazwa].component.scss` – dedykowany arkusz styli SCSS komponentu.
-  4. `[nazwa].component.spec.ts` – testy jednostkowe (jeśli dotyczy).
-- **BEZWZGLĘDNY ZAKAZ:** 
-  - Zakaz trzymania plików komponentów luzem w katalogu nadrzędnym `components/` bez dedykowanego podfolderu.
-  - Zakaz upychania szablonów w `template: \`...\`` oraz styli w `styles: [\`...\`]` wewnątrz plików `.ts`.
-
----
-
-## 3. ⚡ WYDAJNOŚĆ I LAZY LOADING (@defer & loadComponent)
-
-- **Routing:** Wszystkie trasy podstron w `app.routes.ts` **muszą** używać dynamicznego `loadComponent: () => import(...)`. Zakaz statycznych, chciwych (_eager_) importów komponentów stron.
-- **Szablony HTML (@defer):**
-  - Stosuj `@defer (on viewport)` dla ciężkich komponentów logicznych, wykresów, galerii certyfikatów itp.
-  - **ZAKAZ** opakowywania w `@defer` z pustym `height: 0` placeholderem czysto statycznych bloków tekstowych strony głównej, aby uniknąć Cumulative Layout Shift (CLS) i błędów w kalkulacji wysokości przy przewijaniu.
-- **Zasady Anti-Lag (60/120 FPS):**
-  - **ZAKAZ** `background-attachment: fixed` na elementach z gradientami (wymusza pełne przerysowanie klatek przy scrollowaniu).
-  - **ZAKAZ** wielkich filtrów `filter: blur(50px+)` w animacjach pętli. Do poświat (_glow_) używaj czystych `radial-gradient(...)`.
-  - Animuj **wyłącznie** właściwości akcelerowane przez GPU (`transform`, `opacity`).
-  - Stosuj `transform: translateZ(0)` lub `will-change: transform` na elementach pływających/animowanych oraz `contain: content` lub `contain: paint` na kontenerach sekcji.
+- **Dedicated Directory per Component:** Every component (in `src/app/pages/` as well as `src/app/components/`) **must** reside in its own dedicated subfolder matching the component name (e.g. `src/app/components/brand-logo/`, `src/app/pages/dashboard/`).
+- **Required 3-File Separation:**
+  1. `[name].component.ts` – class declaration, `@Component({ standalone: true, templateUrl: './[name].component.html', styleUrls: ['./[name].component.scss'] })`, dependency injection, and clean state logic.
+  2. `[name].component.html` – semantic HTML template using Angular Control Flow and i18n pipes.
+  3. `[name].component.scss` – component-scoped SCSS stylesheet.
+  4. `[name].component.spec.ts` – unit test suite.
+- **STRICT PROHIBITIONS:**
+  - Never place loose component files in the parent directory without their own folder.
+  - Never inline templates (`template: '...'`) or styles (`styles: [...]`) inside `.ts` files.
 
 ---
 
-## 4. 🎯 ZASADA DRY (Style CSS, Metody i Stałe)
+## 3. ⚡ PERFORMANCE & LAZY LOADING (@defer & loadComponent)
 
-### A. Style CSS / SCSS
-
-- **Zakaz redefiniowania styli globalnych w lokalnych plikach `.scss` lub `styles: [...]`:**
-  - Układy stron: korzystaj z globalnego `.page-wrapper` zamiast tworzyć lokalne `min-height: 100vh; padding-bottom: 4rem;`.
-  - Paski nawigacji: korzystaj z `.top-bar-left`, `.top-bar-right`, `.top-bar-center` i `.app-top-bar`.
-  - Karty Glassmorphism: korzystaj z `.glass-panel` oraz `.glass-panel-glow`.
-  - Przyciski i pigułki/badże: korzystaj z `.btn-eco-primary`, `.btn-eco-secondary`, `.badge-eco`, `.badge-verified`, `.badge-danger`, `.badge-web3`.
-  - Animacje: korzystaj z `.animate-pulse-glow` i `.animate-float` ze `src/styles.scss`.
-- **Uwaga dotycząca HTML:** Nie dziel na siłę statycznego, deklaratywnego kodu HTML na dziesiątki mikrokomponentów, jeśli nie wnosi to wartości architektonicznej (np. jeśli nie jest reusowany w różnych plikach).
-
-### B. Metody i Stałe w TypeScript
-
-- **Centralne źródło prawdy dla stałych:** Wszystkie klucze `localStorage`, stałe biznesowe (np. przelicznik CO2, domyślne limity) **muszą** znajdować się w `src/app/constants/index.ts` (np. `STORAGE_KEYS`, `ECO_METRICS`). **ZAKAZ** hardcodowania `'w4t_user'`, `'w4t_lang'` czy liczby `22` bezpośrednio w komponentach/serwisach.
-- **Logika serwisowa:** Nie powielaj sekwencji operacji (np. zapis stanu + nawigacja routera) w wielu metodach — wydzielaj prywatne metody pomocnicze (np. `authenticate()`).
+- **Routing:** All route endpoints in `app.routes.ts` **must** use dynamic lazy loading: `loadComponent: () => import(...)`. Eager page imports are prohibited.
+- **HTML Templates (@defer):**
+  - Use `@defer (on viewport)` for heavy computation widgets, dynamic charts, certificate visualizers, etc.
+  - **PROHIBITION:** Do not wrap pure static text content or landing page headers in `@defer` with empty height placeholders to prevent Cumulative Layout Shift (CLS) and scroll calculation jitter.
+- **Anti-Lag & 60/120 FPS Motion Standards:**
+  - **NO** `background-attachment: fixed` on elements with CSS gradients (forces full-viewport repaint on scroll).
+  - **NO** large CSS blur filters (`filter: blur(50px+)`) inside continuous animation loops. Use pure radial gradients (`radial-gradient(...)`) for lighting glows.
+  - Animate **strictly** GPU-accelerated properties (`transform`, `opacity`).
+  - Use `transform: translateZ(0)` or `will-change: transform` on floating/animated elements, alongside `contain: content` or `contain: paint` on layout containers.
 
 ---
 
-## 5. 📱 RESPONSYWNOŚĆ UI (Mobile & Desktop)
+## 4. 🎯 DRY PRINCIPLE (CSS Styles, Methods, and Constants)
 
-- **Obowiązkowe wersje Mobile i Desktop:** Każdy nowo tworzony lub modyfikowany komponent oraz widok **musi** być w 100% responsywny i zoptymalizowany pod małe ekrany (smartfony 320px–768px), tablety oraz ekrany desktopowe (1024px–2560px).
-- **ZAKAZ sztywnych szerokości:** Zakaz stosowania sztywnych wartości `width: 500px+` bez `max-width: 100%` – interfejs nigdy nie może powodować niepożądanego poziomego paska przewijania (_horizontal scroll jank_).
-- **Standardy RWD:**
-  - Siatki (Grid/Flex) muszą płynnie zwijać się na małych ekranach (`flex-direction: column`, `grid-template-columns: 1fr` w `@media (max-width: 768px)`).
-  - Paski nawigacji i HUD-y muszą posiadać wariant kompaktowy (`mode="compact"`) lub responsywne dostosowanie rozmiaru ikon i typografii.
-  - Elementy klikalne na urządzeniach mobilnych muszą posiadać wygodny obszar dotykowy (_touch target_ min. 44x44px).
+### A. CSS / SCSS Styles
+- **Do not redefine global styles locally:**
+  - Page layouts: use the global `.page-wrapper` rather than creating local `min-height: 100vh; padding-bottom: 4rem;`.
+  - Navigation bars: use `.top-bar-left`, `.top-bar-right`, `.top-bar-center`, and `.app-top-bar`.
+  - Glassmorphism panels: use `.glass-panel` and `.glass-panel-glow`.
+  - Buttons & badges: use `.btn-eco-primary`, `.btn-eco-secondary`, `.badge-eco`, `.badge-verified`, `.badge-danger`, `.badge-web3`.
+  - Micro-animations: use `.animate-pulse-glow` and `.animate-float` from `src/styles.scss`.
+- **HTML Granularity:** Do not unnecessarily split purely static, declarative HTML into micro-components unless reusable across multiple features.
+
+### B. TypeScript Constants & Methods
+- **Single Source of Truth for Constants:** All `localStorage` keys and domain metrics (CO2 coefficients, daily limits) **must** reside in `src/app/constants/index.ts` (e.g. `STORAGE_KEYS`, `ECO_METRICS`). **Never** hardcode string keys like `'w4t_user'`, `'w4t_lang'`, or arbitrary numbers in components/services.
+- **Service Logic:** Avoid duplicate workflows (e.g. state write + route navigation) across multiple methods; extract dedicated private helper routines.
 
 ---
 
-## 6. 🌐 WIELOJĘZYCZNOŚĆ (JSON-based i18n)
+## 5. 📱 RESPONSIVE UI DESIGN (Mobile & Desktop)
 
-- **Czysta separacja tekstów:** Żadne widoczne dla użytkownika teksty (nagłówki, etykiety, przyciski, komunikaty błędów) **nie mogą** być wpisane na sztywno w szablonie ani w kodzie TypeScript.
-- Wszystkie klucze muszą być zdefiniowane w plikach słowników:
+- **Mandatory Mobile & Desktop Parity:** Every newly created or modified component **must** be 100% responsive across mobile viewports (320px–768px), tablets, and desktops (1024px–2560px).
+- **No Rigid Widths:** Never use rigid `width: 500px+` without `max-width: 100%` – the layout must never trigger horizontal scroll jank.
+- **RWD Standards:**
+  - CSS Flexbox & Grids must stack gracefully on small screens (`flex-direction: column`, `grid-template-columns: 1fr` inside mobile media queries).
+  - Navigation bars and HUDs must provide compact variants (`mode="compact"`) or responsive font/icon scaling.
+  - Interactive elements on mobile touchscreens must meet the minimum touch target area of 44x44px.
+
+---
+
+## 6. 🌐 INTERNATIONALIZATION (JSON-based i18n)
+
+- **Strict Text Separation:** No user-facing text (titles, labels, buttons, error messages) may be hardcoded into HTML templates or TypeScript source code.
+- All localization strings must be registered in the dictionary files:
   - `public/i18n/pl.json`
   - `public/i18n/en.json`
-- W szablonach używaj pipe'a: `{{ 'sekcja.klucz' | translate }}`.
+- In templates, use the translation pipe: `{{ 'section.key' | translate }}`.
 
 ---
 
-## 7. 🏷️ KONWENCJA OZNACZEŃ MOCKÓW (TODO_TEMPLATE)
+## 7. 🏷️ MOCKING & PLACEHOLDER CONVENTION (TODO_TEMPLATE)
 
-Wszystkie sekcje, komponenty, widoki i dane, które na obecnym etapie stanowią szablony/mocki i będą w przyszłości podłączane pod docelowe API backendowe, **muszą** być oznaczone tagiem:
+All views, sections, components, and datasets that serve as placeholders awaiting backend API integration **must** be tagged:
 
 ```html
-<!-- [TODO_TEMPLATE: Opis planowanego podłączenia do API backendowego] -->
+<!-- [TODO_TEMPLATE: Description of planned backend integration] -->
 ```
 
-lub w TypeScript:
+or in TypeScript:
 
 ```typescript
-// [TODO_TEMPLATE: Opis logiki/stanu do zastąpienia prawdziwym serwisem API]
+// [TODO_TEMPLATE: Description of state/logic to be replaced with live API service]
 ```
 
 ---
 
-## 8. 🛡️ ZGODNOŚĆ Z MECHANIKĄ BIZNESOWĄ
+## 8. 🛡️ BUSINESS LOGIC & PURPOSE-FIRST ALIGNMENT
 
-- **Purpose-First:** Brak zachęt do klikania w reklamy (_Watch-to-Plant_, nie _Click-to-Earn_).
-- **Formaty:** Wyłącznie _Rewarded Video_ oraz spoty marek ESG.
-- **Wymiana:** 10 kropel wody = 1 posadzone drzewo.
-- **Anti-Fraud:** Eko-quiz po obejrzeniu wideo przed przyznaniem punktów oraz dzienny limit wyświetleń (15).
-
----
-
-## 9. 🚫 ZAKAZ SAMOWOLNEGO OTWIERANIA PRZEGLĄDARKI (Browser Agent)
-
-- **BEZWZGLĘDNY ZAKAZ** samowolnego uruchamiania przeglądarki Chrome, narzędzi `browser_subagent` czy automatycznego testowania w oknie przeglądarki.
-- Agent **NIE MOŻE** sam z siebie otwierać przeglądarki do weryfikacji zmian.
-- **Wyjątek:** Użycie przeglądarki jest dozwolone **WYŁĄCZNIE wtedy, gdy użytkownik wprost i bezpośrednio o to poprosi** w swoim poleceniu.
+- **Purpose-First:** No deceptive click incentives (*Watch-to-Plant*, not *Click-to-Earn*).
+- **Supported Ad Formats:** Rewarded Video spots and verified corporate ESG partner campaigns.
+- **Conversion Ratio:** 10 Water Drops = 1 verified physical tree planted.
+- **Anti-Fraud Mechanics:** Mandatory post-video eco-knowledge quiz before token credit, capped at 15 rewarded views per day.
 
 ---
 
-## 10. ✅ KROK OBOWIĄZKOWY PO KAŻDEJ ZMIANIE
+## 9. 🚫 PROHIBITION OF UNATTENDED BROWSER AUTOMATION
 
-Po wykonaniu jakichkolwiek modyfikacji agent **musi** upewnić się, że:
+- **STRICT PROHIBITION** against unauthorized execution of interactive browser automation or headless browser tools unless explicitly requested by the user.
 
-1. Projekt kompiluje się bez błędów (`ng build`).
-2. Wszystkie testy jednostkowe przechodzą pomyślnie (`ng test --watch=false`).
+---
+
+## 10. ✅ MANDATORY VERIFICATION GATES
+
+Following any changes, verify:
+
+1. The application builds cleanly with zero compile errors (`ng build`).
+2. All unit tests execute and pass (`ng test --watch=false`).
